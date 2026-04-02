@@ -2,9 +2,15 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://www.convertgb.shop'),
   title: "参考文献格式转换器 - 免费 APA, MLA, BibTeX 转 GB/T 7714-2015",
   description: "专业学术文献格式转换工具，支持一键将 BibTeX、APA、MLA 转换为中国国标 GB/T 7714-2015 格式。",
 
+  // 就是这里！添加 google 验证字段
+  verification: {
+    google: "FXB77H9qDSQQl29HkRAm5NTO9Na6yWzEWOE0R7kzQEM",
+  },
+  
   icons: {
     icon: [
       { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
