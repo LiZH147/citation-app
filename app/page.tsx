@@ -71,6 +71,50 @@ export default function FixedConverter() {
     }
   };
 
+  // 复制结果相关状态与方法
+  const [copied, setCopied] = useState(false);
+
+  const copyResult = async () => {
+    if (!output) return;
+
+    try {
+      // Create a temporary element to extract plaintext from the HTML output
+      const temp = document.createElement('div');
+      temp.style.position = 'fixed';
+      temp.style.left = '-9999px';
+      temp.innerHTML = output;
+      document.body.appendChild(temp);
+
+      const text = temp.innerText || temp.textContent || output;
+
+      // Prefer modern clipboard API
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        // Fallback for older browsers
+        const range = document.createRange();
+        range.selectNodeContents(temp);
+        const sel = window.getSelection();
+        if (sel) {
+          sel.removeAllRanges();
+          sel.addRange(range);
+        }
+        // execCommand may be deprecated but works as a fallback
+        document.execCommand('copy');
+        if (sel) sel.removeAllRanges();
+      }
+
+      document.body.removeChild(temp);
+
+      // show transient confirmation
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('复制失败:', err);
+      alert('复制失败：浏览器不支持剪贴板写入或发生错误。');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-slate-50 py-12 px-4">
       <div className="max-w-5xl mx-auto bg-white shadow-2xl rounded-3xl overflow-hidden border border-slate-200">
@@ -81,7 +125,8 @@ export default function FixedConverter() {
             学术论文参考文献格式转换工具
           </h1>
           <p className="text-blue-100 text-lg max-w-2xl mx-auto">
-            支持 <strong>APA</strong>、<strong>MLA</strong>、<strong>BibTeX</strong> 一键转换为中国国家标准 <strong>GB/T 7714-2015</strong>。
+            支持 <strong>BibTeX</strong> 一键转换为中国国家标准 <strong>GB/T 7714-2015</strong>、 <strong>APA</strong>、<strong>MLA</strong>。
+            {/* 支持 <strong>APA</strong>、<strong>MLA</strong>、<strong>BibTeX</strong> 一键转换为中国国家标准 <strong>GB/T 7714-2015</strong>。 */}
           </p>
         </header>
 
@@ -112,7 +157,7 @@ export default function FixedConverter() {
                 >
                   <option value="gb7714">GB/T 7714 (国标数字制)</option>
                   <option value="apa">APA (第7版)</option>
-                  <option value="mla">MLA (第9版)</option>
+                  {/* <option value="mla">MLA (第9版)</option> */}
                 </select>
               </div>
               <div className="relative group">
@@ -122,10 +167,12 @@ export default function FixedConverter() {
                 />
                 {output && (
                   <button
-                    onClick={() => {/* 复制逻辑 */ }}
+                    onClick={copyResult}
                     className="absolute top-4 right-4 bg-white shadow-md hover:bg-slate-50 p-2 rounded-lg text-xs font-bold text-blue-600 transition"
+                    aria-pressed={copied}
+                    aria-live="polite"
                   >
-                    复制结果
+                    {copied ? '已复制' : '复制结果'}
                   </button>
                 )}
               </div>

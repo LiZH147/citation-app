@@ -3,7 +3,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "参考文献格式转换器 - 免费 APA, MLA, BibTeX 转 GB/T 7714-2015",
-  description: "专业学术文献格式转换工具...",
+  description: "专业学术文献格式转换工具，支持一键将 BibTeX、APA、MLA 转换为中国国标 GB/T 7714-2015 格式。",
 
   icons: {
     icon: [
