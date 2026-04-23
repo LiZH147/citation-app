@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import Script from 'next/script'
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.convertgb.shop'),
@@ -51,6 +52,22 @@ export default function RootLayout({
 }) {
   return (
     <html lang="zh-CN">
+      <head>
+        {/* 2. 将 GA 代码放在 head 中，使用 strategy="afterInteractive" 保证不拖慢首屏 */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-B1SEQEKBE1"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-B1SEQEKBE1');
+          `}
+        </Script>
+      </head>
       <body className="antialiased font-sans"> {/* 直接用 Tailwind 的系统字体类 */}
         {children}
       </body>
