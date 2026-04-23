@@ -55,7 +55,7 @@ export default function RootLayout({
       <head>
         {/* 2. 将 GA 代码放在 head 中，使用 strategy="afterInteractive" 保证不拖慢首屏 */}
         <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-B1SEQEKBE1"
+          src="https://www.googletagmanager.com/gtag/js?id=G-KX53PFH0WC"
           strategy="afterInteractive"
         />
         <Script id="google-analytics" strategy="afterInteractive">
