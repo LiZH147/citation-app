@@ -1,6 +1,7 @@
 "use client";
 
-export default function Error({
+export default function LangError({
+  error,
   reset,
 }: {
   error: Error & { digest?: string };
@@ -14,23 +15,13 @@ export default function Error({
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
         </div>
-        <h2 className="text-xl font-bold text-slate-800">页面出错了</h2>
+        <h2 className="text-xl font-bold text-slate-800">Something went wrong</h2>
         <p className="text-slate-500 text-sm leading-relaxed">
-          抱歉，页面加载过程中发生了一个错误。请尝试刷新页面，如果问题持续存在请联系我们。
+          An error occurred while loading this page. Please try refreshing.
         </p>
         <div className="flex gap-3 justify-center">
-          <button
-            onClick={reset}
-            className="px-5 py-2.5 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition-colors shadow-md"
-          >
-            重试
-          </button>
-          <a
-            href="/"
-            className="px-5 py-2.5 bg-slate-100 text-slate-700 font-bold rounded-xl hover:bg-slate-200 transition-colors"
-          >
-            返回首页
-          </a>
+          <button onClick={reset} className="px-5 py-2.5 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition-colors shadow-md">Try Again</button>
+          <a href="/" className="px-5 py-2.5 bg-slate-100 text-slate-700 font-bold rounded-xl hover:bg-slate-200 transition-colors">Back to Home</a>
         </div>
       </div>
     </div>
