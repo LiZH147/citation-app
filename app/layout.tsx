@@ -1,17 +1,92 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import "./globals.css";
-import Script from 'next/script'
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: "#2563eb",
+};
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://www.convertgb.shop'),
-  title: "参考文献格式转换器 - 免费 APA, MLA, BibTeX 转 GB/T 7714-2015",
-  description: "专业学术文献格式转换工具，支持一键将 BibTeX、APA、MLA 转换为中国国标 GB/T 7714-2015 格式。",
+  // 基础 TDK (Title, Description, Keywords) —— SEO 最重要的三要素
+  metadataBase: new URL("https://www.convertgb.shop"),
+  title: {
+    default:
+      "参考文献格式转换器 - BibTeX/APA/MLA 转 GB/T 7714-2015 国标 | ConvertGB",
+    template: "%s | ConvertGB",
+  },
+  description:
+    "免费在线学术文献格式转换工具，支持一键将 BibTeX、APA、MLA 格式转换为中国国家标准 GB/T 7714-2015。支持知网、百度学术、Zotero 导出的引用数据，纯前端解析保障学术隐私安全。",
+  keywords: [
+    "参考文献格式转换",
+    "GB/T 7714",
+    "BibTeX转国标",
+    "APA转GB7714",
+    "MLA转GB/T 7714",
+    "论文参考文献",
+    "国标参考文献格式",
+    "学术引用格式",
+    "GB7714在线转换",
+    "毕业论文参考文献",
+  ],
 
-  // 就是这里！添加 google 验证字段
+  // Google Search Console 验证
   verification: {
     google: "FXB77H9qDSQQl29HkRAm5NTO9Na6yWzEWOE0R7kzQEM",
   },
-  
+
+  // Open Graph —— 社交分享优化
+  openGraph: {
+    type: "website",
+    siteName: "ConvertGB - 参考文献格式转换器",
+    title: "参考文献格式转换器 - BibTeX/APA/MLA 转 GB/T 7714-2015",
+    description:
+      "免费在线文献格式转换工具，一键转换 APA、MLA、BibTeX 为国标 GB/T 7714-2015 格式。",
+    url: "https://www.convertgb.shop",
+    locale: "zh_CN",
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "ConvertGB 参考文献格式转换器",
+      },
+    ],
+  },
+
+  // Twitter Card
+  twitter: {
+    card: "summary_large_image",
+    title: "参考文献格式转换器 - BibTeX/APA/MLA 转 GB/T 7714-2015",
+    description:
+      "免费在线学术文献格式转换工具，一键转换为国标 GB/T 7714-2015 格式。",
+    images: ["/opengraph-image"],
+  },
+
+  // 其他重要的 meta 标签
+  alternates: {
+    canonical: "https://www.convertgb.shop",
+    languages: {
+      "zh-CN": "https://www.convertgb.shop",
+    },
+  },
+  robots: {
+    index: true,
+    follow: true,
+    "max-snippet": -1,
+    "max-image-preview": "large",
+    "max-video-preview": -1,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-snippet": -1,
+      "max-image-preview": "large",
+      "max-video-preview": -1,
+    },
+  },
+
+  // 图标配置
   icons: {
     icon: [
       { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
@@ -30,30 +105,28 @@ export const metadata: Metadata = {
       { url: "/apple-icon-180x180.png", sizes: "180x180", type: "image/png" },
     ],
     other: [
-      {
-        rel: "apple-touch-icon-precomposed",
-        url: "/apple-icon-precomposed.png",
-      },
+      { rel: "apple-touch-icon-precomposed", url: "/apple-icon-precomposed.png" },
     ],
   },
   manifest: "/manifest.json",
-  themeColor: "#ffffff",
-  // 对应 msapplication-TileImage
+
+  // Windows 磁贴
   other: {
-    "msapplication-TileColor": "#ffffff",
+    "msapplication-TileColor": "#2563eb",
     "msapplication-TileImage": "/ms-icon-144x144.png",
+    "baidu-site-verification": "codeva-",
   },
 };
-// 修改后的 layout.tsx 核心部分
+
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
     <html lang="zh-CN">
       <head>
-        {/* 2. 将 GA 代码放在 head 中，使用 strategy="afterInteractive" 保证不拖慢首屏 */}
+        {/* Google Analytics */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-KX53PFH0WC"
           strategy="afterInteractive"
@@ -63,14 +136,21 @@ export default function RootLayout({
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
-
             gtag('config', 'G-B1SEQEKBE1');
           `}
         </Script>
+
+        {/* 预链接 DNS —— 加速外部资源加载 */}
+        <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+        <link rel="dns-prefetch" href="https://raw.githubusercontent.com" />
+
+        {/* Preconnect for faster connections */}
+        <link rel="preconnect" href="https://www.googletagmanager.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://raw.githubusercontent.com" crossOrigin="anonymous" />
       </head>
-      <body className="antialiased font-sans"> {/* 直接用 Tailwind 的系统字体类 */}
+      <body className="antialiased font-sans bg-slate-50 text-slate-900">
         {children}
       </body>
     </html>
-  )
+  );
 }
