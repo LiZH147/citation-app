@@ -14,7 +14,10 @@ function getLocale(request: NextRequest): string {
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // 跳过静态资源和已有 locale 的路径
+  // 跳过带文件扩展名的请求（.csl .png .ico .xml .json 等）
+  if (/\.[a-z0-9]+$/i.test(pathname)) return;
+
+  // 跳过已有 locale 的路径
   const pathnameHasLocale = locales.some(
     (locale) =>
       pathname === `/${locale}` || pathname.startsWith(`/${locale}/`)
@@ -31,7 +34,6 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    // 不匹配：静态文件、Next.js 内部路径、API、站点地图、robots 等
     "/((?!_next|api|sitemap|robots|opengraph-image|manifest|favicon|apple-icon).*)",
   ],
 };
