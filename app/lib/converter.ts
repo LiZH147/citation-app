@@ -188,3 +188,86 @@ export function convertCitation(
     });
   }
 }
+
+// ─── 导出 ────────────────────────────────────────────
+
+export type ExportFormat = "bibtex" | "ris" | "txt";
+
+/** 将输入导出为 BibTeX / RIS / 纯文本 */
+export function convertAndExport(
+  input: string,
+  format: ExportFormat
+): string {
+  const cite = tryParse(input);
+  switch (format) {
+    case "bibtex":
+      return cite.format("bibtex");
+    case "ris":
+      return cite.format("ris");
+    case "txt": {
+      const html = cite.format("bibliography", {
+        format: "html",
+        template: "apa",
+        lang: "en-US",
+      });
+      return stripHtml(html).trim();
+    }
+  }
+}
+
+/** 统一尝试 BibTeX 解析 → APA 启发式回退 */
+function tryParse(input: string): InstanceType<typeof Cite> {
+  try {
+    return new Cite(input);
+  } catch {
+    const items = parseAPA(input);
+    if (!items.length) throw new Error("无法解析输入的引用格式");
+    return new Cite(items);
+  }
+}
+
+function stripHtml(html: string): string {
+  return html.replace(/<[^>]+>/g, "").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;/g, "'");
+}
+
+// ─── 输入格式检测 ────────────────────────────────────
+
+export type InputFormat = "bibtex" | "apa" | "doi" | "url" | "unknown";
+
+/** 自动检测输入格式类型 */
+export function detectInputFormat(input: string): InputFormat {
+  if (!input.trim()) return "unknown";
+
+  // DOI
+  if (/^\s*10\.\d{4,}\/[\S]+/.test(input) || /^\s*doi:\s*10\./i.test(input))
+    return "doi";
+
+  // URL
+  if (/^\s*https?:\/\//i.test(input.trim()))
+    return "url";
+
+  // BibTeX
+  if (/^\s*@\w+\s*\{/.test(input))
+    return "bibtex";
+
+  // APA 文本 (Author (Year). Title.)
+  if (/^.+\(\d{4}[a-z]?\)\.\s+.+/i.test(input))
+    return "apa";
+
+  return "unknown";
+}
+
+// ─── 从 CSL-JSON 转换 ──────────────────────────────────
+
+/** 将 CSL-JSON 条目转换为指定格式的 HTML */
+export function citeFromCSLJSON(
+  items: Record<string, unknown>[],
+  template: string
+): string {
+  const cite = new Cite(items);
+  return cite.format("bibliography", {
+    format: "html",
+    template,
+    lang: template === "gb7714" ? "zh-CN" : "en-US",
+  });
+}

@@ -23,6 +23,34 @@ export interface Translations {
   converting: string;
   copyBtn: string;
   copiedBtn: string;
+  downloadBib: string;
+  downloadRis: string;
+  downloadTxt: string;
+  doiPlaceholder: string;
+  doiLookupBtn: string;
+  doiLooking: string;
+  inputFormatBibtex: string;
+  inputFormatApa: string;
+  inputFormatDoi: string;
+  inputFormatUnknown: string;
+  manualEntryBtn: string;
+  formTitle: string;
+  formAuthor: string;
+  formTitleField: string;
+  formJournal: string;
+  formYear: string;
+  formVolume: string;
+  formIssue: string;
+  formPages: string;
+  formGenerate: string;
+  formCancel: string;
+  recentTitle: string;
+  recentEmpty: string;
+  recentClearBtn: string;
+  errorEmpty: string;
+  errorParse: string;
+  errorDoi: string;
+  errorNetwork: string;
 
   // Privacy
   privacyTitle: string;
@@ -102,6 +130,34 @@ const zh: Translations = {
   converting: "转换中...",
   copyBtn: "复制结果",
   copiedBtn: "✓ 已复制",
+  downloadBib: "下载 BibTeX",
+  downloadRis: "下载 RIS",
+  downloadTxt: "下载纯文本",
+  doiPlaceholder: "粘贴 DOI 或论文 URL 自动查找...",
+  doiLookupBtn: "查找",
+  doiLooking: "查找中...",
+  inputFormatBibtex: "BibTeX 格式",
+  inputFormatApa: "APA 格式",
+  inputFormatDoi: "DOI 标识",
+  inputFormatUnknown: "未知格式",
+  manualEntryBtn: "手动录入",
+  formTitle: "手动录入文献信息",
+  formAuthor: "作者（逗号分隔格式：姓, 名）",
+  formTitleField: "标题",
+  formJournal: "期刊 / 会议名称",
+  formYear: "发表年份",
+  formVolume: "卷",
+  formIssue: "期",
+  formPages: "页码",
+  formGenerate: "生成引用",
+  formCancel: "取消",
+  recentTitle: "最近转换",
+  recentEmpty: "暂无转换记录",
+  recentClearBtn: "清空记录",
+  errorEmpty: "输入内容为空，请粘贴引用数据。",
+  errorParse: "格式无法识别，请检查输入是否正确。",
+  errorDoi: "未找到该 DOI 的文献信息。",
+  errorNetwork: "网络请求失败，请检查网络后重试。",
 
   privacyTitle: "学术隐私安全保障",
   privacyDesc:
@@ -218,6 +274,34 @@ Example BibTeX:
   converting: "Converting...",
   copyBtn: "Copy Result",
   copiedBtn: "✓ Copied",
+  downloadBib: "Download BibTeX",
+  downloadRis: "Download RIS",
+  downloadTxt: "Download Text",
+  doiPlaceholder: "Paste DOI or paper URL to auto-lookup...",
+  doiLookupBtn: "Lookup",
+  doiLooking: "Looking up...",
+  inputFormatBibtex: "BibTeX",
+  inputFormatApa: "APA Format",
+  inputFormatDoi: "DOI",
+  inputFormatUnknown: "Unknown Format",
+  manualEntryBtn: "Manual Entry",
+  formTitle: "Enter Citation Details",
+  formAuthor: "Authors (comma-separated: Family, Given)",
+  formTitleField: "Title",
+  formJournal: "Journal / Conference",
+  formYear: "Year",
+  formVolume: "Volume",
+  formIssue: "Issue",
+  formPages: "Pages",
+  formGenerate: "Generate Citation",
+  formCancel: "Cancel",
+  recentTitle: "Recent Conversions",
+  recentEmpty: "No conversion history yet",
+  recentClearBtn: "Clear History",
+  errorEmpty: "Input is empty. Please paste citation data.",
+  errorParse: "Unable to parse the input format. Please check and try again.",
+  errorDoi: "Could not find metadata for this DOI.",
+  errorNetwork: "Network request failed. Please check your connection.",
 
   privacyTitle: "Privacy Protected",
   privacyDesc:
