@@ -5,6 +5,7 @@ import { lookupDOI } from "@/app/lib/doi-lookup";
 import type { Translations } from "@/app/lib/translations";
 
 type OutputFormat = "gb7714" | "apa";
+type ViewFormat = OutputFormat | "bibtex";
 
 interface Props { t: Translations; }
 
@@ -27,6 +28,8 @@ export default function Converter({ t }: Props) {
   const [input, setInput] = useState("");
   const [output, setOutput] = useState(placeholder(t.outputPlaceholder));
   const [outFormat, setOutFormat] = useState<OutputFormat>("gb7714");
+  const [viewFormat, setViewFormat] = useState<ViewFormat>("gb7714");
+  const [viewOutput, setViewOutput] = useState(placeholder(t.outputPlaceholder));
   const [isReady, setIsReady] = useState(false);
   const [isConverting, setIsConverting] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -94,15 +97,46 @@ export default function Converter({ t }: Props) {
     return () => clearTimeout(timer);
   }, [input, outFormat, t]);
 
-  const hasResult = !!output && !output.includes("italic");
+  // 视图格式输出（格式对照标签）
+  useEffect(() => {
+    if (!input.trim()) {
+      setViewOutput(placeholder(t.outputPlaceholder));
+      return;
+    }
+    if (viewFormat === outFormat) {
+      setViewOutput(output);
+      return;
+    }
+    setIsConverting(true);
+    try {
+      const fmt = viewFormat as "gb7714" | "apa";
+      if (viewFormat === "bibtex") {
+        try {
+          const bibtex = convertAndExport(input, "bibtex");
+          setViewOutput(`<pre class="font-mono text-xs whitespace-pre-wrap text-slate-700">${escapeHtml(bibtex)}</pre>`);
+        } catch {
+          setViewOutput(placeholder(t.outputPlaceholder));
+        }
+      } else {
+        const result = convertCitation(input, fmt);
+        setViewOutput(result);
+      }
+    } catch {
+      setViewOutput(placeholder(t.outputPlaceholder));
+    } finally {
+      setIsConverting(false);
+    }
+  }, [input, viewFormat, outFormat, output, t.outputPlaceholder]);
+
+  const hasResult = !!viewOutput && !viewOutput.includes("italic");
 
   // 复制
   const copyResult = useCallback(async () => {
-    if (!output) return;
+    if (!viewOutput) return;
     try {
       const temp = document.createElement("div");
       temp.style.cssText = "position:fixed;left:-9999px;top:-9999px";
-      temp.innerHTML = output;
+      temp.innerHTML = viewOutput;
       document.body.appendChild(temp);
       const text = temp.innerText || temp.textContent || "";
       document.body.removeChild(temp);
@@ -119,16 +153,15 @@ export default function Converter({ t }: Props) {
       }
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
-      // 记入历史
       if (input.trim() && hasResult) {
         const label = input.trim().slice(0, 120);
-        const newItem: HistoryItem = { input: input.trim(), output, format: outFormat, ts: Date.now(), label };
+        const newItem: HistoryItem = { input: input.trim(), output: viewOutput, format: outFormat, ts: Date.now(), label };
         const updated = [newItem, ...history.filter(h => h.input !== input.trim())].slice(0, 20);
         setHistory(updated);
         saveHistory(updated);
       }
     } catch { alert("Copy failed."); }
-  }, [output, input, hasResult, outFormat, history]);
+  }, [viewOutput, input, hasResult, outFormat, history]);
 
   // 下载
   const download = useCallback((fmt: ExportFormat) => {
@@ -282,11 +315,30 @@ export default function Converter({ t }: Props) {
 
           {/* 输出 */}
           <div className="relative bg-blue-50/20">
+            {/* 格式标签 */}
+            {input.trim() && (
+              <div className="absolute top-3 left-3 z-10 flex items-center gap-1">
+                <span className="text-[10px] text-slate-400 mr-1">{t.viewFormatTabs}</span>
+                {(["gb7714", "apa", "bibtex"] as ViewFormat[]).map((fmt) => (
+                  <button
+                    key={fmt}
+                    onClick={() => setViewFormat(fmt)}
+                    className={`text-[10px] font-bold px-2 py-0.5 rounded-full transition-colors ${
+                      viewFormat === fmt
+                        ? "bg-blue-600 text-white"
+                        : "bg-white text-slate-500 border border-slate-200 hover:border-blue-300 hover:text-blue-600"
+                    }`}
+                  >
+                    {fmt === "gb7714" ? t.viewFormatGB : fmt === "apa" ? t.viewFormatAPA : t.viewFormatBibtex}
+                  </button>
+                ))}
+              </div>
+            )}
             <div
               ref={outputRef}
-              className="w-full h-72 md:h-96 p-5 overflow-y-auto prose prose-sm prose-blue max-w-none"
+              className="w-full h-72 md:h-96 p-5 pt-12 overflow-y-auto prose prose-sm prose-blue max-w-none"
               aria-live="polite" aria-label="Conversion result"
-              dangerouslySetInnerHTML={{ __html: output }}
+              dangerouslySetInnerHTML={{ __html: viewOutput }}
             />
             {isConverting && (
               <div className="absolute inset-0 flex items-center justify-center bg-white/60">
@@ -351,6 +403,10 @@ export default function Converter({ t }: Props) {
 
 function placeholder(text: string): string {
   return `<p class="text-slate-400 italic text-sm">${text}</p>`;
+}
+
+function escapeHtml(s: string): string {
+  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 }
 
 /** 下载下拉 */

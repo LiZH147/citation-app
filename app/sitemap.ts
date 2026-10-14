@@ -1,16 +1,14 @@
 import type { MetadataRoute } from "next";
 
 const baseUrl = "https://www.convertgb.shop";
+const lastModified = new Date();
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const lastModified = new Date();
-  const today = lastModified.toISOString().split("T")[0];
-
   return [
     {
       url: `${baseUrl}/zh`,
       lastModified,
-      changeFrequency: "weekly" as const,
+      changeFrequency: "daily",
       priority: 1.0,
       alternates: {
         languages: {
@@ -22,7 +20,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     {
       url: `${baseUrl}/en`,
       lastModified,
-      changeFrequency: "weekly" as const,
+      changeFrequency: "daily",
       priority: 1.0,
       alternates: {
         languages: {
@@ -30,15 +28,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
           en: `${baseUrl}/en`,
         },
       },
-    },
-  ];
-}
-
-export function generateSitemapIndex() {
-  return [
-    {
-      url: `${baseUrl}/sitemap.xml`,
-      lastModified: new Date(),
     },
   ];
 }

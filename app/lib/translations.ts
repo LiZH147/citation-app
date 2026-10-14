@@ -51,6 +51,10 @@ export interface Translations {
   errorParse: string;
   errorDoi: string;
   errorNetwork: string;
+  viewFormatTabs: string;
+  viewFormatGB: string;
+  viewFormatAPA: string;
+  viewFormatBibtex: string;
 
   // Privacy
   privacyTitle: string;
@@ -158,6 +162,10 @@ const zh: Translations = {
   errorParse: "格式无法识别，请检查输入是否正确。",
   errorDoi: "未找到该 DOI 的文献信息。",
   errorNetwork: "网络请求失败，请检查网络后重试。",
+  viewFormatTabs: "格式预览：",
+  viewFormatGB: "GB/T 7714",
+  viewFormatAPA: "APA",
+  viewFormatBibtex: "BibTeX",
 
   privacyTitle: "学术隐私安全保障",
   privacyDesc:
@@ -302,6 +310,10 @@ Example BibTeX:
   errorParse: "Unable to parse the input format. Please check and try again.",
   errorDoi: "Could not find metadata for this DOI.",
   errorNetwork: "Network request failed. Please check your connection.",
+  viewFormatTabs: "Preview: ",
+  viewFormatGB: "GB/T 7714",
+  viewFormatAPA: "APA",
+  viewFormatBibtex: "BibTeX",
 
   privacyTitle: "Privacy Protected",
   privacyDesc:
