@@ -1,6 +1,7 @@
 /**
  * 参考文献格式转换核心逻辑
- * 支持 BibTeX / APA / MLA → GB/T 7714-2015 / APA
+ * 输入：BibTeX / APA 文本 / DOI / arXiv；输出：GB/T 7714-2015 / APA / BibTeX
+ * 注意：MLA 输入与输出均未实现，页面文案不得宣称支持。
  */
 import { Cite, plugins } from "@citation-js/core";
 import "@citation-js/plugin-bibtex";

@@ -109,17 +109,17 @@ const zh: Translations = {
   navFAQ: "常见问题",
   heroTitle: "参考文献格式转换器",
   heroDesc:
-    "支持 BibTeX、APA、MLA 一键转换为中国国家标准 GB/T 7714-2015。兼容知网、百度学术、Zotero、EndNote 导出的引用格式，纯前端解析保障学术隐私安全。",
+    "支持 BibTeX、APA 一键转换为中国国家标准 GB/T 7714-2015，也可直接输入 DOI 或 arXiv 编号自动抓取文献元数据。兼容知网、百度学术、Zotero、EndNote 导出的引用格式，纯前端解析保障学术隐私安全。",
   heroCTA: "开始转换",
   heroGuide: "查看使用指南",
 
   converterTitle: "格式转换",
-  converterSubtitle: "支持 BibTeX、APA、MLA 格式",
+  converterSubtitle: "支持 BibTeX / APA / DOI / arXiv 输入",
   outputFormat: "输出格式：",
   gbt7714Label: "GB/T 7714-2015（国标）",
   apaLabel: "APA（第7版）",
   clearBtn: "清空",
-  inputPlaceholder: `请粘贴 BibTeX 源码或 APA/MLA 格式文本...
+  inputPlaceholder: `请粘贴 BibTeX 源码或 APA 格式文本...
 
 示例 BibTeX：
 @article{zhang2026,
@@ -174,7 +174,7 @@ const zh: Translations = {
   guideTitle: "使用指南",
   guideStep1Title: "粘贴引用数据",
   guideStep1Desc:
-    "将 Zotero、EndNote、百度学术或其他工具导出的 BibTeX / APA / MLA 格式文本粘贴至左侧输入区。",
+    "将 Zotero、EndNote、百度学术或其他工具导出的 BibTeX / APA 格式文本粘贴至左侧输入区。",
   guideStep2Title: "选择目标格式",
   guideStep2Desc:
     "在顶部工具栏切换期望的输出格式：国标 GB/T 7714-2015 或 APA（第7版）。",
@@ -192,7 +192,7 @@ const zh: Translations = {
   faqs: [
     {
       q: "这个转换器支持哪些输入格式？",
-      a: "目前支持 BibTeX（.bib 文件/文本）、APA（第7版）文本和 MLA 格式文本。您可以粘贴从 Zotero、EndNote、百度学术、Google Scholar 导出的引用数据，工具会自动识别并转换为目标格式。",
+      a: "目前支持 BibTeX（.bib 文件/文本）、APA（第7版）文本，以及 DOI 和 arXiv 编号直接抓取。您可以粘贴从 Zotero、EndNote、百度学术、Google Scholar 导出的文献数据，工具会自动识别格式并转换为 GB/T 7714-2015 或 APA。",
     },
     {
       q: "GB/T 7714-2015 和 APA 有什么区别？",
@@ -218,7 +218,7 @@ const zh: Translations = {
   faqKeywords: [
     "#APA转国标",
     "#BibTeX转GB/T7714",
-    "#MLA转GB7714",
+    "#DOI转国标",
     "#论文参考文献格式",
     "#国标参考文献",
     "#知网引用格式转换",
@@ -230,7 +230,7 @@ const zh: Translations = {
 
   footerAbout: "ConvertGB",
   footerDesc:
-    "免费在线参考文献格式转换工具，支持 BibTeX、APA、MLA 转换为国标 GB/T 7714-2015。纯前端解析，保障学术隐私安全。",
+    "免费在线参考文献格式转换工具，支持 BibTeX、APA 转换为国标 GB/T 7714-2015，也可用 DOI / arXiv 自动抓取元数据。纯前端解析，保障学术隐私安全。",
   footerQuickLinks: "快速链接",
   footerDisclaimer: "免责声明",
   footerDisclaimerText:
@@ -257,17 +257,17 @@ const en: Translations = {
   navFAQ: "FAQ",
   heroTitle: "Citation Format Converter",
   heroDesc:
-    "Free online academic citation format converter. One-click conversion from BibTeX, APA, MLA to China National Standard GB/T 7714-2015. Compatible with CNKI, Google Scholar, Zotero, and EndNote exports. All processing happens locally — your academic privacy is protected.",
+    "Free online citation format converter. One-click conversion from BibTeX or APA to China National Standard GB/T 7714-2015, with DOI and arXiv lookup. Compatible with CNKI, Google Scholar, Zotero, and EndNote exports. All processing happens locally — your academic privacy is protected.",
   heroCTA: "Start Converting",
   heroGuide: "View Guide",
 
   converterTitle: "Converter",
-  converterSubtitle: "Supports BibTeX, APA, MLA formats",
+  converterSubtitle: "Accepts BibTeX, APA, DOI and arXiv",
   outputFormat: "Output:",
   gbt7714Label: "GB/T 7714-2015 (Chinese Standard)",
   apaLabel: "APA (7th Edition)",
   clearBtn: "Clear",
-  inputPlaceholder: `Paste your BibTeX source or APA/MLA formatted text here...
+  inputPlaceholder: `Paste your BibTeX source or APA formatted text here...
 
 Example BibTeX:
 @article{doe2026,
@@ -322,7 +322,7 @@ Example BibTeX:
   guideTitle: "How to Use",
   guideStep1Title: "Paste Citation Data",
   guideStep1Desc:
-    "Paste BibTeX, APA, or MLA text exported from Zotero, EndNote, Google Scholar, or any reference manager into the left panel.",
+    "Paste BibTeX or APA text exported from Zotero, EndNote, Google Scholar, or any reference manager into the left panel.",
   guideStep2Title: "Choose Output Format",
   guideStep2Desc:
     "Select your desired output format: GB/T 7714-2015 (Chinese National Standard) or APA (7th Edition).",
@@ -340,7 +340,7 @@ Example BibTeX:
   faqs: [
     {
       q: "What input formats does this converter support?",
-      a: "It currently supports BibTeX (.bib files/text), APA (7th edition) text, and MLA formatted text. You can paste citation data exported from Zotero, EndNote, Google Scholar, and most reference managers — the tool will auto-detect the format and convert accordingly.",
+      a: "It currently supports BibTeX (.bib files/text) and APA (7th edition) text, plus DOI and arXiv IDs that are fetched automatically. You can paste reference data exported from Zotero, EndNote, Google Scholar, and most reference managers — the tool detects the format and converts it to GB/T 7714-2015 or APA.",
     },
     {
       q: "What is the difference between GB/T 7714-2015 and APA?",
@@ -374,7 +374,7 @@ Example BibTeX:
 
   footerAbout: "ConvertGB",
   footerDesc:
-    "Free online citation format converter — BibTeX, APA, MLA to GB/T 7714-2015. All processing happens locally in your browser.",
+    "Free online citation converter — BibTeX or APA to GB/T 7714-2015, with DOI and arXiv lookup. All processing happens locally in your browser.",
   footerQuickLinks: "Quick Links",
   footerDisclaimer: "Disclaimer",
   footerDisclaimerText:

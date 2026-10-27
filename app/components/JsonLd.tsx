@@ -23,8 +23,8 @@ export default function JsonLd({ lang, t }: Props) {
         alternateName: ["ConvertGB", "参考文献格式转换器", "Citation Converter"],
         url: baseUrl,
         description: isZh
-          ? "免费在线学术文献格式转换工具，BibTeX/APA/MLA 转 GB/T 7714-2015 国标格式。"
-          : "Free online academic citation format converter — BibTeX, APA, MLA to GB/T 7714-2015.",
+          ? "免费在线学术文献格式转换工具，BibTeX/APA 转 GB/T 7714-2015 国标格式，支持 DOI 与 arXiv 抓取。"
+          : "Free online citation format converter — BibTeX or APA to GB/T 7714-2015, with DOI and arXiv lookup.",
         inLanguage: isZh ? "zh-CN" : "en",
         potentialAction: {
           "@type": "SearchAction",
@@ -57,8 +57,8 @@ export default function JsonLd({ lang, t }: Props) {
           : "ConvertGB Citation Format Converter",
         url: pageUrl,
         description: isZh
-          ? "免费在线学术文献格式转换工具，支持一键将 BibTeX、APA、MLA 转换为中国国家标准 GB/T 7714-2015 格式。纯前端解析保障学术隐私安全。"
-          : "Free online citation format converter. One-click conversion from BibTeX, APA, MLA to China National Standard GB/T 7714-2015.",
+          ? "免费在线学术文献格式转换工具，支持一键将 BibTeX、APA 转换为中国国家标准 GB/T 7714-2015 格式，并可用 DOI / arXiv 自动抓取元数据。纯前端解析保障学术隐私安全。"
+          : "Free online citation format converter. One-click conversion from BibTeX or APA to China National Standard GB/T 7714-2015.",
         applicationCategory: "EducationalApplication",
         applicationSubCategory: "ReferenceManagement",
         operatingSystem: "All",
@@ -112,16 +112,16 @@ export default function JsonLd({ lang, t }: Props) {
         "@type": "HowTo",
         name: isZh ? "如何转换参考文献格式" : "How to Convert Citation Formats",
         description: isZh
-          ? "三步将 BibTeX、APA、MLA 转换为 GB/T 7714-2015 国标格式"
-          : "Three steps to convert BibTeX, APA, MLA to GB/T 7714-2015",
+          ? "三步将 BibTeX、APA 转换为 GB/T 7714-2015 国标格式"
+          : "Three steps to convert BibTeX or APA to GB/T 7714-2015",
         step: [
           {
             "@type": "HowToStep",
             position: 1,
             name: isZh ? "粘贴引用数据" : "Paste citation data",
             text: isZh
-              ? "将 Zotero、EndNote、百度学术或其他工具导出的 BibTeX / APA / MLA 格式文本粘贴至输入区。"
-              : "Paste BibTeX, APA, or MLA formatted text exported from Zotero, EndNote, or Google Scholar.",
+              ? "将 Zotero、EndNote、百度学术或其他工具导出的 BibTeX / APA 格式文本粘贴至输入区。"
+              : "Paste BibTeX or APA formatted text exported from Zotero, EndNote, or Google Scholar.",
           },
           {
             "@type": "HowToStep",

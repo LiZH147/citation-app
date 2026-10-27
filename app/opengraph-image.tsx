@@ -83,7 +83,7 @@ export default function OpenGraphImage() {
             lineHeight: 1.4,
           }}
         >
-          BibTeX &middot; APA &middot; MLA → GB/T 7714‑2015 国标
+          BibTeX &middot; APA &middot; DOI → GB/T 7714‑2015 国标
         </div>
 
         {/* 底部 URL */}
