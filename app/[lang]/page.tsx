@@ -42,7 +42,7 @@ export default async function LangPage({
           navLinks={navLinks}
         />
         <main className="flex-1">
-          <Converter t={t} />
+          <Converter t={t} lang={lang} />
           <PrivacyNotice t={t} />
           <Guide t={t} lang={lang} />
           <ToolLinks

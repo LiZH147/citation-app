@@ -12,6 +12,10 @@ export const LONGFORM_SLUGS = [
   "gb7714-format",
   "zotero-gb7714",
   "doi-to-gb7714",
+  "bibtex-to-mla",
+  "apa-to-mla",
+  "bibtex-to-chicago",
+  "bibtex-to-ieee",
 ] as const;
 
 export type LongformSlug = (typeof LONGFORM_SLUGS)[number];

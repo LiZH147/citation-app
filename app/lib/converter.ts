@@ -1,7 +1,9 @@
 /**
  * 参考文献格式转换核心逻辑
- * 输入：BibTeX / APA 文本 / DOI / arXiv；输出：GB/T 7714-2015 / APA / BibTeX
- * 注意：MLA 输入与输出均未实现，页面文案不得宣称支持。
+ * 输入：BibTeX / APA 文本 / DOI / arXiv；输出：GB/T 7714-2015 / APA（第7版）/
+ * MLA（第9版）/ Chicago（第17版 作者-日期）/ Harvard / IEEE / BibTeX
+ * CSL 模板来自 citation-style-language/styles（public/*.csl），
+ * GB/T 7714 模板为本站自有 public/gb7714.csl。
  */
 import { Cite, plugins } from "@citation-js/core";
 import "@citation-js/plugin-bibtex";
@@ -9,34 +11,54 @@ import "@citation-js/plugin-csl";
 
 let cslInitialized = false;
 
+/** 注册的 CSL 模板：模板名 → public/ 下的文件（"apa" 为 citation-js 内置模板）。 */
+export const CSL_TEMPLATES = {
+  gb7714: "/gb7714.csl",
+  mla: "/modern-language-association.csl",
+  "chicago-author-date": "/chicago-author-date-17th-edition.csl",
+  harvard: "/harvard-cite-them-right-11th-edition.csl",
+  ieee: "/ieee.csl",
+} as const;
+
+export type CslTemplateName = keyof typeof CSL_TEMPLATES | "apa";
+
 /** 初始化 CSL 模板和中文语言包（单例） */
 export async function initCSL(): Promise<boolean> {
   if (cslInitialized) return true;
 
+  const config = plugins.config.get("@csl");
+  if (!config) return false;
+
+  // 中文语言包：GB/T 7714 输出需要；失败也不阻塞英文模板注册。
   try {
-    const [resStyle, resLocale] = await Promise.all([
-      fetch("/gb7714.csl"),
-      fetch(
-        "https://raw.githubusercontent.com/citation-style-language/locales/master/locales-zh-CN.xml"
-      ),
-    ]);
-
-    const [cslText, localeText] = await Promise.all([
-      resStyle.text(),
-      resLocale.text(),
-    ]);
-
-    const config = plugins.config.get("@csl");
-    if (config) {
-      config.locales.add("zh-CN", localeText);
-      config.templates.add("gb7714", cslText);
-      cslInitialized = true;
-      return true;
+    const resLocale = await fetch(
+      "https://raw.githubusercontent.com/citation-style-language/locales/master/locales-zh-CN.xml"
+    );
+    if (resLocale.ok) {
+      config.locales.add("zh-CN", await resLocale.text());
     }
-    return false;
   } catch {
-    return false;
+    // 离线或上游不可达时继续：英文模板不受影响。
   }
+
+  // 注册全部 CSL 模板；单个文件失败不影响其余模板。
+  const results = await Promise.allSettled(
+    (Object.entries(CSL_TEMPLATES) as [string, string][]).map(
+      async ([name, path]) => {
+        const res = await fetch(path);
+        if (!res.ok) throw new Error(`${path}: HTTP ${res.status}`);
+        return [name, await res.text()] as const;
+      }
+    )
+  );
+  for (const r of results) {
+    if (r.status === "fulfilled") {
+      config.templates.add(r.value[0], r.value[1]);
+    }
+  }
+
+  cslInitialized = true;
+  return true;
 }
 
 /** 解析 APA 文本为 CSL-JSON 条目（启发式） */
