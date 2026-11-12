@@ -591,6 +591,436 @@ const en: LongformSet = {
     ctaSecondary: "See which types get which codes",
     updated: "2026-10-27",
   },
+
+  "bibtex-to-mla": {
+    slug: "bibtex-to-mla",
+    keyword: "BibTeX to MLA",
+    title: "BibTeX to MLA: Author, Container, DOI",
+    description:
+      "BibTeX to MLA 9th edition, field by field: the first-author flip, et al. after two names, italic containers, vol. and no., and the DOI in short form.",
+    h1: "BibTeX to MLA: A Field-by-Field Conversion Guide",
+    intro:
+      "A .bib entry stores references as named fields; the MLA 9th edition Works Cited list expects a fixed element order with fixed punctuation. Almost every BibTeX to MLA problem comes from that mismatch rather than from missing data. This guide shows which field lands where, how many author names survive, and what to check before you paste the result into a paper.",
+    sections: [
+      {
+        h2: "BibTeX to MLA: what actually changes",
+        paragraphs: [
+          "Nothing inside @article{lecun2015deep, author = {LeCun, Yann and Bengio, Yoshua and Hinton, Geoffrey}, title = {Deep Learning}, journal = {Nature}, year = {2015}, volume = {521}, number = {7553}, pages = {436--444}, doi = {10.1038/nature14539}} says that only the first author keeps the surname-first order, that the title takes quotation marks, or that the journal name goes in italics. MLA 9th edition is the opposite: one element order, one punctuation set. A BibTeX to MLA conversion is therefore a placement job, not a translation job.",
+          "So the field labels, the equals signs and the double hyphen disappear, while a quoted title, an italic container and a volume-and-issue block appear. The example above becomes `LeCun, Yann, et al. \"Deep Learning.\" Nature, vol. 521, no. 7553, 2015, pp. 436–44. https://doi.org/10.1038/nature14539.` The BibTeX double hyphen turns into an en dash, and the page range is shortened to 436–44.",
+        ],
+        table: {
+          headers: ["BibTeX field", "MLA 9th edition element", "Output shape"],
+          rows: [
+            ["author", "First author surname first, then et al. for 3+", "LeCun, Yann, et al."],
+            ["title", "In quotation marks, title case", "\"Deep Learning.\""],
+            ["journal", "Container, in italics", "Nature,"],
+            ["year", "After the issue number", "2015,"],
+            ["volume, number", "vol. and no. abbreviations", "vol. 521, no. 7553,"],
+            ["pages", "pp. with a shortened range", "pp. 436–44."],
+            ["doi", "As a link, last element", "https://doi.org/10.1038/nature14539."],
+          ],
+        },
+      },
+      {
+        h2: "Author names: one flip, then et al.",
+        paragraphs: [
+          "MLA 9th edition inverts only the first author's name. `author = {LeCun, Yann and Bengio, Yoshua and Hinton, Geoffrey}` becomes LeCun, Yann, et al. — the second and third authors never appear, because MLA lists the first author plus et al. once a work has three or more authors. With two authors, both appear: `Doe, John, and Jane Smith.`",
+          "The trap is a BibTeX file that already abbreviates authors, or one that stores a corporate author without double braces. World Health Organization reads as three people unless you write it as {{World Health Organization}}. The converter splits the author field on and before formatting, so a missing and merges two people into one.",
+        ],
+        list: [
+          "Count the names in each author field before converting.",
+          "Double-brace every corporate author so it stays one name.",
+          "Two authors: both names, second in natural order after and.",
+          "Three or more authors: first author only, then a comma and et al.",
+        ],
+      },
+      {
+        h2: "Containers: the title is quoted, the journal is not",
+        paragraphs: [
+          "MLA 9th edition wraps the title of a journal article in quotation marks and italicises the container that holds it. A BibTeX to MLA conversion therefore needs to know which field is the container: journal for @article, booktitle for @inproceedings, publisher for @book. A chapter title is quoted and its book title is italicised.",
+          "Book entries follow the same rule with a different container. @book{goodfellow2016deep, author = {Goodfellow, Ian and Bengio, Yoshua and Courville, Aaron}, title = {Deep Learning}, publisher = {MIT Press}, year = {2016}} becomes `Goodfellow, Ian, et al. Deep Learning. MIT Press, 2016.` The book title is italicised and the publisher takes the container position.",
+        ],
+        table: {
+          headers: ["Entry type", "Quoted title", "Italic container"],
+          rows: [
+            ["@article", "Article title", "Journal name"],
+            ["@inproceedings", "Paper title", "Proceedings title"],
+            ["@book", "Book title (italic, not quoted)", "Publisher"],
+            ["@incollection", "Chapter title", "Book title"],
+            ["@phdthesis", "Thesis title (italic, not quoted)", "University"],
+            ["@online", "Page title", "Website name"],
+          ],
+        },
+      },
+      {
+        h2: "Volume, issue, pages and the DOI",
+        paragraphs: [
+          "MLA 9th edition spells out its abbreviations: vol. 521, no. 7553, pp. 436–44. The volume and issue never appear as bare numbers, and the page range is shortened by the same rule Chicago uses, dropping repeated digits. When an entry has no issue number, the block collapses to vol. 521 on its own.",
+          "The DOI closes the entry as a link, https://doi.org/10.1038/nature14539. MLA 9th edition prefers the DOI as a clickable link, so the resolver prefix stays. A URL is used only when no DOI exists, and it is printed without angle brackets.",
+        ],
+      },
+      {
+        h2: "Check the converted entry against four points",
+        paragraphs: [
+          "Before you paste a converted BibTeX to MLA entry anywhere, read it against four questions: at most one author name before et al., a quoted title followed by an italic container, vol. and no. in abbreviated form, and a short-form DOI at the very end.",
+          "Keep the BibTeX download if a second submission is likely. A formatted string cannot be turned back into fields, while a .bib file converts again for another style in seconds, and the .ris download carries the same records into EndNote or Zotero.",
+        ],
+        list: [
+          "Authors: first author surname first, et al. for three or more.",
+          "Title: in quotation marks; container in italics.",
+          "Numbers: vol., no., pp. with a shortened range.",
+          "DOI: last element, as a full link.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "How many authors does MLA 9th edition list?",
+        a: "One, then et al., once a work has three or more authors. Two authors are both listed, the second in natural order after and.",
+      },
+      {
+        q: "Does MLA use a DOI link or the short form?",
+        a: "The link: https://doi.org/10.1038/nature14539. MLA 9th edition prefers the DOI as a clickable link, so the resolver prefix stays.",
+      },
+      {
+        q: "Why is the journal name in italics but the article title in quotes?",
+        a: "MLA italicises containers and quotes the works inside them. The journal is the container; the article is the work it contains.",
+      },
+      {
+        q: "What happens to brace-protected capitals such as {DNA}?",
+        a: "The braces are removed and the inner text is kept as written, so {DNA} prints as DNA rather than Dna. That is one reason to convert instead of retyping titles.",
+      },
+      {
+        q: "Does a BibTeX to MLA conversion keep the volume and issue?",
+        a: "Yes, as vol. 521, no. 7553. If the entry has no number field, the block collapses to the volume alone.",
+      },
+      {
+        q: "Is my .bib file uploaded when I convert it?",
+        a: "No. The BibTeX to MLA conversion runs inside your browser tab, nothing is posted to a server, and no account is needed.",
+      },
+    ],
+    relatedSlugs: ["apa-to-mla", "bibtex-to-chicago", "bibtex-to-ieee"],
+    ctaPrimary: "Paste your BibTeX and get the MLA list",
+    ctaSecondary: "See how Chicago handles the same entry",
+    updated: "2026-11-12",
+  },
+
+  "apa-to-mla": {
+    slug: "apa-to-mla",
+    keyword: "APA to MLA",
+    title: "APA to MLA: Authors, Quotes, Containers",
+    description:
+      "APA to MLA 9th edition: how the parenthesised year moves, why initials become full first names, and how (LeCun et al., 2015) turns into a Works Cited entry.",
+    h1: "APA to MLA: Reference List Conversion in Practice",
+    intro:
+      "APA and MLA 9th edition agree that a reference opens with the author, then disagree about nearly everything after that. An APA to MLA conversion expands the initials back into first names, moves the year, quotes the title, and italicises the container. The differences are small enough to miss by eye and large enough to fail a paper's Works Cited check.",
+    sections: [
+      {
+        h2: "APA to MLA: five structural differences",
+        paragraphs: [
+          "Here is one article in both systems. APA 7th edition: `LeCun, Y., Bengio, Y., & Hinton, G. (2015). Deep learning. Nature, 521(7553), 436–444. https://doi.org/10.1038/nature14539`. MLA 9th edition: `LeCun, Yann, et al. \"Deep Learning.\" Nature, vol. 521, no. 7553, 2015, pp. 436–44. https://doi.org/10.1038/nature14539.` Every row in the table below is visible in that pair.",
+          "The ampersand and the parenthesised year are the two markers that let a reader spot an unconverted APA entry at a glance. A year in parentheses after the author block exists in no MLA variant, because MLA puts the year near the end of the entry, after the issue number.",
+        ],
+        table: {
+          headers: ["Element", "APA 7th edition", "MLA 9th edition"],
+          rows: [
+            ["Authors", "LeCun, Y., Bengio, Y., & Hinton, G.", "LeCun, Yann, et al."],
+            ["Year", "In parentheses after the authors", "After the issue number"],
+            ["Title", "Sentence case, no marker", "Title case, in quotation marks"],
+            ["Container", "Journal name in italics", "Journal name in italics"],
+            ["Volume, issue", "521(7553)", "vol. 521, no. 7553"],
+            ["Pages", "436–444, en dash", "pp. 436–44, shortened range"],
+            ["DOI", "https://doi.org/10.1038/nature14539", "https://doi.org/10.1038/nature14539"],
+            ["In text", "(LeCun et al., 2015)", "(LeCun et al. 436)"],
+          ],
+        },
+      },
+      {
+        h2: "Author names: the initials expand again",
+        paragraphs: [
+          "APA already writes the surname first, so the name order survives an APA to MLA conversion; the initials do not. LeCun, Y. becomes LeCun, Yann: the initial expands to the full first name, and only the first author is listed when a work has three or more authors. APA 7th lists up to twenty names; MLA stops after the first and appends et al.",
+          "Author count is where the systems really part. A four-author APA reference loses its second, third and fourth names in MLA, and if you restore them by hand you must re-check whether et al. is still needed. Group authors pass through unchanged: World Health Organization prints in full in both systems, never abbreviated to WHO unless the source does.",
+        ],
+      },
+      {
+        h2: "In-text markers: (LeCun et al., 2015) becomes a page number",
+        paragraphs: [
+          "MLA in-text citations point at a page, not a year. Where APA writes (LeCun et al., 2015), MLA writes (LeCun et al. 436) for a quotation from page 436, or (LeCun et al.) when the whole work is meant. The Works Cited list itself is alphabetical by author, so converting the list does not renumber anything the way a numeric system would.",
+          "That makes an APA to MLA migration mostly mechanical: the list keeps its order, the markers change shape, and the only manual step is finding the page numbers your quotations actually came from.",
+        ],
+        list: [
+          "Paste the full APA list into the converter, one reference per line or block.",
+          "Check each entry's author count: three or more becomes first author plus et al.",
+          "Replace every (Author, Year) marker with (Author page) in the text.",
+          "Keep the DOI short form; the resolver URL is APA practice.",
+        ],
+      },
+      {
+        h2: "Dashes, italics and other typographic damage",
+        paragraphs: [
+          "An APA to MLA conversion has to survive the paste as well as the parser. APA page ranges use an en dash, 436–444, and MLA shortens the range to 436–44. Word's AutoFormat turns a hyphen between digits back into an en dash as you type the closing digit, so text that was correct when copied can be wrong once pasted.",
+          "Title case is the second trap. APA writes article titles in sentence case, Deep learning, while MLA writes them in title case, \"Deep Learning.\" A converter cannot know which words stay lowercase in title case — short prepositions and articles do — so read the converted title once before submitting.",
+        ],
+      },
+      {
+        h2: "Where APA parsing needs a human",
+        paragraphs: [
+          "The shape a parser recognises is author block, year in parentheses, period. Entries that break it include legal citations, web pages with no personal author, and anything whose date is a range such as (2020-2023). Those are faster to type into the manual entry form than to repair afterwards.",
+          "A web page with no named author is the commonest of the three. Paste it, check the year, and make sure the finished item names the site as its container so the APA to MLA result reads as a web source rather than a journal article.",
+        ],
+        list: [
+          "n.d. has no MLA equivalent either: supply a year, or cite the item as a web source with an access date.",
+          "An edition pasted into the title, such as (2nd ed.), lands inside the title element and nothing removes it.",
+          "Retrieved from strings are APA-specific and should be dropped before conversion.",
+          "A DOI typed as https://doi.org/10.1038/nature14539 prints as the same link in MLA.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "Do I need to delete the ampersand before converting?",
+        a: "No, the parser drops it. If you convert by hand, replace the ampersand with a comma first, because a leftover & is the clearest sign of a half-converted entry.",
+      },
+      {
+        q: "Should I use an en dash or a hyphen for page ranges in MLA?",
+        a: "A shortened range with an en dash: pp. 436–44. MLA 9th edition drops repeated digits, so 436–444 becomes 436–44.",
+      },
+      {
+        q: "Why does MLA list only one author for a three-author paper?",
+        a: "Because MLA 9th edition writes the first author plus et al. for three or more authors. APA lists up to twenty, so the same paper looks very different in the two lists.",
+      },
+      {
+        q: "What do I do with an APA entry dated n.d.?",
+        a: "MLA has no marker for an unknown year either. Use the year from the publisher's page, or cite the item as a web source with the date you accessed it.",
+      },
+      {
+        q: "Does the converter renumber references in citation order?",
+        a: "No. Both APA and MLA lists are alphabetical, so an APA to MLA batch keeps its input order. Only numeric styles renumber.",
+      },
+      {
+        q: "Why did the article title change case?",
+        a: "Because MLA uses title case for article titles while APA uses sentence case. Check short words by hand: prepositions and articles stay lowercase in title case.",
+      },
+    ],
+    relatedSlugs: ["bibtex-to-mla", "bibtex-to-chicago", "bibtex-to-ieee"],
+    ctaPrimary: "Convert an APA reference list to MLA",
+    ctaSecondary: "Convert the same list from BibTeX to MLA",
+    updated: "2026-11-12",
+  },
+
+  "bibtex-to-chicago": {
+    slug: "bibtex-to-chicago",
+    keyword: "BibTeX to Chicago",
+    title: "BibTeX to Chicago: Author-Date in Practice",
+    description:
+      "BibTeX to Chicago 17th edition author-date: full author names, the year after the authors, quoted titles, and volume(issue) with a colon before the pages.",
+    h1: "BibTeX to Chicago: A Field-by-Field Conversion Guide",
+    intro:
+      "A .bib entry stores references as named fields; the Chicago Manual of Style 17th edition author-date system expects a fixed element order with fixed punctuation. Almost every BibTeX to Chicago problem comes from that mismatch rather than from missing data. This guide shows which field lands where, how the year moves, and what to check before you paste the result into a paper.",
+    sections: [
+      {
+        h2: "BibTeX to Chicago: what actually changes",
+        paragraphs: [
+          "Nothing inside @article{lecun2015deep, author = {LeCun, Yann and Bengio, Yoshua and Hinton, Geoffrey}, title = {Deep Learning}, journal = {Nature}, year = {2015}, volume = {521}, number = {7553}, pages = {436--444}, doi = {10.1038/nature14539}} says that all three authors are listed in full, that the year follows the author block, or that the page range takes a colon. Chicago author-date is the opposite: one element order, one punctuation set. A BibTeX to Chicago conversion is therefore a placement job, not a translation job.",
+          "So the field labels, the equals signs and the double hyphen disappear, while a year, a quoted title and a volume-and-issue block appear. The example above becomes `LeCun, Yann, Yoshua Bengio, and Geoffrey Hinton. 2015. \"Deep Learning.\" Nature 521 (7553): 436–44. https://doi.org/10.1038/nature14539.` The BibTeX double hyphen turns into an en dash, and the page range is shortened to 436–44.",
+        ],
+        table: {
+          headers: ["BibTeX field", "Chicago 17th author-date element", "Output shape"],
+          rows: [
+            ["author", "All authors, first surname first, rest in natural order", "LeCun, Yann, Yoshua Bengio, and Geoffrey Hinton."],
+            ["year", "After the author block", "2015."],
+            ["title", "In quotation marks, headline style", "\"Deep Learning.\""],
+            ["journal", "In italics", "Nature"],
+            ["volume, number", "One block, issue in parentheses", "521 (7553):"],
+            ["pages", "After a colon, shortened range", "436–44."],
+            ["doi", "Resolver URL, last element", "https://doi.org/10.1038/nature14539."],
+          ],
+        },
+      },
+      {
+        h2: "Author names: everyone is listed, in two orders",
+        paragraphs: [
+          "Chicago author-date lists every author, up to ten names, and inverts only the first. `author = {LeCun, Yann and Bengio, Yoshua and Hinton, Geoffrey}` becomes LeCun, Yann, Yoshua Bengio, and Geoffrey Hinton. With eleven or more authors, Chicago lists the first seven followed by et al.",
+          "The trap is a BibTeX file that already abbreviates authors, or one that stores a corporate author without double braces. World Health Organization reads as three people unless you write it as {{World Health Organization}}. The converter splits the author field on and before formatting, so a missing and merges two people into one.",
+        ],
+      },
+      {
+        h2: "Author-date or notes: pick the system first",
+        paragraphs: [
+          "Chicago defines two systems, and a BibTeX to Chicago conversion has to know which one you want. The author-date system, used here, puts (LeCun et al. 2015) in the text and a reference list at the end. The notes-and-bibliography system uses footnotes instead, and its entries start with the same author block but end with a period after the DOI rather than a URL in the text.",
+          "Most science and social-science journals that ask for Chicago want author-date. If your style sheet says footnotes, convert with the same tool but check the output against the notes format: the first footnote for a work spells out all authors and ends with the page cited, while later notes shorten to author and title.",
+        ],
+        list: [
+          "Author-date in text: (LeCun et al. 2015, 437).",
+          "Notes first citation: full entry plus the cited page.",
+          "Notes later citations: LeCun et al., \"Deep Learning,\" 437.",
+          "Bibliography: one entry per work, alphabetical by author.",
+        ],
+      },
+      {
+        h2: "Volume, issue, pages and the DOI",
+        paragraphs: [
+          "Chicago writes the volume and issue as one block, 521 (7553), followed by a colon and the page range. The range is shortened by Chicago's rule: 436–444 becomes 436–44, dropping the repeated digits. When an entry has no issue number, the block collapses to the volume alone, 521: 436–44.",
+          "The DOI closes the entry as a resolver URL, https://doi.org/10.1038/nature14539. A URL is used only when no DOI exists, and it is printed in full. Book entries follow the same pattern with a different container: place, colon, publisher, year, as in `Goodfellow, Ian, Yoshua Bengio, and Aaron Courville. 2016. Deep Learning. Cambridge, MA: MIT Press.`",
+        ],
+      },
+      {
+        h2: "Check the converted entry against four points",
+        paragraphs: [
+          "Before you paste a converted BibTeX to Chicago entry anywhere, read it against four questions: all authors listed with only the first inverted, the year directly after the author block, a quoted title with an italic container, and a volume(issue): pages block with a shortened range.",
+          "Keep the BibTeX download if a second submission is likely. A formatted string cannot be turned back into fields, while a .bib file converts again for another style in seconds, and the .ris download carries the same records into EndNote or Zotero.",
+        ],
+        list: [
+          "Authors: first inverted, rest in natural order, and before the last.",
+          "Year: immediately after the author block, then a period.",
+          "Title: in quotation marks; container in italics.",
+          "Numbers: volume (issue): shortened page range, DOI last.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "Does Chicago list all authors or use et al.?",
+        a: "Author-date lists up to ten authors in full. With eleven or more, it lists the first seven followed by et al.",
+      },
+      {
+        q: "What is the difference between author-date and notes?",
+        a: "Author-date puts (LeCun et al. 2015) in the text and a reference list at the end. Notes-and-bibliography uses footnotes instead. Most science journals want author-date.",
+      },
+      {
+        q: "Why is the page range 436–44 and not 436–444?",
+        a: "Chicago shortens page ranges by dropping repeated digits: 436–444 becomes 436–44. The converter applies that rule automatically.",
+      },
+      {
+        q: "Where does the year go in Chicago author-date?",
+        a: "Directly after the author block, before the title: LeCun, Yann, et al. 2015. \"Deep Learning.\" That position is what makes the system author-date.",
+      },
+      {
+        q: "Does Chicago use a DOI link or the short form?",
+        a: "The resolver URL: https://doi.org/10.1038/nature14539. The short doi: form is MLA practice, not Chicago.",
+      },
+      {
+        q: "Is my .bib file uploaded when I convert it?",
+        a: "No. The BibTeX to Chicago conversion runs inside your browser tab, nothing is posted to a server, and no account is needed.",
+      },
+    ],
+    relatedSlugs: ["bibtex-to-mla", "apa-to-mla", "bibtex-to-ieee"],
+    ctaPrimary: "Paste your BibTeX and get the Chicago list",
+    ctaSecondary: "See how IEEE numbers the same entry",
+    updated: "2026-11-12",
+  },
+
+  "bibtex-to-ieee": {
+    slug: "bibtex-to-ieee",
+    keyword: "BibTeX to IEEE",
+    title: "BibTeX to IEEE: Numbered References",
+    description:
+      "BibTeX to IEEE: initials before surnames, quoted titles, vol. and no., pp. ranges, and reference numbers [1], [2] in citation order.",
+    h1: "BibTeX to IEEE: A Field-by-Field Conversion Guide",
+    intro:
+      "A .bib entry stores references as named fields; the IEEE reference list expects a fixed element order, numbered by first citation. Almost every BibTeX to IEEE problem comes from that mismatch rather than from missing data. This guide shows which field lands where, how the numbers are assigned, and what to check before you paste the result into a paper.",
+    sections: [
+      {
+        h2: "BibTeX to IEEE: what actually changes",
+        paragraphs: [
+          "Nothing inside @article{lecun2015deep, author = {LeCun, Yann and Bengio, Yoshua and Hinton, Geoffrey}, title = {Deep Learning}, journal = {Nature}, year = {2015}, volume = {521}, number = {7553}, pages = {436--444}, doi = {10.1038/nature14539}} says that initials come before surnames, that the title takes quotation marks, or that the entry opens with a bracketed number. IEEE is the opposite: one element order, one punctuation set, and a number that depends on where the work is first cited. A BibTeX to IEEE conversion is therefore a placement job, not a translation job.",
+          "So the field labels, the equals signs and the double hyphen disappear, while initials, a quoted title and a volume-and-issue block appear. The example above becomes `[1] Y. LeCun, Y. Bengio, and G. Hinton, \"Deep learning,\" Nature, vol. 521, no. 7553, pp. 436–444, May 2015, doi: 10.1038/nature14539.` The BibTeX double hyphen turns into an en dash.",
+        ],
+        table: {
+          headers: ["BibTeX field", "IEEE element", "Output shape"],
+          rows: [
+            ["author", "Initials before surnames, and before the last", "Y. LeCun, Y. Bengio, and G. Hinton,"],
+            ["title", "In quotation marks, sentence case, then a comma", "\"Deep learning,\""],
+            ["journal", "In italics", "Nature,"],
+            ["volume, number", "vol. and no. abbreviations", "vol. 521, no. 7553,"],
+            ["pages", "pp. with an en-dash range", "pp. 436–444,"],
+            ["year, month", "Month and year near the end", "May 2015,"],
+            ["doi", "Short form, last element", "doi: 10.1038/nature14539."],
+          ],
+        },
+      },
+      {
+        h2: "Reference numbers follow first citation, not the alphabet",
+        paragraphs: [
+          "IEEE numbers entries in the order they are first cited in the text: the first work cited is [1], the second is [2], and the list is printed in that order. A BibTeX to IEEE conversion numbers the list in the order you paste it, so paste in citation order or renumber afterwards. Insert one source in paragraph two and every later number shifts by one, so this belongs in your last pass over the manuscript.",
+          "In the text, the marker is the number in square brackets: `... as shown in [1].` The same work cited twice keeps the same number, and a range is written [1]–[3]. There is no author-date marker anywhere in IEEE, so (LeCun, 2015) never appears.",
+        ],
+        list: [
+          "Paste references in the order they are first cited.",
+          "Cite with [1], not with the author name or year.",
+          "Renumber after any insertion, since a new [2] shifts every later reference.",
+          "The same work always keeps the same number.",
+        ],
+      },
+      {
+        h2: "Author names: initials first, surnames last",
+        paragraphs: [
+          "IEEE writes every author as initials followed by the surname: Y. LeCun, Y. Bengio, and G. Hinton. All authors are listed, and the word and precedes the last name. A BibTeX to IEEE conversion therefore flips every name in the author field, not just the first one.",
+          "The trap is a BibTeX file that stores a corporate author without double braces. World Health Organization reads as three people unless you write it as {{World Health Organization}}. The converter splits the author field on and before formatting, so a missing and merges two people into one.",
+        ],
+      },
+      {
+        h2: "Volume, issue, pages, month and DOI",
+        paragraphs: [
+          "IEEE spells out its abbreviations: vol. 521, no. 7553, pp. 436–444. The page range uses an en dash, unlike the hyphen MLA prefers. The month and year sit near the end of the entry, after the pages: May 2015. When the month is unknown, the year stands alone.",
+          "The DOI closes the entry in short form, doi: 10.1038/nature14539. A URL is used only when no DOI exists. Book entries follow the same pattern with a different container: `I. Goodfellow, Y. Bengio, and A. Courville, Deep Learning. Cambridge, MA, USA: MIT Press, 2016.` The book title is italicised and the place and publisher take the container position.",
+        ],
+        table: {
+          headers: ["Entry type", "IEEE shape"],
+          rows: [
+            ["@article", "[1] Initials Surnames, \"Title,\" Journal, vol., no., pp., Month Year, doi."],
+            ["@inproceedings", "[1] Initials Surnames, \"Title,\" in Proc. Conf., City, Year, pp."],
+            ["@book", "[1] Initials Surnames, Title. Place: Publisher, Year."],
+            ["@phdthesis", "[1] Initials Surnames, \"Title,\" Ph.D. dissertation, Dept., Univ., City, Year."],
+            ["@online", "[1] Initials Surnames, \"Title,\" Website, Year. [Online]. Available: URL"],
+          ],
+        },
+      },
+      {
+        h2: "Check the converted entry against four points",
+        paragraphs: [
+          "Before you paste a converted BibTeX to IEEE entry anywhere, read it against four questions: a bracketed number at the start, initials before every surname, a quoted title with an italic container, and vol., no. and pp. in abbreviated form.",
+          "Keep the BibTeX download if a second submission is likely. A formatted string cannot be turned back into fields, while a .bib file converts again for another style in seconds, and the .ris download carries the same records into EndNote or Zotero.",
+        ],
+        list: [
+          "Number: [1], [2] in first-citation order, not alphabetical.",
+          "Authors: initials first, and before the last name.",
+          "Title: in quotation marks; container in italics.",
+          "Numbers: vol., no., pp. with an en-dash range, DOI last.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "Does IEEE sort references alphabetically?",
+        a: "No. IEEE numbers entries in first-citation order: the first work cited is [1] and the list is printed in that order. Inserting a source renumbers everything after it.",
+      },
+      {
+        q: "How do I cite the same work twice in IEEE?",
+        a: "With the same number, [1]. A range of works is written [1]–[3]. There is no author-date marker in IEEE.",
+      },
+      {
+        q: "Does IEEE use a DOI link or the short form?",
+        a: "The short form: doi: 10.1038/nature14539. The https://doi.org/ resolver URL is APA practice, not IEEE.",
+      },
+      {
+        q: "Should page ranges use a hyphen or an en dash in IEEE?",
+        a: "An en dash: pp. 436–444. MLA prefers a hyphen, so the same range looks different in the two styles.",
+      },
+      {
+        q: "What happens to the month if my BibTeX entry has none?",
+        a: "The entry ends with the year alone. IEEE prints the month only when the record carries one.",
+      },
+      {
+        q: "Is my .bib file uploaded when I convert it?",
+        a: "No. The BibTeX to IEEE conversion runs inside your browser tab, nothing is posted to a server, and no account is needed.",
+      },
+    ],
+    relatedSlugs: ["bibtex-to-mla", "apa-to-mla", "bibtex-to-chicago"],
+    ctaPrimary: "Paste your BibTeX and get the IEEE list",
+    ctaSecondary: "See how MLA handles the same entry",
+    updated: "2026-11-12",
+  },
 };
 
 export default en;

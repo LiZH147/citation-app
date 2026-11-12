@@ -4,7 +4,8 @@ import type { LongformSet } from "./types";
  * 中文长尾落地页正文（一页一词）。
  * 事实基准：GB/T 7714-2015《信息与文献 参考文献著录规则》。
  * 只描述本站真实能力：BibTeX / APA / DOI / arXiv 输入，
- * GB/T 7714-2015（顺序编码制）、APA、BibTeX 三种输出；纯前端解析。
+ * GB/T 7714-2015（顺序编码制）、APA（第7版）、MLA（第9版）、
+ * Chicago（第17版·作者-日期）、Harvard、IEEE、BibTeX 输出；纯前端解析。
  */
 const zh: LongformSet = {
   "bibtex-to-gb7714": {
@@ -563,13 +564,359 @@ const zh: LongformSet = {
       },
       {
         q: "一条 DOI 能同时输出 APA 和 BibTeX 吗？",
-        a: "可以，转换器支持 GB/T 7714-2015 顺序编码制、APA、BibTeX 三种输出，换一次输出制式重新生成即可，不用重新粘贴。",
+        a: "可以，转换器支持 GB/T 7714-2015 顺序编码制、APA、MLA、Chicago、Harvard、IEEE、BibTeX 输出，换一次输出制式重新生成即可，不用重新粘贴。",
       },
     ],
     relatedSlugs: ["gb7714-format", "bibtex-to-gb7714", "apa-to-gb7714"],
     ctaPrimary: "粘一条 DOI，生成 GB/T 7714 条目",
     ctaSecondary: "看 GB/T 7714-2015 著录项结构",
     updated: "2026-10-27",
+  },
+
+  "bibtex-to-mla": {
+    slug: "bibtex-to-mla",
+    keyword: "BibTeX 转 MLA",
+    title: "BibTeX 转 MLA：作者、容器与 DOI",
+    description:
+      "BibTeX 转 MLA 第 9 版：首位作者姓前名后、三人以上只列一人加 et al.、题名加引号、刊名斜体、卷期页码与 DOI 简写。",
+    h1: "BibTeX 转 MLA：字段逐项拆解",
+    intro:
+      "写英文论文投人文社科期刊，常被要求用 MLA 第 9 版。BibTeX 转 MLA 真正要处理四件事：作者只留首位加 et al.、题名加引号、刊名变斜体、卷期页码换缩写。这篇按字段拆开讲，拿 LeCun 等人 2015 年 Nature 文章作例子。",
+    sections: [
+      {
+        h2: "BibTeX 转 MLA：字段落到哪里",
+        paragraphs: [
+          "以 LeCun 等人 2015 年发表在 Nature 521 卷 7553 期 436–444 页的 Deep Learning 为例，BibTeX 是 @article{lecun2015deep, author = {LeCun, Yann and Bengio, Yoshua and Hinton, Geoffrey}, title = {Deep Learning}, journal = {Nature}, year = {2015}, volume = {521}, number = {7553}, pages = {436--444}, doi = {10.1038/nature14539}}。MLA 第 9 版输出是 LeCun, Yann, et al. “Deep Learning.” Nature, vol. 521, no. 7553, 2015, pp. 436–44. https://doi.org/10.1038/nature14539.",
+          "页码按 MLA 规则缩写，436–444 写作 436–44。DOI 写成完整链接 https://doi.org/10.1038/nature14539，MLA 第 9 版要求 DOI 是可点击的链接。",
+        ],
+        table: {
+          headers: ["BibTeX 字段", "MLA 第 9 版著录位", "写法要点"],
+          rows: [
+            ["author", "首位作者姓前名后", "三人以上只列一人，加 et al."],
+            ["title", "题名加引号", "实词首字母大写"],
+            ["journal", "容器名斜体", "刊名斜体，题名不斜体"],
+            ["volume / number", "卷 / 期", "写作 vol. 521, no. 7553"],
+            ["pages", "起止页码", "写作 pp. 436–44"],
+            ["doi", "条目末尾", "链接 https://doi.org/10.xxxx/xxxx"],
+          ],
+        },
+      },
+      {
+        h2: "作者：只留首位，其余用 et al.",
+        paragraphs: [
+          "MLA 第 9 版只翻转第一位作者的姓名，三位以上作者只列第一位，其后加 et al.。两位作者则两人全列，第二位按正常语序写在 and 之后。APA 能列二十位作者，MLA 不行，同一篇论文在两种格式下差别很大。",
+          "机构作者要双重大括号保护，写成 {{World Health Organization}}，否则会被拆成三个人。author 字段用 and 连接，缺一个 and 就会把两个人并成一个人。",
+        ],
+      },
+      {
+        h2: "题名加引号，容器斜体",
+        paragraphs: [
+          "MLA 的规则是容器斜体、被容纳的作品加引号：期刊文章题名加引号，刊名斜体；专著题名斜体不加引号，出版社取容器位。会议论文题名加引号，会议录名斜体。",
+          "专著的例子：Goodfellow 等人 2016 年 MIT Press 出版的 Deep Learning，MLA 写作 Goodfellow, Ian, et al. Deep Learning. MIT Press, 2016. 书名斜体，出版社之后直接跟年份。",
+        ],
+      },
+      {
+        h2: "转换后逐条自查",
+        paragraphs: [
+          "贴进论文之前按四点检查：et al. 前面只有一位作者、题名有引号、刊名斜体、卷期页码用了 vol.、no.、pp. 缩写、DOI 在末尾用简写。",
+          "留着 .bib 原文件，下次投别的期刊换个格式就能重新生成；下载的 .ris 可以导回 Zotero 或 EndNote，不用重新录入。",
+        ],
+        list: [
+          "作者：首位姓前名后，三人以上加 et al.",
+          "题名：加引号；容器：斜体。",
+          "数字：vol.、no.、pp.，页码缩写。",
+          "DOI：末尾写完整链接。",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "MLA 第 9 版列几位作者？",
+        a: "三位以上只列第一位加 et al.，两位作者全列，第二位按正常语序写在 and 之后。",
+      },
+      {
+        q: "DOI 写链接还是简写？",
+        a: "写完整链接 https://doi.org/10.1038/nature14539。MLA 第 9 版要求 DOI 是可点击的链接。",
+      },
+      {
+        q: "为什么刊名斜体、题名加引号？",
+        a: "MLA 把容器斜体、被容纳的作品加引号。期刊是容器，文章是被容纳的作品。",
+      },
+      {
+        q: "页码用短横还是长破折号？",
+        a: "缩写范围加长破折号，写作 pp. 436–44。MLA 第 9 版会省掉重复数字，436–444 写作 436–44。",
+      },
+      {
+        q: ".bib 文件会被上传吗？",
+        a: "不会。BibTeX 转 MLA 全程在浏览器本地完成，不上传服务器，也不用注册账号。",
+      },
+    ],
+    relatedSlugs: ["apa-to-mla", "bibtex-to-chicago", "bibtex-to-ieee"],
+    ctaPrimary: "粘贴 BibTeX，生成 MLA 参考文献",
+    ctaSecondary: "看同一篇论文的 Chicago 格式",
+    updated: "2026-11-12",
+  },
+
+  "apa-to-mla": {
+    slug: "apa-to-mla",
+    keyword: "APA 转 MLA",
+    title: "APA 转 MLA：作者、年份与引号",
+    description:
+      "APA 转 MLA 第 9 版：括号里的年份挪到后面、姓名缩写展开成全名、题名加引号、DOI 改简写，同一篇论文两种写法的对照。",
+    h1: "APA 转 MLA：两种格式逐项对照",
+    intro:
+      "APA 和 MLA 都以作者开头，之后几乎处处不同。APA 转 MLA 要做四件事：把姓名缩写展开成全名、把括号里的年份挪到后面、给题名加引号、把 DOI 改成简写。这篇用同一篇 Nature 文章对照两种写法。",
+    sections: [
+      {
+        h2: "APA 转 MLA：五处结构差别",
+        paragraphs: [
+          "同一篇文章两种写法。APA 第 7 版：LeCun, Y., Bengio, Y., & Hinton, G. (2015). Deep learning. Nature, 521(7553), 436–444. https://doi.org/10.1038/nature14539。MLA 第 9 版：LeCun, Yann, et al. “Deep Learning.” Nature, vol. 521, no. 7553, 2015, pp. 436–44. https://doi.org/10.1038/nature14539。",
+          "最显眼的两处是 & 符号和作者后的括号年份。MLA 没有括号年份，年份挪到卷期之后；& 符号在 MLA 里也不存在，三位以上作者只留首位加 et al.。",
+        ],
+        table: {
+          headers: ["著录项", "APA 第 7 版", "MLA 第 9 版"],
+          rows: [
+            ["作者", "LeCun, Y., Bengio, Y., & Hinton, G.", "LeCun, Yann, et al."],
+            ["年份", "作者后括号内", "卷期之后"],
+            ["题名", "句首大写，无标记", "实词大写，加引号"],
+            ["刊名", "斜体", "斜体"],
+            ["卷期", "521(7553)", "vol. 521, no. 7553"],
+            ["页码", "436–444，长破折号", "pp. 436–44，缩写范围"],
+            ["DOI", "https://doi.org/ 链接", "https://doi.org/ 链接"],
+            ["文内引用", "(LeCun et al., 2015)", "(LeCun et al. 436)"],
+          ],
+        },
+      },
+      {
+        h2: "作者：缩写展开，全名只留首位",
+        paragraphs: [
+          "APA 写 LeCun, Y.，MLA 写 LeCun, Yann：缩写要展开成全名。APA 最多列二十位作者，MLA 三位以上只列首位加 et al.，同一篇论文的作者块在两种格式下差别最大。",
+          "机构作者两种格式都写全称，不缩写成 WHO。文内引用也随之变化：APA 写 (LeCun et al., 2015)，MLA 写 (LeCun et al. 436)，指向引用页码而非年份。",
+        ],
+      },
+      {
+        h2: "题名大小写与破折号",
+        paragraphs: [
+          "APA 的文章题名用句首大写 Deep learning，MLA 用实词大写 “Deep Learning.”。转换器无法判断哪些短词在实词大写里保持小写，贴进论文前通读一遍题名。",
+          "页码按 MLA 规则缩写为 436–44。Word 的自动更正会在输入数字后把短横变回长破折号，粘贴之后再检查一遍。",
+        ],
+      },
+      {
+        h2: "APA 文本解析需要人工复核的地方",
+        paragraphs: [
+          "解析器认的是「作者块、括号年份、句点」这个形状。没有个人作者的网页、日期是区间的条目、法律文献都认不出来，直接用手动录入表单更快。",
+          "没有年份的条目 APA 写 n.d.，MLA 同样没有对应写法：去出版方页面找年份，或者按网页来源著录并写访问日期。edition 写进题名的 (2nd ed.) 不会自动剥离，转换前删掉。",
+        ],
+        list: [
+          "n.d. 没有对应写法，补年份或按网页著录。",
+          "题名里的 (2nd ed.) 要用 Edition 字段，转换前处理。",
+          "Retrieved from 是 APA 特有表述，转换前删掉。",
+          "DOI 保持链接形式 https://doi.org/10.1038/nature14539。",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "转换前要删掉 & 符号吗？",
+        a: "不用，解析器会去掉。手工转换时先把 & 换成逗号，残留的 & 是半成品最明显的标志。",
+      },
+      {
+        q: "MLA 页码用短横还是长破折号？",
+        a: "缩写范围加长破折号，写作 pp. 436–44。MLA 第 9 版会省掉重复数字。",
+      },
+      {
+        q: "三位作者 MLA 为什么只列一位？",
+        a: "MLA 第 9 版规定三位以上作者只列首位加 et al.，APA 最多列二十位，同一篇论文两种写法差别很大。",
+      },
+      {
+        q: "APA 的 n.d. 怎么处理？",
+        a: "MLA 同样没有未知年份的标记。去出版方页面找年份，或者按网页来源著录并写访问日期。",
+      },
+      {
+        q: "转换器会按引用顺序重排吗？",
+        a: "不会。APA 和 MLA 的文献表都按作者字母顺序排列，转换保持粘贴顺序，只有数字制式才重排。",
+      },
+    ],
+    relatedSlugs: ["bibtex-to-mla", "bibtex-to-chicago", "bibtex-to-ieee"],
+    ctaPrimary: "把 APA 文献表转成 MLA",
+    ctaSecondary: "同一批文献从 BibTeX 转 MLA",
+    updated: "2026-11-12",
+  },
+
+  "bibtex-to-chicago": {
+    slug: "bibtex-to-chicago",
+    keyword: "BibTeX 转 Chicago",
+    title: "BibTeX 转 Chicago：作者-日期制实操",
+    description:
+      "BibTeX 转 Chicago 第 17 版作者-日期制：全部作者列出、年份紧跟作者块、题名加引号、卷(期)后冒号接页码。",
+    h1: "BibTeX 转 Chicago：字段逐项拆解",
+    intro:
+      "投社科期刊常被要求用 Chicago 第 17 版。BibTeX 转 Chicago 真正要处理四件事：作者全部列出、年份挪到作者块之后、题名加引号、卷期页码用冒号连接。这篇拿 LeCun 等人 2015 年 Nature 文章作例子。",
+    sections: [
+      {
+        h2: "BibTeX 转 Chicago：字段落到哪里",
+        paragraphs: [
+          "同一篇文章的 Chicago 作者-日期制写法是 LeCun, Yann, Yoshua Bengio, and Geoffrey Hinton. 2015. “Deep Learning.” Nature 521 (7553): 436–44. https://doi.org/10.1038/nature14539. 页码按 Chicago 规则缩写，436–444 写作 436–44。",
+          "DOI 用解析链接形式 https://doi.org/10.1038/nature14539，写在条目末尾。没有 DOI 时写完整 URL。",
+        ],
+        table: {
+          headers: ["BibTeX 字段", "Chicago 作者-日期制著录位", "写法要点"],
+          rows: [
+            ["author", "全部作者，首位姓前名后", "其余按正常语序，末位前加 and"],
+            ["year", "作者块之后", "紧跟作者，年份后加句点"],
+            ["title", "题名加引号", "标题式大写"],
+            ["journal", "刊名斜体", "刊名斜体"],
+            ["volume / number", "卷(期)", "写作 521 (7553):"],
+            ["pages", "冒号后页码", "缩写范围，如 436–44"],
+            ["doi", "条目末尾", "解析链接形式"],
+          ],
+        },
+      },
+      {
+        h2: "作者-日期制与注释制，先选制式",
+        paragraphs: [
+          "Chicago 有两个制式，转换前要先确定。作者-日期制文内写 (LeCun et al. 2015)，文末是参考文献表；注释制用脚注，首次引用写全条目加引用页码，之后简写为作者加题名。社科和理工期刊大多要求作者-日期制。",
+          "作者-日期制最多列十位作者，十一位以上列前七位加 et al.。注释制首次脚注同样处理，之后的简短脚注写作 LeCun et al., “Deep Learning,” 437。",
+        ],
+      },
+      {
+        h2: "卷期页码与 DOI",
+        paragraphs: [
+          "卷期写作 521 (7553)，其后冒号接页码。没有期号时只写卷，521: 436–44。专著的写法不同：Goodfellow 等人 2016 年 Deep Learning，写作 Goodfellow, Ian, Yoshua Bengio, and Aaron Courville. 2016. Deep Learning. Cambridge, MA: MIT Press. 出版地、冒号、出版社、年份依次排列。",
+          "页码缩写是 Chicago 最容易错的地方：436–444 省略重复数字写作 436–44，100–104 写作 100–104（百位不省），以 0 结尾的数字也不省。",
+        ],
+      },
+      {
+        h2: "转换后逐条自查",
+        paragraphs: [
+          "贴进论文之前按四点检查：作者全部列出且只有首位翻转、年份紧跟作者块、题名有引号、卷(期)冒号页码且页码已缩写。",
+          "留着 .bib 原文件，下次投别的期刊换个格式就能重新生成；下载的 .ris 可以导回 Zotero 或 EndNote，不用重新录入。",
+        ],
+        list: [
+          "作者：首位翻转，其余正常语序，末位前加 and。",
+          "年份：紧跟作者块，其后加句点。",
+          "题名：加引号；容器：斜体。",
+          "数字：卷(期): 缩写页码，DOI 在末尾。",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "Chicago 列全部作者还是用 et al.？",
+        a: "作者-日期制最多列十位全名，十一位以上列前七位加 et al.。",
+      },
+      {
+        q: "作者-日期制和注释制怎么选？",
+        a: "看期刊要求：文内写 (LeCun et al. 2015) 是作者-日期制，用脚注的是注释制。社科和理工期刊大多要作者-日期制。",
+      },
+      {
+        q: "页码 436–444 为什么变成 436–44？",
+        a: "Chicago 的页码缩写规则会省掉重复数字。转换器自动处理，手工核对时注意百位和以 0 结尾的数字不省。",
+      },
+      {
+        q: "年份放在哪里？",
+        a: "紧跟作者块，在题名之前：LeCun, Yann, et al. 2015. “Deep Learning.” 这是作者-日期制的标志。",
+      },
+      {
+        q: ".bib 文件会被上传吗？",
+        a: "不会。BibTeX 转 Chicago 全程在浏览器本地完成，不上传服务器，也不用注册账号。",
+      },
+    ],
+    relatedSlugs: ["bibtex-to-mla", "apa-to-mla", "bibtex-to-ieee"],
+    ctaPrimary: "粘贴 BibTeX，生成 Chicago 参考文献",
+    ctaSecondary: "看同一篇论文的 IEEE 格式",
+    updated: "2026-11-12",
+  },
+
+  "bibtex-to-ieee": {
+    slug: "bibtex-to-ieee",
+    keyword: "BibTeX 转 IEEE",
+    title: "BibTeX 转 IEEE：编号制参考文献",
+    description:
+      "BibTeX 转 IEEE：姓名缩写在前、题名加引号、vol. 与 no. 缩写、pp. 页码、参考文献按引用顺序编号 [1]、[2]。",
+    h1: "BibTeX 转 IEEE：字段逐项拆解",
+    intro:
+      "投工程类期刊常被要求用 IEEE 格式。BibTeX 转 IEEE 真正要处理四件事：姓名改成缩写在前、题名加引号、卷期页码换缩写、文献表按引用顺序编号。这篇拿 LeCun 等人 2015 年 Nature 文章作例子。",
+    sections: [
+      {
+        h2: "BibTeX 转 IEEE：字段落到哪里",
+        paragraphs: [
+          "同一篇文章的 IEEE 写法是 [1] Y. LeCun, Y. Bengio, and G. Hinton, “Deep learning,” Nature, vol. 521, no. 7553, pp. 436–444, May 2015, doi: 10.1038/nature14539. 编号 [1] 写在条目开头，姓名是缩写在前、姓氏在后。",
+          "页码用长破折号，写作 pp. 436–444，这点和 MLA 的单短横不同。月份和年份写在页码之后，没有月份时只写年份。",
+        ],
+        table: {
+          headers: ["BibTeX 字段", "IEEE 著录位", "写法要点"],
+          rows: [
+            ["author", "缩写在前、姓氏在后", "Y. LeCun, Y. Bengio, and G. Hinton,"],
+            ["title", "题名加引号", "句首大写，其后加逗号"],
+            ["journal", "刊名斜体", "刊名斜体"],
+            ["volume / number", "卷 / 期", "写作 vol. 521, no. 7553,"],
+            ["pages", "起止页码", "写作 pp. 436–444,"],
+            ["year / month", "月份与年份", "写作 May 2015,"],
+            ["doi", "条目末尾", "简写 doi: 10.1038/nature14539"],
+          ],
+        },
+      },
+      {
+        h2: "编号按引用顺序，不按字母顺序",
+        paragraphs: [
+          "IEEE 的文献表按首次引用顺序编号：正文里第一个引用的工作是 [1]，第二个是 [2]，文献表按这个顺序排列。转换器按粘贴顺序编号，所以粘贴时按引用顺序粘，或者转换后手动重排。",
+          "正文里引用写 [1]，同一篇工作重复引用仍用同一个编号，一组引用写作 [1]–[3]。IEEE 没有 (LeCun, 2015) 这种作者-日期标记。",
+        ],
+        list: [
+          "按首次引用顺序粘贴参考文献。",
+          "正文引用写 [1]，不用作者名或年份。",
+          "中间插入新文献后，后面的编号要重排。",
+          "同一篇工作永远用同一个编号。",
+        ],
+      },
+      {
+        h2: "作者与卷期页码",
+        paragraphs: [
+          "IEEE 的作者全部列出，写作缩写加姓氏，末位前加 and。机构作者要双重大括号保护，否则会被拆成多个人。",
+          "专著的写法是 I. Goodfellow, Y. Bengio, and A. Courville, Deep Learning. Cambridge, MA, USA: MIT Press, 2016. 书名斜体，出版地、出版社、年份依次排列。会议论文写作 [1] Y. LeCun, et al., “Deep learning,” in Proc. Conf., City, Year, pp. 1–8.",
+        ],
+      },
+      {
+        h2: "转换后逐条自查",
+        paragraphs: [
+          "贴进论文之前按四点检查：条目开头有 [1]、[2] 编号、姓名是缩写在前、题名有引号、卷期页码用了 vol.、no.、pp. 缩写、DOI 在末尾用简写。",
+          "留着 .bib 原文件，下次投别的期刊换个格式就能重新生成；下载的 .ris 可以导回 Zotero 或 EndNote，不用重新录入。",
+        ],
+        list: [
+          "编号：按引用顺序，不按字母顺序。",
+          "作者：缩写在前，末位前加 and。",
+          "题名：加引号；容器：斜体。",
+          "数字：vol.、no.、pp.，页码长破折号，DOI 在末尾。",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "IEEE 的文献表按字母顺序排吗？",
+        a: "不按。按首次引用顺序编号，第一个引用的工作是 [1]，文献表按这个顺序排列，中间插入新文献要重排。",
+      },
+      {
+        q: "同一篇工作引用两次怎么写？",
+        a: "用同一个编号 [1]。一组引用写作 [1]–[3]，IEEE 没有作者-日期标记。",
+      },
+      {
+        q: "DOI 写链接还是简写？",
+        a: "简写 doi: 10.1038/nature14539。https://doi.org/ 形式的解析链接是 APA 的写法，不是 IEEE。",
+      },
+      {
+        q: "页码用短横还是长破折号？",
+        a: "长破折号，写作 pp. 436–444。MLA 用单短横，同一组页码两种格式写法不同。",
+      },
+      {
+        q: ".bib 文件会被上传吗？",
+        a: "不会。BibTeX 转 IEEE 全程在浏览器本地完成，不上传服务器，也不用注册账号。",
+      },
+    ],
+    relatedSlugs: ["bibtex-to-mla", "apa-to-mla", "bibtex-to-chicago"],
+    ctaPrimary: "粘贴 BibTeX，生成 IEEE 参考文献",
+    ctaSecondary: "看同一篇论文的 MLA 格式",
+    updated: "2026-11-12",
   },
 };
 

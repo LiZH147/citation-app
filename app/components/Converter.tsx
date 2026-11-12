@@ -4,10 +4,26 @@ import { initCSL, convertCitation, convertAndExport, detectInputFormat, citeFrom
 import { lookupDOI } from "@/app/lib/doi-lookup";
 import type { Translations } from "@/app/lib/translations";
 
-type OutputFormat = "gb7714" | "apa";
+type OutputFormat = "gb7714" | "apa" | "mla" | "chicago-author-date" | "harvard" | "ieee";
 type ViewFormat = OutputFormat | "bibtex";
 
-interface Props { t: Translations; }
+/** 模板名 → 输出格式标签（与 CSL_TEMPLATES 的注册名一致；"apa" 为 citation-js 内置模板）。 */
+const FORMAT_LABELS: Record<OutputFormat, string> = {
+  gb7714: "GB/T 7714",
+  apa: "APA",
+  mla: "MLA",
+  "chicago-author-date": "Chicago",
+  harvard: "Harvard",
+  ieee: "IEEE",
+};
+
+/** 各语言提供的输出格式（zh 默认国标，en 默认 APA）。 */
+const FORMATS_BY_LANG: Record<string, OutputFormat[]> = {
+  zh: ["gb7714", "apa"],
+  en: ["apa", "mla", "chicago-author-date", "harvard", "ieee", "gb7714"],
+};
+
+interface Props { t: Translations; lang?: string; }
 
 // ─── localStorage 历史记录 ───────────────────────────
 
@@ -24,11 +40,14 @@ function saveHistory(items: HistoryItem[]) {
 
 // ─── 组件 ──────────────────────────────────────────────
 
-export default function Converter({ t }: Props) {
+export default function Converter({ t, lang = "zh" }: Props) {
+  const isEn = lang === "en";
+  const formats = FORMATS_BY_LANG[lang] ?? FORMATS_BY_LANG.zh;
+  const defaultFormat: OutputFormat = isEn ? "apa" : "gb7714";
   const [input, setInput] = useState("");
   const [output, setOutput] = useState(placeholder(t.outputPlaceholder));
-  const [outFormat, setOutFormat] = useState<OutputFormat>("gb7714");
-  const [viewFormat, setViewFormat] = useState<ViewFormat>("gb7714");
+  const [outFormat, setOutFormat] = useState<OutputFormat>(defaultFormat);
+  const [viewFormat, setViewFormat] = useState<ViewFormat>(defaultFormat);
   const [viewOutput, setViewOutput] = useState(placeholder(t.outputPlaceholder));
   const [isReady, setIsReady] = useState(false);
   const [isConverting, setIsConverting] = useState(false);
@@ -109,7 +128,7 @@ export default function Converter({ t }: Props) {
     }
     setIsConverting(true);
     try {
-      const fmt = viewFormat as "gb7714" | "apa";
+      const fmt = viewFormat as OutputFormat;
       if (viewFormat === "bibtex") {
         try {
           const bibtex = convertAndExport(input, "bibtex");
@@ -230,6 +249,25 @@ export default function Converter({ t }: Props) {
     } catch { setError(t.errorParse); }
   };
 
+  const optionLabels: Record<OutputFormat, string> = {
+    gb7714: t.gbt7714Label,
+    apa: t.apaLabel,
+    mla: t.mlaLabel,
+    "chicago-author-date": t.chicagoLabel,
+    harvard: t.harvardLabel,
+    ieee: t.ieeeLabel,
+  };
+
+  const viewTabLabels: Record<ViewFormat, string> = {
+    gb7714: t.viewFormatGB,
+    apa: t.viewFormatAPA,
+    mla: t.viewFormatMLA,
+    "chicago-author-date": t.viewFormatChicago,
+    harvard: t.viewFormatHarvard,
+    ieee: t.viewFormatIEEE,
+    bibtex: t.viewFormatBibtex,
+  };
+
   const formatBadge = (fmt: InputFormat): string => {
     const map: Record<InputFormat, string> = {
       bibtex: t.inputFormatBibtex, apa: t.inputFormatApa, doi: t.inputFormatDoi, url: t.inputFormatDoi, unknown: t.inputFormatUnknown,
@@ -262,8 +300,9 @@ export default function Converter({ t }: Props) {
               value={outFormat}
               onChange={(e) => setOutFormat(e.target.value as OutputFormat)}
             >
-              <option value="gb7714">{t.gbt7714Label}</option>
-              <option value="apa">{t.apaLabel}</option>
+              {formats.map((fmt) => (
+                <option key={fmt} value={fmt}>{optionLabels[fmt]}</option>
+              ))}
             </select>
             <button onClick={() => setShowForm(true)} className="text-xs px-2 py-1.5 border border-dashed border-slate-300 rounded-lg text-slate-500 hover:border-blue-400 hover:text-blue-600 transition-colors">{t.manualEntryBtn}</button>
             <button onClick={clearAll} className="text-xs text-slate-400 hover:text-slate-600 transition-colors">{t.clearBtn}</button>
@@ -317,9 +356,9 @@ export default function Converter({ t }: Props) {
           <div className="relative bg-blue-50/20">
             {/* 格式标签 */}
             {input.trim() && (
-              <div className="absolute top-3 left-3 z-10 flex items-center gap-1">
+              <div className="absolute top-3 left-3 z-10 flex flex-wrap items-center gap-1 max-w-[70%]">
                 <span className="text-[10px] text-slate-400 mr-1">{t.viewFormatTabs}</span>
-                {(["gb7714", "apa", "bibtex"] as ViewFormat[]).map((fmt) => (
+                {([...formats, "bibtex"] as ViewFormat[]).map((fmt) => (
                   <button
                     key={fmt}
                     onClick={() => setViewFormat(fmt)}
@@ -329,7 +368,7 @@ export default function Converter({ t }: Props) {
                         : "bg-white text-slate-500 border border-slate-200 hover:border-blue-300 hover:text-blue-600"
                     }`}
                   >
-                    {fmt === "gb7714" ? t.viewFormatGB : fmt === "apa" ? t.viewFormatAPA : t.viewFormatBibtex}
+                    {viewTabLabels[fmt]}
                   </button>
                 ))}
               </div>
@@ -384,7 +423,7 @@ export default function Converter({ t }: Props) {
                   className="flex-shrink-0 max-w-[200px] text-left px-3 py-2 bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-300 rounded-lg text-xs text-slate-600 truncate transition-colors"
                   title={item.label}
                 >
-                  <span className="font-mono text-[10px] text-slate-400 block">{item.format === "gb7714" ? "GB/T 7714" : "APA"}</span>
+                  <span className="font-mono text-[10px] text-slate-400 block">{FORMAT_LABELS[item.format] ?? "APA"}</span>
                   {item.label}
                 </button>
               ))}

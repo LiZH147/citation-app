@@ -17,6 +17,10 @@ export interface Translations {
   outputFormat: string;
   gbt7714Label: string;
   apaLabel: string;
+  mlaLabel: string;
+  chicagoLabel: string;
+  harvardLabel: string;
+  ieeeLabel: string;
   clearBtn: string;
   inputPlaceholder: string;
   outputPlaceholder: string;
@@ -54,6 +58,10 @@ export interface Translations {
   viewFormatTabs: string;
   viewFormatGB: string;
   viewFormatAPA: string;
+  viewFormatMLA: string;
+  viewFormatChicago: string;
+  viewFormatHarvard: string;
+  viewFormatIEEE: string;
   viewFormatBibtex: string;
 
   // Privacy
@@ -118,6 +126,10 @@ const zh: Translations = {
   outputFormat: "输出格式：",
   gbt7714Label: "GB/T 7714-2015（国标）",
   apaLabel: "APA（第7版）",
+  mlaLabel: "MLA（第9版）",
+  chicagoLabel: "Chicago（第17版·作者-日期）",
+  harvardLabel: "Harvard",
+  ieeeLabel: "IEEE",
   clearBtn: "清空",
   inputPlaceholder: `请粘贴 BibTeX 源码或 APA 格式文本...
 
@@ -165,6 +177,10 @@ const zh: Translations = {
   viewFormatTabs: "格式预览：",
   viewFormatGB: "GB/T 7714",
   viewFormatAPA: "APA",
+  viewFormatMLA: "MLA",
+  viewFormatChicago: "Chicago",
+  viewFormatHarvard: "Harvard",
+  viewFormatIEEE: "IEEE",
   viewFormatBibtex: "BibTeX",
 
   privacyTitle: "学术隐私安全保障",
@@ -257,7 +273,7 @@ const en: Translations = {
   navFAQ: "FAQ",
   heroTitle: "Citation Format Converter",
   heroDesc:
-    "Free online citation format converter. One-click conversion from BibTeX or APA to China National Standard GB/T 7714-2015, with DOI and arXiv lookup. Compatible with CNKI, Google Scholar, Zotero, and EndNote exports. All processing happens locally — your academic privacy is protected.",
+    "Free online citation format converter. One-click conversion from BibTeX or APA to APA 7th, MLA 9th, Chicago 17th (Author-Date), Harvard, IEEE, or China National Standard GB/T 7714-2015, with DOI and arXiv lookup. Compatible with Google Scholar, Zotero, and EndNote exports. All processing happens locally — your academic privacy is protected.",
   heroCTA: "Start Converting",
   heroGuide: "View Guide",
 
@@ -266,6 +282,10 @@ const en: Translations = {
   outputFormat: "Output:",
   gbt7714Label: "GB/T 7714-2015 (Chinese Standard)",
   apaLabel: "APA (7th Edition)",
+  mlaLabel: "MLA (9th Edition)",
+  chicagoLabel: "Chicago (17th ed., Author-Date)",
+  harvardLabel: "Harvard",
+  ieeeLabel: "IEEE",
   clearBtn: "Clear",
   inputPlaceholder: `Paste your BibTeX source or APA formatted text here...
 
@@ -313,6 +333,10 @@ Example BibTeX:
   viewFormatTabs: "Preview: ",
   viewFormatGB: "GB/T 7714",
   viewFormatAPA: "APA",
+  viewFormatMLA: "MLA",
+  viewFormatChicago: "Chicago",
+  viewFormatHarvard: "Harvard",
+  viewFormatIEEE: "IEEE",
   viewFormatBibtex: "BibTeX",
 
   privacyTitle: "Privacy Protected",
@@ -325,7 +349,7 @@ Example BibTeX:
     "Paste BibTeX or APA text exported from Zotero, EndNote, Google Scholar, or any reference manager into the left panel.",
   guideStep2Title: "Choose Output Format",
   guideStep2Desc:
-    "Select your desired output format: GB/T 7714-2015 (Chinese National Standard) or APA (7th Edition).",
+    "Select your desired output format: APA (7th Edition), MLA (9th Edition), Chicago 17th (Author-Date), Harvard, IEEE, or GB/T 7714-2015.",
   guideStep3Title: "View & Copy Results",
   guideStep3Desc:
     "Results appear instantly in the right panel. Click \"Copy Result\" to copy all formatted references to your clipboard at once.",
@@ -340,7 +364,7 @@ Example BibTeX:
   faqs: [
     {
       q: "What input formats does this converter support?",
-      a: "It currently supports BibTeX (.bib files/text) and APA (7th edition) text, plus DOI and arXiv IDs that are fetched automatically. You can paste reference data exported from Zotero, EndNote, Google Scholar, and most reference managers — the tool detects the format and converts it to GB/T 7714-2015 or APA.",
+      a: "It currently supports BibTeX (.bib files/text) and APA (7th edition) text, plus DOI and arXiv IDs that are fetched automatically. You can paste reference data exported from Zotero, EndNote, Google Scholar, and most reference managers — the tool detects the format and converts it to APA, MLA, Chicago, Harvard, IEEE, or GB/T 7714-2015.",
     },
     {
       q: "What is the difference between GB/T 7714-2015 and APA?",
@@ -374,7 +398,7 @@ Example BibTeX:
 
   footerAbout: "ConvertGB",
   footerDesc:
-    "Free online citation converter — BibTeX or APA to GB/T 7714-2015, with DOI and arXiv lookup. All processing happens locally in your browser.",
+    "Free online citation converter — BibTeX or APA to APA, MLA, Chicago, Harvard, IEEE, or GB/T 7714-2015, with DOI and arXiv lookup. All processing happens locally in your browser.",
   footerQuickLinks: "Quick Links",
   footerDisclaimer: "Disclaimer",
   footerDisclaimerText:

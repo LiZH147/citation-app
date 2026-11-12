@@ -13,21 +13,25 @@ export default function Guide({ t, lang }: Props) {
     { title: t.guideStep3Title, desc: t.guideStep3Desc },
   ];
 
+  const outputList = isZh
+    ? "GB/T 7714 · APA · BibTeX"
+    : "APA · MLA · Chicago · Harvard · IEEE · GB/T 7714 · BibTeX";
+
   const rows = [
     {
       input: "BibTeX (.bib)",
       source: isZh ? "Zotero、JabRef、Google Scholar" : "Zotero, JabRef, Google Scholar",
-      output: "GB/T 7714 · APA · BibTeX",
+      output: outputList,
     },
     {
       input: isZh ? "APA 文本" : "APA text",
       source: isZh ? "知网、Google Scholar、PubMed" : "CNKI, Google Scholar, PubMed",
-      output: "GB/T 7714 · APA",
+      output: isZh ? "GB/T 7714 · APA" : outputList,
     },
     {
       input: "DOI / arXiv",
       source: isZh ? "Crossref、arXiv（自动抓取元数据）" : "Crossref, arXiv (metadata fetched automatically)",
-      output: "GB/T 7714 · APA · BibTeX",
+      output: outputList,
     },
   ];
 
@@ -80,11 +84,11 @@ export default function Guide({ t, lang }: Props) {
 
       <div className="mt-10 grid sm:grid-cols-2 gap-4">
         <div className="bg-white rounded-xl border border-slate-200 p-5">
-          <h3 className="font-bold text-slate-800 mb-2 text-sm">{isZh ? "支持哪些国标细节" : "GB/T 7714 details covered"}</h3>
+          <h3 className="font-bold text-slate-800 mb-2 text-sm">{isZh ? "支持哪些国标细节" : "English styles covered"}</h3>
           <p className="text-xs text-slate-500 leading-relaxed">
             {isZh
               ? "按 GB/T 7714-2015 顺序编码制输出：责任者超过 3 位取前 3 位加「等」，西文姓名缩写不加缩写点，文献类型标识（[J]/[M]/[C]/[D]/[EB/OL] 等）按类型自动补全，DOI 置于条目末尾。"
-              : "Output follows the GB/T 7714-2015 numeric system: more than three authors truncated to three plus “et al”, Western initials without periods, document-type codes ([J]/[M]/[C]/[D]/[EB/OL]) added automatically, and DOI appended at the end."}
+              : "APA 7th lists authors as Surname, Initials and ends with a DOI link; MLA 9th uses “First, et al.” for three or more authors with the container in italics; Chicago 17th author-date puts the year after the author block; Harvard uses (Author, Year) in text; IEEE numbers references as [1], [2] in citation order."}
           </p>
         </div>
         <div className="bg-white rounded-xl border border-slate-200 p-5">
