@@ -278,7 +278,10 @@ export default function Converter({ t, lang = "zh" }: Props) {
   const loadHistoryItem = (item: HistoryItem) => {
     setInput(item.input);
     setOutput(item.output);
-    if (item.format !== outFormat) setOutFormat(item.format);
+    if (item.format !== outFormat) {
+      setOutFormat(item.format);
+      setViewFormat(item.format);
+    }
     setError(null);
   };
 
@@ -298,7 +301,11 @@ export default function Converter({ t, lang = "zh" }: Props) {
               id="fmt-select"
               className="bg-white border border-slate-300 rounded-lg px-3 py-1.5 text-sm font-medium focus:ring-2 focus:ring-blue-500 outline-none transition"
               value={outFormat}
-              onChange={(e) => setOutFormat(e.target.value as OutputFormat)}
+              onChange={(e) => {
+                const fmt = e.target.value as OutputFormat;
+                setOutFormat(fmt);
+                setViewFormat(fmt);
+              }}
             >
               {formats.map((fmt) => (
                 <option key={fmt} value={fmt}>{optionLabels[fmt]}</option>
