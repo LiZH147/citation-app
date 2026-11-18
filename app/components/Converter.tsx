@@ -3,6 +3,12 @@ import { useState, useEffect, useRef, useCallback, type FormEvent } from "react"
 import { initCSL, convertCitation, convertAndExport, detectInputFormat, citeFromCSLJSON, type ExportFormat, type InputFormat } from "@/app/lib/converter";
 import { lookupDOI } from "@/app/lib/doi-lookup";
 import type { Translations } from "@/app/lib/translations";
+import ProSection, { type ProStatus } from "@/app/components/ProSection";
+import {
+  loadStoredLicense, saveStoredLicense, clearStoredLicense,
+  activateLicense, validateStoredLicense, deactivateStoredLicense,
+  type StoredLicense,
+} from "@/app/lib/license";
 
 type OutputFormat = "gb7714" | "apa" | "mla" | "chicago-author-date" | "harvard" | "ieee";
 type ViewFormat = OutputFormat | "bibtex";
@@ -29,12 +35,15 @@ interface Props { t: Translations; lang?: string; }
 
 interface HistoryItem { input: string; output: string; format: OutputFormat; ts: number; label: string; }
 
+const FREE_HISTORY_LIMIT = 20;
+const PRO_HISTORY_LIMIT = 100;
+
 function loadHistory(): HistoryItem[] {
   try { return JSON.parse(localStorage.getItem("convertgb_history") || "[]"); }
   catch { return []; }
 }
-function saveHistory(items: HistoryItem[]) {
-  try { localStorage.setItem("convertgb_history", JSON.stringify(items.slice(0, 20))); }
+function saveHistory(items: HistoryItem[], limit = FREE_HISTORY_LIMIT) {
+  try { localStorage.setItem("convertgb_history", JSON.stringify(items.slice(0, limit))); }
   catch { /* quota exceeded */ }
 }
 
@@ -67,6 +76,35 @@ export default function Converter({ t, lang = "zh" }: Props) {
   // 手动录入
   const [showForm, setShowForm] = useState(false);
   const [history, setHistory] = useState<HistoryItem[]>([]);
+
+  // Pro 授权（激活码存在 localStorage，启动时向服务器校验）
+  const [proLicense, setProLicense] = useState<StoredLicense | null>(null);
+  const [proStatus, setProStatus] = useState<ProStatus>("unknown");
+  const isPro = proStatus === "active" || proStatus === "error";
+  const historyLimit = isPro ? PRO_HISTORY_LIMIT : FREE_HISTORY_LIMIT;
+
+  // 启动时校验已保存的激活码
+  useEffect(() => {
+    const stored = loadStoredLicense();
+    if (!stored) { setProStatus("inactive"); return; }
+    setProLicense(stored);
+    let cancelled = false;
+    validateStoredLicense(stored).then((result) => {
+      if (cancelled) return;
+      if (result.ok && result.data.valid) {
+        setProStatus("active");
+      } else if (result.ok && !result.data.valid) {
+        clearStoredLicense();
+        setProLicense(null);
+        setProStatus(result.data.reason === "revoked_or_expired" ? "expired" : "invalid");
+      } else {
+        // 校验服务暂时不可用（未配置或网络问题）：本次浏览保留 Pro，
+        // 下次打开时再校验。
+        setProStatus("error");
+      }
+    });
+    return () => { cancelled = true; };
+  }, []);
 
   // 初始化 CSL
   useEffect(() => {
@@ -175,12 +213,12 @@ export default function Converter({ t, lang = "zh" }: Props) {
       if (input.trim() && hasResult) {
         const label = input.trim().slice(0, 120);
         const newItem: HistoryItem = { input: input.trim(), output: viewOutput, format: outFormat, ts: Date.now(), label };
-        const updated = [newItem, ...history.filter(h => h.input !== input.trim())].slice(0, 20);
+        const updated = [newItem, ...history.filter(h => h.input !== input.trim())].slice(0, historyLimit);
         setHistory(updated);
-        saveHistory(updated);
+        saveHistory(updated, historyLimit);
       }
     } catch { alert("Copy failed."); }
-  }, [viewOutput, input, hasResult, outFormat, history]);
+  }, [viewOutput, input, hasResult, outFormat, history, historyLimit]);
 
   // 下载
   const download = useCallback((fmt: ExportFormat) => {
@@ -222,6 +260,43 @@ export default function Converter({ t, lang = "zh" }: Props) {
   const clearAll = useCallback(() => {
     setInput(""); setDoiInput(""); setOutput(placeholder(t.outputPlaceholder)); setError(null); outputCache.current.clear();
   }, [t.outputPlaceholder]);
+
+  // Pro：激活 / 移除激活码
+  const handleActivatePro = useCallback(async (key: string) => {
+    const result = await activateLicense(key);
+    if (!result.ok) return { ok: false as const, code: result.code, message: result.message };
+    saveStoredLicense(result.data);
+    setProLicense(result.data);
+    setProStatus("active");
+    return { ok: true as const, message: "" };
+  }, []);
+
+  const handleRemovePro = useCallback(async () => {
+    // 尽量释放 Creem 上的激活名额；失败也不阻止本地移除。
+    if (proLicense) await deactivateStoredLicense(proLicense);
+    clearStoredLicense();
+    setProLicense(null);
+    setProStatus("inactive");
+  }, [proLicense]);
+
+  // Pro：批量上传 .bib 文件（只在浏览器本地读文件内容，不上传服务器）
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const handleBibFiles = useCallback(async (files: FileList | null) => {
+    if (!files || files.length === 0) return;
+    const texts: string[] = [];
+    for (const file of Array.from(files)) {
+      try { texts.push(await file.text()); } catch { /* 跳过读失败的文件 */ }
+    }
+    if (texts.length === 0) return;
+    const combined = texts.join("\n\n");
+    setInput((prev) => (prev.trim() ? `${prev.trim()}\n\n${combined}` : combined));
+    outputCache.current.clear();
+  }, []);
+
+  const handleUploadClick = useCallback(() => {
+    if (isPro) fileInputRef.current?.click();
+    else document.getElementById("pro-section")?.scrollIntoView({ behavior: "smooth" });
+  }, [isPro]);
 
   // 手动录入表单
   const [form, setForm] = useState<Record<string,string>>({ author: "", title: "", journal: "", year: "", volume: "", issue: "", pages: "" });
@@ -312,6 +387,21 @@ export default function Converter({ t, lang = "zh" }: Props) {
               ))}
             </select>
             <button onClick={() => setShowForm(true)} className="text-xs px-2 py-1.5 border border-dashed border-slate-300 rounded-lg text-slate-500 hover:border-blue-400 hover:text-blue-600 transition-colors">{t.manualEntryBtn}</button>
+            <button
+              onClick={handleUploadClick}
+              title={isPro ? undefined : t.proUploadProOnly}
+              className="text-xs px-2 py-1.5 border border-dashed border-slate-300 rounded-lg text-slate-500 hover:border-blue-400 hover:text-blue-600 transition-colors"
+            >
+              {isPro ? t.proUploadBib : `${t.proUploadBib} · Pro`}
+            </button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".bib,.txt"
+              multiple
+              className="hidden"
+              onChange={(e) => { void handleBibFiles(e.target.files); e.target.value = ""; }}
+            />
             <button onClick={clearAll} className="text-xs text-slate-400 hover:text-slate-600 transition-colors">{t.clearBtn}</button>
           </div>
         </div>
@@ -438,6 +528,15 @@ export default function Converter({ t, lang = "zh" }: Props) {
           </div>
         )}
       </div>
+
+      {/* ── Pro：购买与激活 ── */}
+      <ProSection
+        t={t}
+        status={proStatus}
+        licenseKey={proLicense?.key ?? null}
+        onActivate={handleActivatePro}
+        onRemove={() => { void handleRemovePro(); }}
+      />
 
       {/* ── 手动录入 Modal ── */}
       {showForm && <ManualFormOverlay t={t} form={form} setForm={setForm} onSubmit={submitForm} onClose={() => setShowForm(false)} />}

@@ -64,6 +64,42 @@ export interface Translations {
   viewFormatIEEE: string;
   viewFormatBibtex: string;
 
+  // Pro
+  proTitle: string;
+  proSubtitle: string;
+  proFreeName: string;
+  proProName: string;
+  proFreePrice: string;
+  proProPrice: string;
+  proFreeFeature1: string;
+  proFreeFeature2: string;
+  proFreeFeature3: string;
+  proFeature1: string;
+  proFeature2: string;
+  proFeature3: string;
+  proMonthlyBtn: string;
+  proLifetimeBtn: string;
+  proActivateTitle: string;
+  proKeyPlaceholder: string;
+  proActivateBtn: string;
+  proActivating: string;
+  proWhereKey: string;
+  proActiveTitle: string;
+  proActiveDesc: string;
+  proRemoveBtn: string;
+  proErrorInvalidKey: string;
+  proErrorLimit: string;
+  proErrorServer: string;
+  proErrorNetwork: string;
+  proErrorUnknown: string;
+  proExpiredMsg: string;
+  proInvalidMsg: string;
+  proVerifyErrorMsg: string;
+  proUploadBib: string;
+  proUploadProOnly: string;
+  proCurrentFree: string;
+  proCurrentPro: string;
+
   // Privacy
   privacyTitle: string;
   privacyDesc: string;
@@ -182,6 +218,44 @@ const zh: Translations = {
   viewFormatHarvard: "Harvard",
   viewFormatIEEE: "IEEE",
   viewFormatBibtex: "BibTeX",
+
+  proTitle: "升级 Pro",
+  proSubtitle: "批量转换 .bib 文件，保留更长的转换记录。",
+  proFreeName: "免费版",
+  proProName: "Pro",
+  proFreePrice: "$0",
+  proProPrice: "$4.99/月 或 $19 买断",
+  proFreeFeature1: "全部 6 种输出格式",
+  proFreeFeature2: "DOI 与 arXiv 查找",
+  proFreeFeature3: "复制与下载（.bib / .ris / .txt）",
+  proFeature1: "免费版全部功能",
+  proFeature2: "批量转换：直接上传 .bib 文件",
+  proFeature3: "100 条转换记录（免费版 20 条）",
+  proMonthlyBtn: "按月订阅 — $4.99/月",
+  proLifetimeBtn: "一次买断 — $19",
+  proActivateTitle: "已有 Pro？输入激活码",
+  proKeyPlaceholder: "粘贴你的激活码",
+  proActivateBtn: "激活 Pro",
+  proActivating: "激活中...",
+  proWhereKey:
+    "付款后，激活码会显示在订单确认页和邮箱收据里。粘贴到这里即可开通 Pro。",
+  proActiveTitle: "Pro 已激活",
+  proActiveDesc: "当前浏览器已解锁 Pro 功能。",
+  proRemoveBtn: "移除激活码",
+  proErrorInvalidKey:
+    "激活码无效，请检查订单确认页或邮箱收据里的激活码后重试。",
+  proErrorLimit:
+    "该激活码已达到激活数量上限，请先在其他设备上移除，或联系客服。",
+  proErrorServer: "服务器尚未配置激活功能，请稍后再试。",
+  proErrorNetwork: "网络请求失败，请检查网络后重试。",
+  proErrorUnknown: "激活失败，请稍后再试。",
+  proExpiredMsg: "你的激活码已过期或被撤销，Pro 已关闭。",
+  proInvalidMsg: "你的激活码已失效，Pro 已关闭。",
+  proVerifyErrorMsg: "暂时无法验证激活码，Pro 保持开启（仅限本次浏览）。",
+  proUploadBib: "上传 .bib 文件",
+  proUploadProOnly: "上传 .bib 文件是 Pro 功能，请先升级。",
+  proCurrentFree: "当前方案：免费版",
+  proCurrentPro: "当前方案：Pro",
 
   privacyTitle: "学术隐私安全保障",
   privacyDesc:
@@ -338,6 +412,48 @@ Example BibTeX:
   viewFormatHarvard: "Harvard",
   viewFormatIEEE: "IEEE",
   viewFormatBibtex: "BibTeX",
+
+  proTitle: "Upgrade to Pro",
+  proSubtitle: "Batch-convert .bib files and keep a longer conversion history.",
+  proFreeName: "Free",
+  proProName: "Pro",
+  proFreePrice: "$0",
+  proProPrice: "$4.99/mo or $19 once",
+  proFreeFeature1: "All 6 output styles",
+  proFreeFeature2: "DOI & arXiv lookup",
+  proFreeFeature3: "Copy & download (.bib / .ris / .txt)",
+  proFeature1: "Everything in Free",
+  proFeature2: "Batch conversion — upload .bib files directly",
+  proFeature3: "100-item conversion history (Free keeps 20)",
+  proMonthlyBtn: "Monthly — $4.99/mo",
+  proLifetimeBtn: "Lifetime — $19 one-time",
+  proActivateTitle: "Already bought Pro? Enter your license key",
+  proKeyPlaceholder: "Paste your license key",
+  proActivateBtn: "Activate Pro",
+  proActivating: "Activating...",
+  proWhereKey:
+    "After checkout, your license key appears on the order confirmation page and in your email receipt. Paste it here to unlock Pro.",
+  proActiveTitle: "Pro is active",
+  proActiveDesc: "This browser has Pro unlocked.",
+  proRemoveBtn: "Remove license key",
+  proErrorInvalidKey:
+    "This license key is invalid. Check the key on your order confirmation page or email receipt and try again.",
+  proErrorLimit:
+    "This license key has reached its activation limit. Remove it from another device first, or contact support.",
+  proErrorServer:
+    "License activation is not configured on the server yet. Please try again later.",
+  proErrorNetwork: "Network request failed. Please check your connection.",
+  proErrorUnknown: "Activation failed. Please try again later.",
+  proExpiredMsg:
+    "Your license key was revoked or expired, so Pro has been turned off.",
+  proInvalidMsg:
+    "Your license key is no longer valid, so Pro has been turned off.",
+  proVerifyErrorMsg:
+    "Could not verify your license key right now. Pro stays on for this session only.",
+  proUploadBib: "Upload .bib file",
+  proUploadProOnly: "Uploading .bib files is a Pro feature — upgrade below.",
+  proCurrentFree: "Current plan: Free",
+  proCurrentPro: "Current plan: Pro",
 
   privacyTitle: "Privacy Protected",
   privacyDesc:
