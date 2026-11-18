@@ -918,6 +918,669 @@ const zh: LongformSet = {
     ctaSecondary: "看同一篇论文的 MLA 格式",
     updated: "2026-11-12",
   },
+
+  "doi-to-bibtex": {
+    slug: "doi-to-bibtex",
+    keyword: "DOI 转 BibTeX",
+    title: "DOI 转 BibTeX：Crossref 生成条目",
+    description:
+      "DOI 转 BibTeX 一次查一条：粘贴 DOI 就能拿到干净的 @article 条目，引用键、字段、页码都对好；再讲 arXiv 的 DOI 为什么查不到、数据集 DOI 该怎么处理。",
+    h1: "DOI 转 BibTeX：从标识符到 .bib 条目",
+    intro:
+      "DOI 是拿到 .bib 条目最快的办法，也是最容易缺字段的办法。DOI 转 BibTeX 靠 Crossref 反查出版方登记的元数据，再写成 BibTeX 条目。现代期刊的登记一般很全，其它文献就要多看一眼。",
+    sections: [
+      {
+        h2: "DOI 转 BibTeX：一次查找能拿到什么",
+        paragraphs: [
+          "一次查找就是向 Crossref 的 REST 接口发一次请求，拿回出版方登记的 JSON。从里面读九个字段：题名、刊名、作者（姓和名分开）、出版日期、卷、期、页码、出版社和 DOI 本身。",
+          "这九个字段正好就是一条 BibTeX 条目需要的全部，所以只给一个 DOI 常常就能拿到完整的 @article。摘要、许可、资助信息这些用不上的字段直接丢掉。以 10.1038/nature14539 为例，查到的是 LeCun 等人 2015 年发表在 Nature 521 卷 7553 期 436–444 页的 Deep learning。",
+          "麻烦在登记质量。老记录常有全大写题名、缺卷期、作者没有名，只有姓。DOI 转 BibTeX 的结果结构正确、仍需改两处的情况很常见，知道盯哪几个字段就快了。",
+        ],
+        table: {
+          headers: ["Crossref 字段", "BibTeX 字段", "LeCun 的例子"],
+          rows: [
+            ["title", "title", "Deep learning"],
+            ["author[].family / given", "author，用 and 连接", "LeCun, Yann and Bengio, Yoshua and Hinton, Geoffrey"],
+            ["container-title", "journal", "Nature"],
+            ["issued date-parts", "year", "2015"],
+            ["volume / issue", "volume / number", "521 / 7553"],
+            ["page", "pages，双短横", "436--444"],
+            ["DOI", "doi，外加 url 字段", "10.1038/nature14539"],
+            ["type", "条目类型", "journal-article 变成 @article"],
+          ],
+        },
+      },
+      {
+        h2: "引用键：LeCun2015Deep",
+        paragraphs: [
+          "每条 BibTeX 都要一个引用键，DOI 查找按记录本身生成：首位作者的姓、年份、题名的第一个词。LeCun 那篇就是 @article{LeCun2015Deep, ...}。键里没有 DOI，又短又好打，写引用命令时不会出错。",
+          "保存前随便改键，纯文本而已，条目里其它字段不依赖它。唯一规则是同一个 .bib 文件里键不能重复：同一年同一位作者的第二篇论文会按自己的题名首词生成不同的键，题名首词也一样就手工改一个。",
+        ],
+        list: [
+          "引用键按「姓 + 年份 + 题名首词」生成，例如 LeCun2015Deep。",
+          "键只是个标签，改了不影响条目里的任何字段。",
+          "同一个 .bib 文件里两个条目不能共用一个键。",
+          "写引用命令之前核对键，写错就等于正文里丢了一条引用。",
+        ],
+      },
+      {
+        h2: "DOI 变成哪种条目类型",
+        paragraphs: [
+          "Crossref 给每篇作品打一个类型，类型决定 BibTeX 的条目类型。按文献本身判断，不看出版社。留神 posted-content：这是 Crossref 对预印本的叫法，查到的会是 @article，容器是预印本平台，引用成期刊论文之前先看容器。",
+          "学位论文是另一个边界情况。Crossref 叫它 dissertation，转换器分不出博士还是硕士论文，所以先给 @misc。手工改成 @phdthesis，再补一个 school 字段，其余内容都是对的。",
+        ],
+        table: {
+          headers: ["Crossref 类型", "BibTeX 条目类型", "备注"],
+          rows: [
+            ["journal-article", "@article", "最常见"],
+            ["proceedings-article", "@inproceedings", "容器是会议录名"],
+            ["book", "@book", "出版社取容器位"],
+            ["book-chapter", "@inbook", "题名是章节，容器是书名"],
+            ["report", "@techreport", "机构写进 institution 字段"],
+            ["dataset", "@misc", "仓储库写进备注"],
+            ["dissertation", "@misc", "改成 @phdthesis 再补 school"],
+            ["posted-content", "@article", "预印本：先看容器"],
+          ],
+        },
+      },
+      {
+        h2: "Crossref 里没有这条 DOI",
+        paragraphs: [
+          "Crossref 只是注册机构之一，DOI 转 BibTeX 只能读它自己的登记。10.48550/arXiv.2301.00001 这种 arXiv DOI 由 DataCite 注册，Crossref 再怎么查都是查无此号。改贴 arXiv ID，例如 2301.00001，或者 abs 链接：系统另外认这个格式，版本号去掉，从 arXiv 接口读记录。",
+          "Zenodo、figshare、Dryad 的标识，包括 10.5281 这一家，也都是 DataCite 的记录，Crossref 里没有。它们是数据集，条目类型是 @misc，容器是仓储库而不是期刊。直接粘 https://doi.org/ 开头的链接也能识别，系统会先扫出 DOI 形状的字串，句末的分号、句点先去掉再查，从 PDF 参考文献里复制出来带句子的情况就靠这个。",
+        ],
+      },
+      {
+        h2: "DOI 转 BibTeX 的批量做法",
+        paragraphs: [
+          "DOI 输入框一次只解析一个标识符：读输入里第一个 DOI 形状的字串或 arXiv 标识符，返回一条记录。四十条 DOI 就是四十次查找，文献已经在手里的时候换别的输入方式更快。",
+          "整批粘贴 APA 文本，一条空一行，或者直接粘 BibTeX，两种都是一次解析。DOI 输入框留给源头就坏掉的那条：题名丢了、页码在复制里丢了。长列表里通常每条坏掉的文献查一次 DOI 就够了。",
+          "查找和转换记录留在浏览器本地历史里，最近二十条，昨天查过的标识符一点就回来。输出能下 .bib、.ris 或纯文本，.ris 可以导回 EndNote 或 Zotero，不用重新录入。",
+        ],
+        list: [
+          "粘 DOI，或者只有整条参考文献就粘整条。",
+          "先看条目类型再信 @article 这个标签。",
+          "卷期页码缺失先在源记录里补，再重新导出。",
+          "留着 .bib 文件：其它格式都是从它再生成的。",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "DOI 转 BibTeX 生成的引用键是什么？",
+        a: "首位作者的姓、年份、题名的第一个词，LeCun 2015 年那篇就是 LeCun2015Deep。随便改，只是标签，不影响条目里的其它字段。",
+      },
+      {
+        q: "arXiv 的 DOI（10.48550）为什么查不到？",
+        a: "10.48550 由 DataCite 注册而非 Crossref，Crossref 元数据里没有这条记录。改用 arXiv ID 或文章链接作为输入即可。",
+      },
+      {
+        q: ".bib 条目里还留着 DOI 吗？",
+        a: "留着，而且留了两处：doi 字段和存 https://doi.org/ 链接的 url 字段。导进文献管理软件再导出来也不会丢。",
+      },
+      {
+        q: "Crossref 没有页码怎么办？",
+        a: "有些登记只有文章编号、没有页码，pages 字段就是空的，自己补上。老记录缺卷期也很常见。",
+      },
+      {
+        q: "一次能转多少条 DOI？",
+        a: "DOI 输入框一次解析一个标识符。长列表粘 APA 文本或 BibTeX，一次解析完。",
+      },
+      {
+        q: "DOI 转 BibTeX 会上传我的文献吗？",
+        a: "不会。只把标识符发给 Crossref 查出版方元数据，不用注册账号，不上传文献列表，服务器也不留副本。",
+      },
+    ],
+    relatedSlugs: ["doi-to-apa", "bibtex-to-apa", "doi-to-mla"],
+    ctaPrimary: "粘一条 DOI，生成 BibTeX 条目",
+    ctaSecondary: "同一条记录看 APA 第 7 版",
+    updated: "2026-11-18",
+  },
+
+  "bibtex-to-apa": {
+    slug: "bibtex-to-apa",
+    keyword: "BibTeX 转 APA 第 7 版",
+    title: "BibTeX 转 APA 第 7 版：字段对照",
+    description:
+      "BibTeX 转 APA 第 7 版按字段对照着讲：二十位作者规则、句首大写题名、斜体的刊名与卷、DOI 写完整链接，附 LeCun 2015 年 Nature 文章的完整例子。",
+    h1: "BibTeX 转 APA 第 7 版：字段逐项拆解",
+    intro:
+      "写英文论文投社科、心理、教育期刊，常被要求用 APA 第 7 版。BibTeX 转 APA 第 7 版真正要处理四件事：作者最多列二十位、题名改句首大写、刊名和卷变斜体、DOI 写完整链接。这篇按字段拆开讲，拿 LeCun 等人 2015 年 Nature 文章作例子。",
+    sections: [
+      {
+        h2: "BibTeX 转 APA 第 7 版：字段落到哪里",
+        paragraphs: [
+          "以 LeCun 等人 2015 年发表在 Nature 521 卷 7553 期 436–444 页的 Deep Learning 为例，BibTeX 是 @article{lecun2015deep, author = {LeCun, Yann and Bengio, Yoshua and Hinton, Geoffrey}, title = {Deep Learning}, journal = {Nature}, year = {2015}, volume = {521}, number = {7553}, pages = {436--444}, doi = {10.1038/nature14539}}。APA 第 7 版输出是 LeCun, Y., Bengio, Y., & Hinton, G. (2015). Deep learning. Nature, 521(7553), 436–444. https://doi.org/10.1038/nature14539。",
+          "页码保持完整长度，436–444 不缩写。DOI 写成完整链接 https://doi.org/10.1038/nature14539，后面不加句点，前面也不加 DOI: 前缀。",
+        ],
+        table: {
+          headers: ["BibTeX 字段", "APA 第 7 版著录位", "写法要点"],
+          rows: [
+            ["author", "姓加缩写，最后一位前加 &", "LeCun, Y., Bengio, Y., & Hinton, G."],
+            ["year", "作者后括号内", "(2015)."],
+            ["title", "句首大写，无标记", "Deep learning."],
+            ["journal", "斜体", "Nature,"],
+            ["volume / number", "卷斜体，期放括号", "521(7553),"],
+            ["pages", "完整范围，长破折号", "436–444."],
+            ["doi", "条目末尾", "链接 https://doi.org/10.xxxx/xxxx"],
+          ],
+        },
+      },
+      {
+        h2: "作者：二十位，之后用省略号",
+        paragraphs: [
+          "APA 第 7 版的文献表最多列二十位作者。二十一位以上只印前十九位、一个省略号、最后一位作者，中间的都不出现。正文里的引用更严：三位以上作者从第一次出现就写成首位作者加 et al.，所以正文里 (LeCun et al., 2015) 是对的，文献表里三位全列也是对的。",
+          "缩写就是缩写：Y. 不会变回 Yann，因为只存缩写的 .bib 文件没东西可展开。机构作者要双重大括号保护，写成 {{World Health Organization}}，否则会被拆成三个人。最后一位作者前的 & 是 APA 的标点，不是数据，BibTeX 源文件里没有它。",
+        ],
+        list: [
+          "转换前数一数每个 author 字段有几个人。",
+          "二十位以下：文献表里全列。",
+          "二十一位以上：前十九位、省略号、最后一位。",
+          "三位以上作者：正文引用是首位加 et al.",
+        ],
+      },
+      {
+        h2: "题名大小写、斜体与卷期",
+        paragraphs: [
+          "APA 第 7 版的文章题名用句首大写：只有第一个词和专有名词保留大写，Deep Learning 变成 Deep learning。大括号保护的大写 {DNA} 不受影响，括号告诉格式化程序按原样保留，没有它 DNA 会印成 Dna。",
+          "刊名和卷一起斜体，期紧跟在卷后面放括号，中间没有空格：Nature, 521(7553)。页码保持完整长度，436–444，用长破折号，APA 不像 MLA 那样缩写范围。没有期号的条目只剩斜体的卷。",
+        ],
+        table: {
+          headers: ["条目类型", "题名处理", "容器"],
+          rows: [
+            ["@article", "句首大写，不加标记", "刊名与卷斜体"],
+            ["@book", "句首大写，斜体", "出版社"],
+            ["@inproceedings", "句首大写，不加标记", "会议录名斜体"],
+            ["@incollection", "句首大写，不加标记", "书名斜体，前面加 In"],
+            ["@phdthesis", "句首大写，斜体", "大学"],
+            ["@online", "句首大写，不加标记", "网站名"],
+          ],
+        },
+      },
+      {
+        h2: "DOI 写在条目末尾，用完整链接",
+        paragraphs: [
+          "APA 第 7 版把 DOI 写成完整链接 https://doi.org/10.1038/nature14539，后面不加句点，前面不加 DOI:。没有 DOI 才用 URL，写出来不加尖括号。老条目里 DOI 没带解析前缀也能转，格式化程序会补上。",
+          "预印本、数据集、在线优先出版没有页码，DOI 仍然收尾，卷期页码那一块直接没有。有些出版社只登记文章编号 e12345，查找读的是 page 字段，这类条目拿不到编号，手工补上。",
+        ],
+      },
+      {
+        h2: "转换后逐条自查",
+        paragraphs: [
+          "贴进论文之前按四点检查：作者最多二十位、题名句首大写、刊名和卷斜体、页码完整加长破折号、DOI 在末尾用完整链接。",
+          "留着 .bib 原文件，下次投别的期刊换个格式就能重新生成；下载的 .ris 可以导回 Zotero 或 EndNote，不用重新录入。",
+        ],
+        list: [
+          "作者：缩写，最后一位前加 &，最多二十位。",
+          "题名：句首大写；刊名与卷：斜体。",
+          "数字：卷（期），页码完整加长破折号。",
+          "DOI：末尾写完整链接。",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "APA 第 7 版列几位作者？",
+        a: "文献表最多二十位。二十一位以上印前十九位、省略号、最后一位。正文引用三位以上作者从第一次就用首位加 et al.",
+      },
+      {
+        q: "题名为什么转完变小写了？",
+        a: "APA 第 7 版的文章题名用句首大写，只有第一个词和专有名词保留大写，Deep Learning 变成 Deep learning。",
+      },
+      {
+        q: "DOI 在 APA 里写在哪？",
+        a: "条目末尾，写完整链接 https://doi.org/10.1038/nature14539。前面不加 DOI:，后面不加句点。",
+      },
+      {
+        q: "大括号保护的大写 {DNA} 会怎样？",
+        a: "括号去掉，里面的文字按原样保留，{DNA} 印成 DNA 而不是 Dna。这也是用转换器而不是手打的原因之一。",
+      },
+      {
+        q: "BibTeX 转 APA 第 7 版保留卷和期吗？",
+        a: "保留，写成斜体的卷加括号里的期：521(7553)。没有 number 字段的条目只剩卷。",
+      },
+      {
+        q: ".bib 文件会被上传吗？",
+        a: "不会。BibTeX 转 APA 第 7 版全程在浏览器本地完成，不上传服务器，也不用注册账号。",
+      },
+    ],
+    relatedSlugs: ["apa-to-bibtex", "doi-to-apa", "bibtex-to-harvard"],
+    ctaPrimary: "粘贴 BibTeX，生成 APA 参考文献",
+    ctaSecondary: "把 APA 文献表转回 BibTeX",
+    updated: "2026-11-18",
+  },
+
+  "apa-to-bibtex": {
+    slug: "apa-to-bibtex",
+    keyword: "APA 转 BibTeX",
+    title: "APA 转 BibTeX：文献表还原 .bib",
+    description:
+      "APA 转 BibTeX：把文献表粘进来，@article 条目就回来了，类型、引用键、页码都对好；再讲哪几类条目还得手工处理、哪些形状解析器认不出来。",
+    h1: "APA 转 BibTeX：把文献表变回字段",
+    intro:
+      "排好版的 APA 文献表是成品：生成它用的字段边界已经没了。APA 转 BibTeX 要靠标点和位置把字段重建回来，好在 APA 第 7 版足够死板，读得回去。这篇讲解析器认什么形状、每个部分变成哪个字段、哪几处还得人工处理。",
+    sections: [
+      {
+        h2: "APA 转 BibTeX：解析器认什么形状",
+        paragraphs: [
+          "解析器认的形状是「作者块、括号年份、句点」。LeCun, Y., Bengio, Y., & Hinton, G. (2015). Deep learning. Nature, 521(7553), 436–444. https://doi.org/10.1038/nature14539 正好按这个拆：作者块在年份处结束，题名在年份后的第一个句点处结束，剩下的是刊名、卷、期、页码。一条空一行粘进来，整张表一次读完。",
+          "形状之外就是失效模式：法律文献、没有个人作者的网页、日期是区间 (2020-2023) 的条目都认不出来。直接用手动录入表单填，比修解析结果更快，解析器遇到也会明说，而不是瞎猜。",
+        ],
+        table: {
+          headers: ["APA 著录项", "BibTeX 字段", "LeCun 的例子"],
+          rows: [
+            ["作者块", "author，缩写保留", "LeCun, Y. and Bengio, Y. and Hinton, G."],
+            ["括号里的年份", "year", "2015"],
+            ["题名，句首大写", "title", "Deep learning"],
+            ["刊名、卷（期）", "journal、volume、number", "Nature、521、7553"],
+            ["页码范围", "pages，双短横", "436--444"],
+            ["DOI 链接", "doi", "10.1038/nature14539"],
+          ],
+        },
+      },
+      {
+        h2: "重建的条目和它的引用键",
+        paragraphs: [
+          "重建出来是一条普通的 @article，引用键按记录生成：首位作者的姓、年份、题名的第一个词，LeCun 那篇就是 @article{LeCun2015Deep, ...}。键只是个标签，随便改，但同一个 .bib 文件里不能重复，两个条目共用一个键编译会报错。",
+          "页码回来是双短横 436--444，BibTeX 就是用双短横写长破折号。DOI 链接剥回裸标识符放进 doi 字段，解析链接另外留作 url 字段，一来一回什么都不丢。",
+        ],
+        list: [
+          "一条空一行粘进来，整张表一次读完。",
+          "核对引用键：同一年同一位作者的两篇论文可能撞键。",
+          "页码回来是双短横 436--444。",
+          "DOI 留在 doi 字段，链接另外留作 url 字段。",
+        ],
+      },
+      {
+        h2: "作者：缩写就是缩写",
+        paragraphs: [
+          "APA 写 LeCun, Y.，重建的 BibTeX 没法知道 Y. 是 Yann。缩写就是缩写：重建的 author 字段是 LeCun, Y. and Bengio, Y. and Hinton, G.，编译没问题，只是比手写的 .bib 文件单薄。全名重要的话事后在 .bib 文本里补上，& 去掉换成 and。",
+          "文献表里没有 et al.：APA 第 7 版二十位以内全列，APA 转 BibTeX 转换整张表时作者块是完整的。et al. 只出现在正文引用 (LeCun et al., 2015) 里，那种粘进来解析不了——粘文献表，别粘正文。机构作者直接出来是普通名字，套双重大括号 {{World Health Organization}}，BibTeX 才不会把它拆成三个人。",
+        ],
+      },
+      {
+        h2: "类型：期刊文章和会议论文",
+        paragraphs: [
+          "解析器默认 @article，只有文字告诉它才换类型。容器里出现 In 或者 Proceedings、Conference、Symposium、Proceeding 这些词就变成 @inproceedings，会议录名进 booktitle 字段。其余都留在 @article，粘进来的大列表多数情况是对的。",
+          "专著在 APA 文本里没有独立形状：专著条目读起来像容器是出版社的文章，所以先出来是 @article，手工改成 @book。学位论文、报告也一样。日期是 n.d. 的条目没有年份，year 字段是空的，去出版方页面找年份补上，不然编译出来缺年份。",
+        ],
+        table: {
+          headers: ["APA 文本里的线索", "BibTeX 条目类型", "核对什么"],
+          rows: [
+            ["刊名、卷（期）", "@article", "默认，通常是对的"],
+            ["In，或 Proceedings / Conference", "@inproceedings", "容器变成 booktitle"],
+            ["出版社，没有刊名", "@article（手工改）", "把类型改成 @book"],
+            ["大学、学位论文", "@article（手工改）", "把类型改成 @phdthesis"],
+            ["日期是 n.d.", "@article，没有年份", "去源头找年份补上"],
+          ],
+        },
+      },
+      {
+        h2: "编译之前检查重建的 .bib",
+        paragraphs: [
+          "编译之前按四点检查：每个条目引用键唯一、作者之间用 and 连接、题名里该大写的地方大写、页码用双短横。题名最弱：APA 印句首大写，DNA 这种词回来是小写，重新加大括号保护。",
+          "APA 文献表留着，等 PDF 编译过一次再删。排好版的字符串变不回字段，但刚重建的 .bib 文件换个格式马上能再生成一遍，下载的 .ris 可以导回 Zotero 或 EndNote。",
+        ],
+        list: [
+          "引用键：文件里唯一，撞了就改名。",
+          "作者：and 连接，缩写就是缩写。",
+          "题名：APA 压小写的大写词重新加大括号。",
+          "页码：双短横 436--444。",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "APA 的缩写能展开回全名吗？",
+        a: "不能。APA 印 Y.，解析器没法知道是 Yann。全名重要的话事后在 .bib 文本里补上。",
+      },
+      {
+        q: "APA 转 BibTeX 时 et al. 怎么处理？",
+        a: "不用处理：文献表里没有它，APA 二十位以内全列。et al. 只出现在正文引用里，那种粘进来解析不了，粘文献表。",
+      },
+      {
+        q: "专著为什么变成 @article 了？",
+        a: "专著在 APA 文本里没有独立形状。解析器默认 @article，只有会议论文靠容器认得出来。手工把类型改成 @book。",
+      },
+      {
+        q: "日期是 n.d. 的条目怎么办？",
+        a: "year 字段回来是空的，去出版方页面找年份补上。APA 的 n.d. 在 BibTeX 里没有对应写法。",
+      },
+      {
+        q: "重建的条目还留着 DOI 吗？",
+        a: "留着，doi 字段是裸标识符，另外还有个 url 字段存 https://doi.org/ 链接。导进文献管理软件再导出来也不会丢。",
+      },
+      {
+        q: "APA 文献表会被上传吗？",
+        a: "不会。APA 转 BibTeX 全程在浏览器本地完成，不上传服务器，也不用注册账号。",
+      },
+    ],
+    relatedSlugs: ["bibtex-to-apa", "doi-to-bibtex", "bibtex-to-mla"],
+    ctaPrimary: "把 APA 文献表转回 .bib",
+    ctaSecondary: "看 BibTeX 怎么转成 APA",
+    updated: "2026-11-18",
+  },
+
+  "doi-to-apa": {
+    slug: "doi-to-apa",
+    keyword: "DOI 转 APA 第 7 版",
+    title: "DOI 转 APA 第 7 版：Crossref 查元数据",
+    description:
+      "DOI 转 APA 第 7 版靠 Crossref 反查书目信息：二十位作者规则、句首大写题名、斜体的刊名与卷、DOI 写完整链接，附正文引用写法与批量做法。",
+    h1: "DOI 转 APA 第 7 版：从标识符到参考文献",
+    intro:
+      "DOI 是拿到完整 APA 参考文献最省事的办法，也是最容易缺字段的办法。DOI 转 APA 第 7 版靠 Crossref 反查出版方登记的元数据，再按 APA 第 7 版排版。现代期刊的登记一般很全，其它文献就要多看一眼。",
+    sections: [
+      {
+        h2: "DOI 转 APA 第 7 版：一次查找能拿到什么",
+        paragraphs: [
+          "一次查找就是向 Crossref 的 REST 接口发一次请求，拿回出版方登记的 JSON。从里面读九个字段：题名、刊名、作者（姓和名分开）、出版日期、卷、期、页码、出版社和 DOI 本身。",
+          "这九个字段正好就是 APA 第 7 版一条参考文献需要的全部，所以只给一个 DOI 常常就能拿到成品。摘要、许可、资助信息这些用不上的字段直接丢掉。以 10.1038/nature14539 为例，查到的是 LeCun 等人 2015 年发表在 Nature 521 卷 7553 期 436–444 页的 Deep learning。",
+          "麻烦在登记质量。老记录常有全大写题名、缺卷期、作者没有名，只有姓。DOI 转 APA 第 7 版的结果结构正确、仍需改两处的情况很常见，知道盯哪几个字段就快了。",
+        ],
+        table: {
+          headers: ["Crossref 字段", "APA 第 7 版著录位", "LeCun 的例子"],
+          rows: [
+            ["author[].family / given", "姓加缩写", "LeCun, Y., Bengio, Y., & Hinton, G."],
+            ["issued date-parts", "作者后括号里的年份", "(2015)."],
+            ["title", "句首大写，无标记", "Deep learning."],
+            ["container-title", "刊名斜体", "Nature,"],
+            ["volume / issue", "卷斜体，期放括号", "521(7553),"],
+            ["page", "完整范围，长破折号", "436–444."],
+            ["DOI", "末尾写链接", "https://doi.org/10.1038/nature14539"],
+          ],
+        },
+      },
+      {
+        h2: "APA 第 7 版的形状：作者、年份、斜体",
+        paragraphs: [
+          "APA 第 7 版的文献表最多列二十位作者。二十一位以上只印前十九位、一个省略号、最后一位作者。正文里的引用更严：三位以上作者从第一次出现就写成首位作者加 et al.，所以正文里 (LeCun et al., 2015) 是对的，文献表里三位全列也是对的。",
+          "题名改句首大写，Deep Learning 变成 Deep learning；刊名和卷一起斜体，期紧跟在卷后面放括号，中间没有空格：Nature, 521(7553)。DOI 收尾写完整链接 https://doi.org/10.1038/nature14539，后面不加句点，前面不加 DOI:。",
+        ],
+      },
+      {
+        h2: "Crossref 里没有这条 DOI",
+        paragraphs: [
+          "Crossref 只是注册机构之一，DOI 转 APA 第 7 版只能读它自己的登记。10.48550/arXiv.2301.00001 这种 arXiv DOI 由 DataCite 注册，Crossref 再怎么查都是查无此号。改贴 arXiv ID，例如 2301.00001，或者 abs 链接：系统另外认这个格式，版本号去掉，从 arXiv 接口读记录。",
+          "Zenodo、figshare、Dryad 的标识，包括 10.5281 这一家，也都是 DataCite 的记录，Crossref 里没有。它们是数据集，条目是数据集参考文献，容器是仓储库而不是期刊。直接粘 https://doi.org/ 开头的链接也能识别，系统会先扫出 DOI 形状的字串，句末的分号、句点先去掉再查。",
+        ],
+      },
+      {
+        h2: "同一条记录的正文引用",
+        paragraphs: [
+          "文献表只是一半工作，正文引用要对得上。三位以上作者括号里写 (LeCun et al., 2015)，叙述式写 LeCun et al. (2015)，年份跟在名字后面。两位作者括号里两个都写，中间用 &：(LeCun & Bengio, 2015)，叙述式用 and。",
+          "引用原话还要加页码：单页 (LeCun et al., 2015, p. 436)，多页 pp. 436–437。页码来自同一份 Crossref 登记，没有 page 字段的记录写不出页码，引用之前先看条目。",
+        ],
+        list: [
+          "三位以上作者：括号里 (LeCun et al., 2015)。",
+          "两位作者：括号里 (LeCun & Bengio, 2015)，叙述式用 and。",
+          "引用原话：加上 p. 或 pp. 和引用的页码。",
+          "叙述式：LeCun et al. (2015) 认为……",
+        ],
+      },
+      {
+        h2: "DOI 转 APA 第 7 版的批量做法",
+        paragraphs: [
+          "DOI 输入框一次只解析一个标识符：读输入里第一个 DOI 形状的字串或 arXiv 标识符，返回一条记录。四十条 DOI 就是四十次查找，文献已经在手里的时候换别的输入方式更快。",
+          "整批粘贴 APA 文本，一条空一行，或者直接粘 BibTeX，两种都是一次解析。DOI 输入框留给源头就坏掉的那条：题名丢了、页码在复制里丢了。长列表里通常每条坏掉的文献查一次 DOI 就够了。",
+          "查找和转换记录留在浏览器本地历史里，最近二十条，昨天查过的标识符一点就回来。输出能下 .bib、.ris 或纯文本，.ris 可以导回 EndNote 或 Zotero，不用重新录入。",
+        ],
+        list: [
+          "粘 DOI，或者只有整条参考文献就粘整条。",
+          "先看作者数量再信文献表。",
+          "卷期页码缺失先在源记录里补，再重新排版。",
+          "要导回管理软件就下 .ris。",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "DOI 查找能拿到页码吗？",
+        a: "多数能，因为多数出版社登记了起止页码。老记录或只有文章编号的没有，页码那一项就是空的，自己补上。",
+      },
+      {
+        q: "arXiv 的 DOI（10.48550）为什么查不到？",
+        a: "10.48550 由 DataCite 注册而非 Crossref，Crossref 元数据里没有这条记录。改用 arXiv ID 或文章链接作为输入即可。",
+      },
+      {
+        q: "一次能转多少条 DOI？",
+        a: "DOI 输入框一次解析一个标识符。长列表粘 APA 文本或 BibTeX，一次解析完。",
+      },
+      {
+        q: "DOI 在参考文献里写在哪？",
+        a: "条目末尾，写完整链接 https://doi.org/10.1038/nature14539。前面不加 DOI:，后面不加句点。",
+      },
+      {
+        q: "DOI 转 APA 第 7 版会上传我的文献吗？",
+        a: "不会。只把标识符发给 Crossref 查出版方元数据，不用注册账号，不上传文献列表，服务器也不留副本。",
+      },
+      {
+        q: "三位作者正文里怎么写？",
+        a: "括号里 (LeCun et al., 2015)，叙述式 LeCun et al. (2015)。文献表里三位全列。",
+      },
+    ],
+    relatedSlugs: ["doi-to-bibtex", "bibtex-to-apa", "doi-to-mla"],
+    ctaPrimary: "粘一条 DOI，生成 APA 参考文献",
+    ctaSecondary: "同一条记录拿 BibTeX",
+    updated: "2026-11-18",
+  },
+
+  "bibtex-to-harvard": {
+    slug: "bibtex-to-harvard",
+    keyword: "BibTeX 转 Harvard",
+    title: "BibTeX 转 Harvard：Cite Them Right",
+    description:
+      "BibTeX 转 Harvard（Cite Them Right 第 11 版）：三位作者规则、题名加引号、刊名斜体、doi: 前缀；再讲 Harvard 各校版本不一样的地方与自查四点。",
+    h1: "BibTeX 转 Harvard：字段逐项拆解",
+    intro:
+      "Harvard 没有统一的官方手册，这是 BibTeX 转 Harvard 首先要知道的事。这篇按 Cite Them Right 第 11 版讲，转换器用的就是这个版本，也是多数英国大学指南的底本。你学校如果发了自己的 Harvard 指南，按文末四点对照着看。",
+    sections: [
+      {
+        h2: "BibTeX 转 Harvard：字段落到哪里",
+        paragraphs: [
+          "以 LeCun 等人 2015 年发表在 Nature 521 卷 7553 期 436–444 页的 Deep Learning 为例，BibTeX 是 @article{lecun2015deep, author = {LeCun, Yann and Bengio, Yoshua and Hinton, Geoffrey}, title = {Deep Learning}, journal = {Nature}, year = {2015}, volume = {521}, number = {7553}, pages = {436--444}, doi = {10.1038/nature14539}}。Harvard 输出是 LeCun, Y., Bengio, Y. and Hinton, G. (2015) “Deep learning,” Nature, 521(7553), pp. 436–444. doi:10.1038/nature14539.",
+          "刊名在渲染出的页面里是斜体，卷和期连在一起写，页码前面加 pp.、保持完整长度。DOI 是裸标识符，前面加 doi:，没有 https://doi.org/ 前缀，冒号后面也没有空格。",
+        ],
+        table: {
+          headers: ["BibTeX 字段", "Harvard 著录位（Cite Them Right 第 11 版）", "写法要点"],
+          rows: [
+            ["author", "姓加缩写，最后一位前用 and", "LeCun, Y., Bengio, Y. and Hinton, G."],
+            ["year", "作者后括号内", "(2015)"],
+            ["title", "加引号", "“Deep learning,”"],
+            ["journal", "斜体", "Nature,"],
+            ["volume / number", "卷（期），没有空格", "521(7553),"],
+            ["pages", "pp. 加完整范围", "pp. 436–444."],
+            ["doi", "doi: 加裸标识符", "doi:10.1038/nature14539."],
+          ],
+        },
+      },
+      {
+        h2: "作者：三位，之后用 et al.",
+        paragraphs: [
+          "Cite Them Right 的 Harvard 最多列三位作者。四位以上作者只列首位加 et al.，第二、第三、第四位都不出现。正文引用同一个分界：三位作者全写出来，(LeCun, Bengio and Hinton, 2015)，四位以上才用 et al.",
+          "最后一位作者前面是 and，绝不是 &，这是 Harvard 文献表和 APA 一眼能分出来的地方。缩写就是缩写，机构作者要双重大括号保护，写成 {{World Health Organization}}，否则会被拆成三个人。其它 Harvard 版本不一样：有的文献表里全列作者，你学校指南如果这么说，按学校的来。",
+        ],
+        list: [
+          "转换前数一数每个 author 字段有几个人。",
+          "三位作者：三位全列，中间用 and 连接。",
+          "四位以上作者：只列首位加 et al.",
+          "分隔词是 and，绝不是 &。",
+        ],
+      },
+      {
+        h2: "题名引号、斜体与 doi: 前缀",
+        paragraphs: [
+          "文章题名加引号、写句首大写，Deep Learning 变成 “Deep learning,”，逗号在右引号里面。刊名斜体，卷和期连在一起写 521(7553)，页码前面加 pp.、保持完整长度，pp. 436–444。",
+          "DOI 最容易让人意外：Cite Them Right 的 Harvard 写成 doi:10.1038/nature14539，裸标识符前面加 doi:，冒号后面没有空格，也没有链接。其它 Harvard 指南有的写完整 https://doi.org/ 链接，学校指南如果要求链接，按学校的来，转换器按 Cite Them Right 第 11 版输出。",
+        ],
+      },
+      {
+        h2: "条目类型：@article、@book、@inproceedings",
+        paragraphs: [
+          "专著的开头一样是作者加年份，容器不同。@book{goodfellow2016deep, author = {Goodfellow, Ian and Bengio, Yoshua and Courville, Aaron}, title = {Deep Learning}, publisher = {MIT Press}, year = {2016}} 变成 Goodfellow, I., Bengio, Y. and Courville, A. (2016) Deep Learning. MIT Press. 书名斜体，出版社取容器位，没有卷期那一块。",
+          "会议论文题名加引号，会议录名斜体、前面加 In。章节题名加引号，书名斜体。专著的 .bib 条目里没有出版地，Harvard 输出就只有出版社，学校指南要求出版地的话手工补上。",
+        ],
+        table: {
+          headers: ["条目类型", "加引号的题名", "斜体的容器"],
+          rows: [
+            ["@article", "文章题名", "刊名"],
+            ["@inproceedings", "论文题名", "会议录名"],
+            ["@book", "书名（斜体，不加引号）", "出版地与出版社"],
+            ["@incollection", "章节题名", "书名"],
+            ["@phdthesis", "论文题名（斜体，不加引号）", "大学"],
+            ["@online", "页面题名", "网站名"],
+          ],
+        },
+      },
+      {
+        h2: "转换后逐条自查",
+        paragraphs: [
+          "贴进论文之前按四点检查：et al. 前面最多三位作者、题名有引号、刊名斜体、卷（期）加 pp. 范围、DOI 在末尾写 doi: 前缀。学校指南跟其中任何一点不一样，按学校指南来，Harvard 是一族格式，不是一本手册。",
+          "留着 .bib 原文件，下次投别的期刊换个格式就能重新生成；下载的 .ris 可以导回 Zotero 或 EndNote，不用重新录入。",
+        ],
+        list: [
+          "作者：最多三位，四位以上加 et al.",
+          "题名：加引号；刊名：斜体。",
+          "数字：卷（期），pp. 加完整范围。",
+          "DOI：末尾写 doi: 加裸标识符。",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "这篇讲的是哪个 Harvard？",
+        a: "Cite Them Right 第 11 版，转换器用的版本，也是多数英国大学指南的底本。Harvard 没有统一的官方手册，学校指南不一样就按学校的来。",
+      },
+      {
+        q: "Harvard 列几位作者？",
+        a: "三位。四位以上作者只列首位加 et al.，文献表和正文都一样。",
+      },
+      {
+        q: "DOI 为什么写 doi: 而不是链接？",
+        a: "Cite Them Right 第 11 版印裸标识符，前面加 doi:，冒号后面没有空格，也没有解析链接。其它 Harvard 指南有的写完整链接。",
+      },
+      {
+        q: "题名用单引号还是双引号？",
+        a: "转换器输出双引号，逗号在右引号里面：“Deep learning,”。有的学校指南用单引号，按学校的来。",
+      },
+      {
+        q: "大括号保护的大写 {DNA} 会怎样？",
+        a: "括号去掉，里面的文字按原样保留，{DNA} 印成 DNA 而不是 Dna。这也是用转换器而不是手打的原因之一。",
+      },
+      {
+        q: ".bib 文件会被上传吗？",
+        a: "不会。BibTeX 转 Harvard 全程在浏览器本地完成，不上传服务器，也不用注册账号。",
+      },
+    ],
+    relatedSlugs: ["bibtex-to-apa", "bibtex-to-mla", "doi-to-bibtex"],
+    ctaPrimary: "粘贴 BibTeX，生成 Harvard 参考文献",
+    ctaSecondary: "同一条目看 APA 第 7 版",
+    updated: "2026-11-18",
+  },
+
+  "doi-to-mla": {
+    slug: "doi-to-mla",
+    keyword: "DOI 转 MLA 第 9 版",
+    title: "DOI 转 MLA 第 9 版：Crossref 生成条目",
+    description:
+      "DOI 转 MLA 第 9 版靠 Crossref 反查书目信息：只列一位作者加 et al.、题名加引号、刊名斜体、DOI 写链接，附正文引用写法与批量做法。",
+    h1: "DOI 转 MLA 第 9 版：从标识符到 Works Cited",
+    intro:
+      "DOI 是拿到完整 MLA 条目最省事的办法，也是最容易缺字段的办法。DOI 转 MLA 第 9 版靠 Crossref 反查出版方登记的元数据，再按 MLA 第 9 版排版。现代期刊的登记一般很全，其它文献就要多看一眼。",
+    sections: [
+      {
+        h2: "DOI 转 MLA 第 9 版：一次查找能拿到什么",
+        paragraphs: [
+          "一次查找就是向 Crossref 的 REST 接口发一次请求，拿回出版方登记的 JSON。从里面读九个字段：题名、刊名、作者（姓和名分开）、出版日期、卷、期、页码、出版社和 DOI 本身。",
+          "这九个字段正好就是 MLA 第 9 版一条 Works Cited 需要的全部，所以只给一个 DOI 常常就能拿到成品。摘要、许可、资助信息这些用不上的字段直接丢掉。以 10.1038/nature14539 为例，查到的是 LeCun 等人 2015 年发表在 Nature 521 卷 7553 期 436–444 页的 Deep learning。",
+          "麻烦在登记质量。老记录常有全大写题名、缺卷期、作者没有名，只有姓。DOI 转 MLA 第 9 版的结果结构正确、仍需改两处的情况很常见，知道盯哪几个字段就快了。",
+        ],
+        table: {
+          headers: ["Crossref 字段", "MLA 第 9 版著录位", "LeCun 的例子"],
+          rows: [
+            ["author[].family / given", "只列首位加 et al.", "LeCun, Yann, et al."],
+            ["title", "加引号，实词大写", "“Deep Learning.”"],
+            ["container-title", "容器名斜体", "Nature,"],
+            ["issued date-parts", "年份在卷期之后", "2015,"],
+            ["volume / issue", "vol.、no. 缩写", "vol. 521, no. 7553,"],
+            ["page", "pp. 加缩写范围", "pp. 436–44."],
+            ["DOI", "末尾写链接", "https://doi.org/10.1038/nature14539."],
+          ],
+        },
+      },
+      {
+        h2: "MLA 第 9 版的形状：一位作者、引号、斜体",
+        paragraphs: [
+          "MLA 第 9 版只翻转第一位作者的姓名。LeCun, Yann, et al.，第二、第三位作者不出现，因为三位以上作者只列首位加 et al.。两位作者两人全列：Doe, John, and Jane Smith。",
+          "题名加引号、实词大写，写成 “Deep Learning.”，刊名斜体作容器。卷和期写成 vol. 521, no. 7553，页码缩写成 pp. 436–44，DOI 在末尾写完整链接。年份在靠后的位置，卷期之后，这是没转干净的 APA 条目最容易露馅的地方。",
+        ],
+      },
+      {
+        h2: "Crossref 里没有这条 DOI",
+        paragraphs: [
+          "Crossref 只是注册机构之一，DOI 转 MLA 第 9 版只能读它自己的登记。10.48550/arXiv.2301.00001 这种 arXiv DOI 由 DataCite 注册，Crossref 再怎么查都是查无此号。改贴 arXiv ID，例如 2301.00001，或者 abs 链接：系统另外认这个格式，版本号去掉，从 arXiv 接口读记录。",
+          "Zenodo、figshare、Dryad 的标识，包括 10.5281 这一家，也都是 DataCite 的记录，Crossref 里没有。它们是数据集，条目是数据集参考文献，容器是仓储库而不是期刊。直接粘 https://doi.org/ 开头的链接也能识别，系统会先扫出 DOI 形状的字串，句末的分号、句点先去掉再查。",
+        ],
+      },
+      {
+        h2: "同一条记录的正文引用",
+        paragraphs: [
+          "MLA 的正文引用指向页码，不是指向年份。APA 写 (LeCun et al., 2015) 的地方，MLA 引用 436 页的原话写 (LeCun et al. 436)，整篇作品写 (LeCun et al.)。Works Cited 按作者字母顺序排，转换不改变任何编号，数字制式才重排。",
+          "所以 DOI 转 MLA 第 9 版基本是机械活：列表顺序不变，引用标记换形状，唯一手工步骤是找到你引用的原话到底在哪一页。页码来自同一份 Crossref 登记，没有 page 字段的记录写不出页码。",
+        ],
+        list: [
+          "三位以上作者：引用原话写 (LeCun et al. 436)。",
+          "整篇作品：(LeCun et al.)，不加页码。",
+          "两位作者：(LeCun and Bengio 436)。",
+          "列表按字母顺序排，不重排。",
+        ],
+      },
+      {
+        h2: "DOI 转 MLA 第 9 版的批量做法",
+        paragraphs: [
+          "DOI 输入框一次只解析一个标识符：读输入里第一个 DOI 形状的字串或 arXiv 标识符，返回一条记录。四十条 DOI 就是四十次查找，文献已经在手里的时候换别的输入方式更快。",
+          "整批粘贴 APA 文本，一条空一行，或者直接粘 BibTeX，两种都是一次解析。DOI 输入框留给源头就坏掉的那条：题名丢了、页码在复制里丢了。长列表里通常每条坏掉的文献查一次 DOI 就够了。",
+          "查找和转换记录留在浏览器本地历史里，最近二十条，昨天查过的标识符一点就回来。输出能下 .bib、.ris 或纯文本，.ris 可以导回 EndNote 或 Zotero，不用重新录入。",
+        ],
+        list: [
+          "粘 DOI，或者只有整条参考文献就粘整条。",
+          "先看作者数量再信列表。",
+          "卷期页码缺失先在源记录里补，再重新排版。",
+          "要导回管理软件就下 .ris。",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "DOI 查找能拿到页码吗？",
+        a: "多数能，因为多数出版社登记了起止页码。老记录或只有文章编号的没有，pp. 那一项就是空的，自己补上。",
+      },
+      {
+        q: "arXiv 的 DOI（10.48550）为什么查不到？",
+        a: "10.48550 由 DataCite 注册而非 Crossref，Crossref 元数据里没有这条记录。改用 arXiv ID 或文章链接作为输入即可。",
+      },
+      {
+        q: "一次能转多少条 DOI？",
+        a: "DOI 输入框一次解析一个标识符。长列表粘 APA 文本或 BibTeX，一次解析完。",
+      },
+      {
+        q: "DOI 写链接还是简写？",
+        a: "写完整链接 https://doi.org/10.1038/nature14539。MLA 第 9 版要求 DOI 是可点击的链接。",
+      },
+      {
+        q: "三位作者 MLA 为什么只列一位？",
+        a: "MLA 第 9 版规定三位以上作者只列首位加 et al.，APA 最多列二十位，同一篇论文两种写法差别很大。",
+      },
+      {
+        q: "DOI 转 MLA 第 9 版会上传我的文献吗？",
+        a: "不会。只把标识符发给 Crossref 查出版方元数据，不用注册账号，不上传文献列表，服务器也不留副本。",
+      },
+    ],
+    relatedSlugs: ["doi-to-apa", "doi-to-bibtex", "bibtex-to-mla"],
+    ctaPrimary: "粘一条 DOI，生成 MLA 条目",
+    ctaSecondary: "同一条记录看 APA 第 7 版",
+    updated: "2026-11-18",
+  },
 };
 
 export default zh;

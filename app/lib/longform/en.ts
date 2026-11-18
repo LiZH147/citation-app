@@ -1021,6 +1021,669 @@ const en: LongformSet = {
     ctaSecondary: "See how MLA handles the same entry",
     updated: "2026-11-12",
   },
+
+  "doi-to-bibtex": {
+    slug: "doi-to-bibtex",
+    keyword: "DOI to BibTeX",
+    title: "DOI to BibTeX: Crossref to @article",
+    description:
+      "DOI to BibTeX in one lookup: paste a DOI, get a clean @article entry with a generated key and full fields — plus the arXiv cases Crossref misses.",
+    h1: "DOI to BibTeX: Turning an Identifier Into a .bib Entry",
+    intro:
+      "A DOI is the fastest route to a .bib entry and the one most likely to arrive with pieces missing. A DOI to BibTeX lookup resolves the identifier against Crossref, reads the publisher's deposit, and writes it out as a BibTeX entry. That works well for modern journal deposits and needs a second look for everything else.",
+    sections: [
+      {
+        h2: "DOI to BibTeX: what the lookup returns",
+        paragraphs: [
+          "The lookup is one request to the Crossref REST API for a single work identifier, asking for JSON. The response is the publisher's deposit rather than a curated catalogue record. From it the converter reads nine things: title, container title, authors split into family and given names, issued date, volume, issue, page, publisher and the identifier itself.",
+          "Those nine fields are exactly what a BibTeX entry needs, which is why a bare DOI often produces a finished @article. Everything else in the deposit, from abstracts to licence text to funder data, is discarded. Take 10.1038/nature14539: the lookup returns the LeCun, Bengio and Hinton paper Deep learning, published in Nature in 2015, volume 521, issue 7553, pages 436–444.",
+          "The catch is deposit quality. Older records sometimes carry capitalised titles, a missing volume, or an author list without given names. A DOI to BibTeX result can be structurally correct and still need two edits, and knowing which fields to inspect makes that fast.",
+        ],
+        table: {
+          headers: ["Crossref field", "BibTeX field", "In the LeCun example"],
+          rows: [
+            ["title", "title", "Deep learning"],
+            ["author[].family / given", "author, joined with and", "LeCun, Yann and Bengio, Yoshua and Hinton, Geoffrey"],
+            ["container-title", "journal", "Nature"],
+            ["issued date-parts", "year", "2015"],
+            ["volume / issue", "volume / number", "521 / 7553"],
+            ["page", "pages, double hyphen", "436--444"],
+            ["DOI", "doi, plus a url field", "10.1038/nature14539"],
+            ["type", "entry type", "journal-article becomes @article"],
+          ],
+        },
+      },
+      {
+        h2: "The citation key: LeCun2015Deep",
+        paragraphs: [
+          "Every BibTeX entry needs a key, and the DOI lookup builds one from the record itself: the first author's surname, the year and the first word of the title. The LeCun paper becomes @article{LeCun2015Deep, ...}. The key never contains the DOI, so it stays short enough to type in a cite command and safe to use in every LaTeX setup.",
+          "Rename the key freely before you save the file — it is plain text, and nothing else in the entry depends on it. The one rule is uniqueness: two entries in the same .bib file cannot share a key, and a second paper by the same first author in the same year gets a key from its own title word. If two titles start with the same word, rename one of them by hand.",
+        ],
+        list: [
+          "Keys are built as SurnameYearFirstTitleWord, for example LeCun2015Deep.",
+          "A key is only a label: renaming it changes no field in the entry.",
+          "Two entries in one .bib file must never share a key.",
+          "Check the key before citing it: a typo there is a missing reference in the PDF.",
+        ],
+      },
+      {
+        h2: "Which entry type the DOI becomes",
+        paragraphs: [
+          "Crossref labels every work with a type, and that type decides the BibTeX entry type. The mapping follows the document rather than the publisher, with one trap: posted-content is Crossref's name for a preprint, and it arrives as an @article whose container is the preprint server, so check the container before you cite it as a journal paper.",
+          "A thesis DOI is the other edge case. Crossref calls it a dissertation and the converter has no way to know whether it was a PhD or a master's thesis, so it arrives as @misc. Change the type to @phdthesis by hand and add the school field; the rest of the entry is already correct.",
+        ],
+        table: {
+          headers: ["Crossref type", "BibTeX entry type", "Note"],
+          rows: [
+            ["journal-article", "@article", "The common case"],
+            ["proceedings-article", "@inproceedings", "Container is the proceedings title"],
+            ["book", "@book", "Publisher takes the container position"],
+            ["book-chapter", "@inbook", "Title is the chapter, container is the book"],
+            ["report", "@techreport", "Institution goes in the institution field"],
+            ["dataset", "@misc", "Repository is the howpublished note"],
+            ["dissertation", "@misc", "Change to @phdthesis and add school"],
+            ["posted-content", "@article", "Preprint: check the container first"],
+          ],
+        },
+      },
+      {
+        h2: "When Crossref has no record for the DOI",
+        paragraphs: [
+          "Crossref is one registration agency among several, and a DOI to BibTeX lookup can only read its own deposits. An arXiv DOI of the form 10.48550/arXiv.2301.00001 is registered with DataCite, so a Crossref request returns a not-found error however valid the identifier is. Paste the arXiv ID, such as 2301.00001, or the abs URL instead: the pattern is recognised separately, the version suffix is stripped, and the record is read from the arXiv API.",
+          "Zenodo, figshare and Dryad identifiers, including the 10.5281 family, are DataCite records too, so no DOI to BibTeX lookup finds them at Crossref. Those describe datasets, so the entry type is @misc and the container is the repository rather than a journal. A pasted URL works as well: the input is scanned for a DOI-shaped string and trailing punctuation such as a semicolon or full stop is removed before the request, which matters when the identifier came out of a PDF reference list with the sentence still attached.",
+        ],
+      },
+      {
+        h2: "DOI to BibTeX at list scale",
+        paragraphs: [
+          "The DOI box resolves a single identifier: it reads the first DOI-shaped string or arXiv identifier in the input and returns one record. A list of forty identifiers would mean forty lookups, so use the other input modes when the references are already in front of you.",
+          "Paste them as APA text, one reference per blank line, or as BibTeX, and both are parsed locally in a single pass. Keep the DOI box for the reference that is garbled at the source, where a title is missing or a page range was lost in a copy-paste. For a long list, one DOI to BibTeX lookup per broken entry is usually the whole job.",
+          "Lookups and conversions stay in your browser's local history, the most recent twenty, so an identifier you resolved yesterday is one click away. Output leaves as .bib, .ris or plain .txt, and the .ris route moves records into EndNote or Zotero without retyping.",
+        ],
+        list: [
+          "Paste the identifier, or the whole reference if you only have that.",
+          "Check the entry type before you trust the @article label.",
+          "Fix missing volume or pages in the source record, then re-export.",
+          "Keep the .bib file: it is the source the other styles are generated from.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "What citation key does a DOI to BibTeX conversion produce?",
+        a: "The first author's surname, the year and the first word of the title — LeCun2015Deep for the LeCun 2015 paper. Rename it freely; it is only a label and nothing else in the entry depends on it.",
+      },
+      {
+        q: "Why does an arXiv DOI return nothing?",
+        a: "Because 10.48550 identifiers are registered with DataCite, not Crossref. Paste the arXiv ID such as 2301.00001 or the abs URL instead, and the record is read from the arXiv API.",
+      },
+      {
+        q: "Does the .bib entry keep the DOI?",
+        a: "Yes, twice: once as the doi field and once as a url field holding the https://doi.org/ link. Both survive a round trip through a reference manager.",
+      },
+      {
+        q: "What if Crossref has no page numbers?",
+        a: "Some deposits carry only an article number or no page at all, so the pages field is missing and you add it by hand. Older records sometimes lack a volume too.",
+      },
+      {
+        q: "Can I convert a list of DOIs at once?",
+        a: "The DOI box resolves one identifier per lookup. For a longer list, paste it as APA text or BibTeX, which is parsed in a single pass.",
+      },
+      {
+        q: "Is a DOI to BibTeX lookup private?",
+        a: "Only the identifier is sent, to the Crossref API, to fetch the publisher's metadata. There is no account, no upload of your bibliography, and no server-side copy of your list.",
+      },
+    ],
+    relatedSlugs: ["doi-to-apa", "bibtex-to-apa", "doi-to-mla"],
+    ctaPrimary: "Paste a DOI and get the BibTeX entry",
+    ctaSecondary: "See the same record as APA 7th",
+    updated: "2026-11-18",
+  },
+
+  "bibtex-to-apa": {
+    slug: "bibtex-to-apa",
+    keyword: "BibTeX to APA 7th",
+    title: "BibTeX to APA 7th: Field-by-Field Guide",
+    description:
+      "BibTeX to APA 7th edition, field by field: the twenty-author rule, sentence-case titles, the italic journal and volume block, and the DOI as a link.",
+    h1: "BibTeX to APA 7th: A Field-by-Field Conversion Guide",
+    intro:
+      "A .bib entry stores references as named fields; the APA 7th edition reference list expects a fixed element order with fixed punctuation. Almost every BibTeX to APA 7th problem comes from that mismatch rather than from missing data. This guide shows which field lands where, how many author names survive, and what to check before you paste the result into a paper.",
+    sections: [
+      {
+        h2: "BibTeX to APA 7th: what actually changes",
+        paragraphs: [
+          "Nothing inside @article{lecun2015deep, author = {LeCun, Yann and Bengio, Yoshua and Hinton, Geoffrey}, title = {Deep Learning}, journal = {Nature}, year = {2015}, volume = {521}, number = {7553}, pages = {436--444}, doi = {10.1038/nature14539}} says that the year belongs in parentheses after the authors, that the title drops to sentence case, or that the journal name and the volume go in italics. APA 7th edition is the opposite: one element order, one punctuation set. A BibTeX to APA 7th conversion is therefore a placement job, not a translation job.",
+          "So the field labels, the equals signs and the double hyphen disappear, while a parenthesised year, an italic volume and a DOI link appear. The example above becomes `LeCun, Y., Bengio, Y., & Hinton, G. (2015). Deep learning. Nature, 521(7553), 436–444. https://doi.org/10.1038/nature14539`. The BibTeX double hyphen turns into an en dash, and the page range stays full length.",
+        ],
+        table: {
+          headers: ["BibTeX field", "APA 7th edition element", "Output shape"],
+          rows: [
+            ["author", "Surname plus initials, & before the last", "LeCun, Y., Bengio, Y., & Hinton, G."],
+            ["year", "In parentheses after the authors", "(2015)."],
+            ["title", "Sentence case, no marker", "Deep learning."],
+            ["journal", "In italics", "Nature,"],
+            ["volume, number", "Volume italic, issue in parentheses", "521(7553),"],
+            ["pages", "Full range with an en dash", "436–444."],
+            ["doi", "As a link, last element", "https://doi.org/10.1038/nature14539"],
+          ],
+        },
+      },
+      {
+        h2: "Author names: twenty, then an ellipsis",
+        paragraphs: [
+          "APA 7th edition lists up to twenty authors in the reference list. With twenty-one or more, it prints the first nineteen, an ellipsis, and then the final author — the names in between never appear. The in-text citation is stricter: three or more authors collapse to the first surname plus et al. from the very first mention, so (LeCun et al., 2015) is correct in the text while the list still shows all three names.",
+          "Initials stay initials: Y. never expands back into Yann, because a .bib file that only stores initials has nothing to expand. A corporate author needs double braces, {{World Health Organization}}, or the converter reads it as three people. The ampersand before the last author is APA punctuation, not data, so it never appears in the BibTeX source.",
+        ],
+        list: [
+          "Count the names in each author field before converting.",
+          "Twenty or fewer: every name appears in the list.",
+          "Twenty-one or more: first nineteen, an ellipsis, then the final author.",
+          "Three or more authors: the in-text citation is first author plus et al.",
+        ],
+      },
+      {
+        h2: "Titles, italics and the volume block",
+        paragraphs: [
+          "APA 7th edition writes article titles in sentence case: only the first word and proper nouns keep a capital, so Deep Learning becomes Deep learning. Brace-protected capitals such as {DNA} survive because the braces tell the formatter to keep the inner text as written; without them, DNA would print as Dna.",
+          "The journal name and the volume are italicised together, and the issue sits in parentheses right after the volume with no space: Nature, 521(7553). The page range keeps its full length, 436–444, with an en dash — APA never shortens ranges the way MLA does. When an entry has no issue number, the block collapses to the italic volume alone.",
+        ],
+        table: {
+          headers: ["Entry type", "Title treatment", "Container"],
+          rows: [
+            ["@article", "Sentence case, plain", "Journal name and volume in italics"],
+            ["@book", "Sentence case, in italics", "Publisher"],
+            ["@inproceedings", "Sentence case, plain", "Proceedings title in italics"],
+            ["@incollection", "Sentence case, plain", "Book title in italics, after In"],
+            ["@phdthesis", "Sentence case, in italics", "University"],
+            ["@online", "Sentence case, plain", "Website name"],
+          ],
+        },
+      },
+      {
+        h2: "The DOI closes the entry as a link",
+        paragraphs: [
+          "APA 7th edition prints the DOI as a full link, https://doi.org/10.1038/nature14539, with no period after it and no DOI: prefix. A URL is used only when no DOI exists, and it is printed without angle brackets. Older entries that store the DOI without the resolver prefix still convert, because the formatter adds it.",
+          "When there is no page range, because the item is a preprint, a dataset or an article published online ahead of print, the DOI still closes the entry and the volume-and-pages block is simply absent. Some publishers deposit only an article number such as e12345; the lookup reads the page field, so those entries arrive without that element and you add the number by hand.",
+        ],
+      },
+      {
+        h2: "Check the converted entry against four points",
+        paragraphs: [
+          "Before you paste a converted BibTeX to APA 7th entry anywhere, read it against four questions: at most twenty author names before any ellipsis, a sentence-case title followed by an italic journal and volume, a full-length page range with an en dash, and a DOI link at the very end.",
+          "Keep the BibTeX download if a second submission is likely. A formatted string cannot be turned back into fields, while a .bib file converts again for another style in seconds, and the .ris download carries the same records into EndNote or Zotero.",
+        ],
+        list: [
+          "Authors: initials, & before the last, twenty at most.",
+          "Title: sentence case; journal and volume in italics.",
+          "Numbers: volume(issue), full page range with an en dash.",
+          "DOI: last element, as a full link.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "How many authors does APA 7th edition list?",
+        a: "Up to twenty in the reference list. With twenty-one or more, it prints the first nineteen, an ellipsis, and the final author. In-text citations use first author plus et al. from three authors on.",
+      },
+      {
+        q: "Why is the article title lowercase after conversion?",
+        a: "Because APA 7th edition uses sentence case for article titles: only the first word and proper nouns keep capitals. Deep Learning becomes Deep learning.",
+      },
+      {
+        q: "Where does the DOI go in APA 7th edition?",
+        a: "At the very end, as a full link: https://doi.org/10.1038/nature14539. There is no DOI: prefix and no period after the link.",
+      },
+      {
+        q: "What happens to brace-protected capitals such as {DNA}?",
+        a: "The braces are removed and the inner text is kept as written, so {DNA} prints as DNA rather than Dna. That is one reason to convert instead of retyping titles.",
+      },
+      {
+        q: "Does a BibTeX to APA 7th conversion keep the volume and issue?",
+        a: "Yes, as an italic volume with the issue in parentheses: 521(7553). If the entry has no number field, the block collapses to the volume alone.",
+      },
+      {
+        q: "Is my .bib file uploaded when I convert it?",
+        a: "No. The BibTeX to APA 7th conversion runs inside your browser tab, nothing is posted to a server, and no account is needed.",
+      },
+    ],
+    relatedSlugs: ["apa-to-bibtex", "doi-to-apa", "bibtex-to-harvard"],
+    ctaPrimary: "Paste your BibTeX and get the APA list",
+    ctaSecondary: "Turn the APA list back into BibTeX",
+    updated: "2026-11-18",
+  },
+
+  "apa-to-bibtex": {
+    slug: "apa-to-bibtex",
+    keyword: "APA to BibTeX",
+    title: "APA to BibTeX: Rebuilding the .bib File",
+    description:
+      "APA to BibTeX: paste the reference list and get @article entries back, with the right types, keys and page ranges — plus where a human has to step in.",
+    h1: "APA to BibTeX: Turning a Reference List Back Into Fields",
+    intro:
+      "A formatted APA list is a finished product: the field boundaries it was built from are gone. An APA to BibTeX conversion has to rebuild them from punctuation and position alone, and it works because APA 7th edition is rigid enough to read back. This guide shows which shape the parser recognises, which field each element becomes, and where a human still has to step in.",
+    sections: [
+      {
+        h2: "APA to BibTeX: the shape the parser recognises",
+        paragraphs: [
+          "The shape a parser recognises is author block, year in parentheses, period. LeCun, Y., Bengio, Y., & Hinton, G. (2015). Deep learning. Nature, 521(7553), 436–444. https://doi.org/10.1038/nature14539 splits exactly there: the author block ends at the year, the title ends at the first period after it, and the rest is container, volume, issue and pages. Paste one reference per blank line and the whole list is read in a single pass.",
+          "That shape is also the failure mode. Entries that break it include legal citations, web pages with no personal author, and anything whose date is a range such as (2020-2023). Those are faster to type into the manual entry form than to repair afterwards, and the parser says so instead of guessing.",
+        ],
+        table: {
+          headers: ["APA element", "BibTeX field", "From the LeCun example"],
+          rows: [
+            ["Author block", "author, initials kept", "LeCun, Y. and Bengio, Y. and Hinton, G."],
+            ["Year in parentheses", "year", "2015"],
+            ["Title, sentence case", "title", "Deep learning"],
+            ["Journal, volume(issue)", "journal, volume, number", "Nature, 521, 7553"],
+            ["Page range", "pages, double hyphen", "436--444"],
+            ["DOI link", "doi", "10.1038/nature14539"],
+          ],
+        },
+      },
+      {
+        h2: "The rebuilt entry and its key",
+        paragraphs: [
+          "The rebuilt entry is a plain @article with a generated key: the first author's surname, the year and the first word of the title, so the LeCun paper becomes @article{LeCun2015Deep, ...}. The key is only a label, so rename it freely — but keep it unique inside one .bib file, because two entries with the same key break the compile.",
+          "Page ranges come back with a double hyphen, 436--444, which is the BibTeX way of writing an en dash. The DOI link is stripped back to the bare identifier in the doi field, and the resolver URL is kept as the url field, so nothing is lost in the round trip.",
+        ],
+        list: [
+          "Paste one reference per blank line; the list is read in one pass.",
+          "Check the key: two papers by the same author in one year can collide.",
+          "Page ranges return with a double hyphen, 436--444.",
+          "The DOI survives as the doi field plus a url field.",
+        ],
+      },
+      {
+        h2: "Author names: initials stay initials",
+        paragraphs: [
+          "APA writes LeCun, Y., and a BibTeX entry rebuilt from that cannot know the Y. stands for Yann. Initials stay initials: the rebuilt author field reads LeCun, Y. and Bengio, Y. and Hinton, G., which compiles fine but looks thinner than a hand-written .bib file. If the full names matter, add them in the .bib text afterwards — the ampersand is dropped and and takes its place.",
+          "A reference list never uses et al.: APA 7th edition prints every name up to twenty, so an APA to BibTeX conversion of a list keeps the full author block. Et al. only appears in in-text citations such as (LeCun et al., 2015), and those do not parse — paste the reference list, not the body text. A corporate author arrives as a plain name; wrap it in double braces, {{World Health Organization}}, so BibTeX does not split it into people.",
+        ],
+      },
+      {
+        h2: "Types: journal articles and conference papers",
+        paragraphs: [
+          "The parser starts from @article and only moves when the text tells it to. A container that contains In or the words Proceedings, Conference, Symposium or Proceeding becomes @inproceedings, with the proceedings title as the booktitle field. Everything else stays @article, which is right for the great majority of pasted lists.",
+          "Books have no distinct shape in APA text: a book entry reads like an article whose container is a publisher, so it arrives as @article and you change the type to @book by hand. The same is true of theses and reports. An entry dated n.d. has no year at all, so the year field is empty — fill it from the publisher's page or the entry compiles with a missing year.",
+        ],
+        table: {
+          headers: ["APA text clue", "BibTeX entry type", "What to check"],
+          rows: [
+            ["Journal name, volume(issue)", "@article", "The default; usually right"],
+            ["In, or Proceedings / Conference", "@inproceedings", "Container becomes booktitle"],
+            ["Publisher, no journal", "@article (fix by hand)", "Change the type to @book"],
+            ["University, thesis", "@article (fix by hand)", "Change the type to @phdthesis"],
+            ["n.d. as the date", "@article, no year", "Supply the year from the source"],
+          ],
+        },
+      },
+      {
+        h2: "Check the rebuilt .bib before compiling",
+        paragraphs: [
+          "Before you compile, read the rebuilt file against four questions: every entry has a unique key, the author block uses and between names, the title kept its capitals where they matter, and the page range uses a double hyphen. Titles are the weak point: APA prints them in sentence case, so a capitalised word such as DNA arrives lowercase unless you re-add the braces.",
+          "Keep the APA list next to the .bib file until the PDF compiles once. A formatted string cannot be turned back into fields, but the .bib file you just rebuilt converts again for any other style in seconds, and the .ris download carries the same records into EndNote or Zotero.",
+        ],
+        list: [
+          "Keys: unique in the file, rename on collision.",
+          "Authors: and between names, initials stay initials.",
+          "Titles: re-add {Braces} around capitals APA lowercased.",
+          "Pages: double hyphen, 436--444.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "Can APA initials be expanded back into full names?",
+        a: "No. APA prints Y. and the parser cannot know it stands for Yann. Add full names in the .bib text afterwards if they matter.",
+      },
+      {
+        q: "What happens to et al. in an APA to BibTeX conversion?",
+        a: "Nothing, because a reference list never contains it: APA prints every name up to twenty. Et al. only appears in in-text citations, which do not parse — paste the list, not the body text.",
+      },
+      {
+        q: "Why did my book become an @article?",
+        a: "Because a book has no distinct shape in APA text. The parser defaults to @article and only recognises conference papers by their container. Change the type to @book by hand.",
+      },
+      {
+        q: "What do I do with an entry dated n.d.?",
+        a: "The year field comes back empty, so fill it from the publisher's page. APA has no marker for an unknown year that BibTeX understands.",
+      },
+      {
+        q: "Does the rebuilt entry keep the DOI?",
+        a: "Yes, as the doi field with the bare identifier, plus a url field holding the https://doi.org/ link. Both survive a round trip through a reference manager.",
+      },
+      {
+        q: "Is my APA list uploaded when I convert it?",
+        a: "No. The APA to BibTeX conversion runs inside your browser tab, nothing is posted to a server, and no account is needed.",
+      },
+    ],
+    relatedSlugs: ["bibtex-to-apa", "doi-to-bibtex", "bibtex-to-mla"],
+    ctaPrimary: "Paste the APA list and rebuild the .bib",
+    ctaSecondary: "See how BibTeX turns into APA",
+    updated: "2026-11-18",
+  },
+
+  "doi-to-apa": {
+    slug: "doi-to-apa",
+    keyword: "DOI to APA 7th",
+    title: "DOI to APA 7th: Crossref to Reference",
+    description:
+      "DOI to APA 7th edition with live Crossref metadata: the twenty-author rule, sentence-case titles, the italic volume block and the DOI as a link.",
+    h1: "DOI to APA 7th: Turning an Identifier Into a Reference",
+    intro:
+      "A DOI is the cheapest way to get a complete APA reference and the one most likely to arrive with pieces missing. A DOI to APA 7th lookup resolves the identifier against Crossref, reads the deposited metadata, and formats it for APA 7th edition. That works well for modern journal deposits and needs a second look for everything else.",
+    sections: [
+      {
+        h2: "What a DOI to APA 7th lookup returns",
+        paragraphs: [
+          "The lookup is one request to the Crossref REST API for a single work identifier, asking for JSON. The response is the publisher's deposit rather than a curated catalogue record. From it the converter reads nine things: title, container title, authors split into family and given names, issued date, volume, issue, page, publisher and the identifier itself.",
+          "Those nine fields are exactly what an APA 7th edition entry needs, which is why a bare DOI often produces a finished reference. Everything else in the deposit, from abstracts to licence text to funder data, is discarded. Take 10.1038/nature14539: the lookup returns the LeCun, Bengio and Hinton paper Deep learning, published in Nature in 2015, volume 521, issue 7553, pages 436–444.",
+          "The catch is deposit quality. Older records sometimes carry capitalised titles, a missing volume, or an author list without given names. A DOI to APA 7th result can be structurally correct and still need two edits, and knowing which fields to inspect makes that fast.",
+        ],
+        table: {
+          headers: ["Crossref field", "APA 7th edition element", "In the LeCun example"],
+          rows: [
+            ["author[].family / given", "Surname plus initials", "LeCun, Y., Bengio, Y., & Hinton, G."],
+            ["issued date-parts", "Year in parentheses", "(2015)."],
+            ["title", "Sentence case, no marker", "Deep learning."],
+            ["container-title", "Journal, in italics", "Nature,"],
+            ["volume / issue", "Volume italic, issue in parentheses", "521(7553),"],
+            ["page", "Full range, en dash", "436–444."],
+            ["DOI", "Link, last element", "https://doi.org/10.1038/nature14539"],
+          ],
+        },
+      },
+      {
+        h2: "The APA 7th shape: authors, year, italics",
+        paragraphs: [
+          "APA 7th edition lists up to twenty authors in the reference list. With twenty-one or more, it prints the first nineteen, an ellipsis, and then the final author. The in-text citation is stricter: three or more authors collapse to the first surname plus et al. from the very first mention, so (LeCun et al., 2015) is correct in the text while the list still shows all three names.",
+          "The title drops to sentence case — Deep Learning becomes Deep learning — while the journal name and the volume are italicised together and the issue sits in parentheses right after the volume with no space: Nature, 521(7553). The DOI closes the entry as a full link, https://doi.org/10.1038/nature14539, with no period after it and no DOI: prefix.",
+        ],
+      },
+      {
+        h2: "When the DOI is not registered with Crossref",
+        paragraphs: [
+          "Crossref is one registration agency among several, and a DOI to APA 7th lookup can only read its own deposits. An arXiv DOI of the form 10.48550/arXiv.2301.00001 is registered with DataCite, so a Crossref request returns a not-found error however valid the identifier is. Paste the arXiv ID, such as 2301.00001, or the abs URL instead: the pattern is recognised separately, the version suffix is stripped, and the record is read from the arXiv API.",
+          "Zenodo, figshare and Dryad identifiers, including the 10.5281 family, are DataCite records too, so no DOI to APA 7th lookup finds them at Crossref. Those describe datasets, so the entry is a dataset reference and the container is the repository rather than a journal. A pasted URL works as well: the input is scanned for a DOI-shaped string and trailing punctuation such as a semicolon or full stop is removed before the request.",
+        ],
+      },
+      {
+        h2: "In-text citations from the same record",
+        paragraphs: [
+          "The reference list is only half the job; the in-text citation has to match it. Three or more authors become (LeCun et al., 2015) in parentheses, or LeCun et al. (2015) in narrative form, where the year follows the names. Two authors keep both names with an ampersand in parentheses — (LeCun & Bengio, 2015) — and the word and in narrative text.",
+          "A quotation needs a page number as well: (LeCun et al., 2015, p. 436) for a single page, or pp. 436–437 for a range. The page numbers come from the same Crossref deposit, so a record without a page field cannot produce one — check the entry before you quote from it.",
+        ],
+        list: [
+          "Three or more authors: (LeCun et al., 2015) in parentheses.",
+          "Two authors: (LeCun & Bengio, 2015), and in narrative text.",
+          "Quotations: add p. or pp. with the page you quoted from.",
+          "Narrative form: LeCun et al. (2015) argued …",
+        ],
+      },
+      {
+        h2: "DOI to APA 7th at list scale",
+        paragraphs: [
+          "The DOI box resolves a single identifier: it reads the first DOI-shaped string or arXiv identifier in the input and returns one record. A list of forty identifiers would mean forty lookups, so use the other input modes when the references are already in front of you.",
+          "Paste them as APA text, one reference per blank line, or as BibTeX, and both are parsed locally in a single pass. Keep the DOI box for the reference that is garbled at the source, where a title is missing or a page range was lost in a copy-paste. For a long list, one DOI to APA 7th lookup per broken entry is usually the whole job.",
+          "Lookups and conversions stay in your browser's local history, the most recent twenty, so an identifier you resolved yesterday is one click away. Output leaves as .bib, .ris or plain .txt, and the .ris route moves records into EndNote or Zotero without retyping.",
+        ],
+        list: [
+          "Paste the identifier, or the whole reference if you only have that.",
+          "Check the author count before you trust the list.",
+          "Fix missing volume or pages in the source record, then reformat.",
+          "Export as .ris if the list has to go back into a manager.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "Does a DOI lookup give me the page numbers?",
+        a: "Usually, because most publishers deposit a page range. Older records or article-number-only deposits have none, so the pages element is missing and you add it.",
+      },
+      {
+        q: "Why does an arXiv DOI return nothing?",
+        a: "Because 10.48550 identifiers are registered with DataCite, not Crossref. Paste the arXiv ID such as 2301.00001 or the abs URL instead, and the record is read from the arXiv API.",
+      },
+      {
+        q: "How many DOIs can I convert at once?",
+        a: "The DOI box resolves one identifier per lookup. For a longer list, paste it as APA text or BibTeX, which is parsed in a single pass.",
+      },
+      {
+        q: "Where exactly does the DOI go in the reference?",
+        a: "At the very end, as a full link: https://doi.org/10.1038/nature14539. There is no DOI: prefix and no period after the link.",
+      },
+      {
+        q: "Is a DOI to APA 7th lookup private?",
+        a: "Only the identifier is sent, to the Crossref API, to fetch the publisher's metadata. There is no account, no upload of your bibliography, and no server-side copy of your list.",
+      },
+      {
+        q: "How do I cite three authors in the text?",
+        a: "As (LeCun et al., 2015) in parentheses, or LeCun et al. (2015) in narrative form. The reference list still shows all three names.",
+      },
+    ],
+    relatedSlugs: ["doi-to-bibtex", "bibtex-to-apa", "doi-to-mla"],
+    ctaPrimary: "Paste a DOI and get the APA reference",
+    ctaSecondary: "Get the same record as BibTeX",
+    updated: "2026-11-18",
+  },
+
+  "bibtex-to-harvard": {
+    slug: "bibtex-to-harvard",
+    keyword: "BibTeX to Harvard",
+    title: "BibTeX to Harvard: Cite Them Right 11th",
+    description:
+      "BibTeX to Harvard (Cite Them Right 11th): the three-author cut, the quoted title, the italic journal and the doi: prefix — plus where Harvard varies.",
+    h1: "BibTeX to Harvard: A Field-by-Field Conversion Guide",
+    intro:
+      "Harvard has no single official manual, which is the first thing to know about a BibTeX to Harvard conversion. This page follows Cite Them Right 11th edition, the Harvard variant the converter uses — and the one most UK universities base their guides on. If your institution publishes its own Harvard guide, check it against the four points at the end.",
+    sections: [
+      {
+        h2: "BibTeX to Harvard: what actually changes",
+        paragraphs: [
+          "Nothing inside @article{lecun2015deep, author = {LeCun, Yann and Bengio, Yoshua and Hinton, Geoffrey}, title = {Deep Learning}, journal = {Nature}, year = {2015}, volume = {521}, number = {7553}, pages = {436--444}, doi = {10.1038/nature14539}} says that only three authors survive, that the title takes quotation marks, or that the DOI loses its link. Cite Them Right Harvard is the opposite: one element order, one punctuation set. A BibTeX to Harvard conversion is therefore a placement job, not a translation job.",
+          "So the field labels, the equals signs and the double hyphen disappear, while a parenthesised year, a quoted title and a doi: prefix appear. The example above becomes `LeCun, Y., Bengio, Y. and Hinton, G. (2015) “Deep learning,” Nature, 521(7553), pp. 436–444. doi:10.1038/nature14539.` The journal name is italicised in the rendered page, the volume and issue sit together, and the DOI is a bare identifier rather than a link.",
+        ],
+        table: {
+          headers: ["BibTeX field", "Harvard element (Cite Them Right 11th)", "Output shape"],
+          rows: [
+            ["author", "Surname plus initials, and before the last", "LeCun, Y., Bengio, Y. and Hinton, G."],
+            ["year", "In parentheses after the authors", "(2015)"],
+            ["title", "In quotation marks", "“Deep learning,”"],
+            ["journal", "In italics", "Nature,"],
+            ["volume, number", "Volume(issue), no space", "521(7553),"],
+            ["pages", "pp. with a full range", "pp. 436–444."],
+            ["doi", "doi: plus the bare identifier", "doi:10.1038/nature14539."],
+          ],
+        },
+      },
+      {
+        h2: "Author names: three, then et al.",
+        paragraphs: [
+          "Cite Them Right Harvard lists three authors and no more. With four or more authors, the reference list shows the first author followed by et al. — the second, third and fourth names never appear. The in-text citation follows the same cut: three authors are all named, (LeCun, Bengio and Hinton, 2015), and et al. appears only from four authors on.",
+          "The word before the last author is and, never an ampersand — that is the quickest way to tell a Harvard list from an APA one at a glance. Initials stay initials, and a corporate author needs double braces, {{World Health Organization}}, or the converter reads it as three people. Other Harvard variants differ: some list every author in the reference list, so if your university's guide says so, follow it instead.",
+        ],
+        list: [
+          "Count the names in each author field before converting.",
+          "Three authors: all three, joined by and.",
+          "Four or more authors: first author only, then et al.",
+          "The separator is and, never &.",
+        ],
+      },
+      {
+        h2: "Titles, italics and the doi: prefix",
+        paragraphs: [
+          "The article title is wrapped in quotation marks and written in sentence case, so Deep Learning becomes “Deep learning,” — the comma sits inside the closing quote. The journal name is italicised and the volume and issue sit together with no space, 521(7553), followed by the page range with a pp. prefix and a full-length en dash, pp. 436–444.",
+          "The DOI is the element that surprises people most: Cite Them Right Harvard prints it as doi:10.1038/nature14539, a bare identifier with no resolver prefix, no space after the colon and no link. Other Harvard guides print the full https://doi.org/ link instead, so check your institution's guide if the marker matters — the converter follows Cite Them Right 11th edition.",
+        ],
+      },
+      {
+        h2: "Entry types: @article, @book, @inproceedings",
+        paragraphs: [
+          "A book entry follows the same author-and-year opening with a different container. @book{goodfellow2016deep, author = {Goodfellow, Ian and Bengio, Yoshua and Courville, Aaron}, title = {Deep Learning}, publisher = {MIT Press}, year = {2016}} becomes `Goodfellow, I., Bengio, Y. and Courville, A. (2016) Deep Learning. MIT Press.` The book title is italicised and the publisher takes the container position.",
+          "Conference papers keep the paper title in quotation marks and italicise the proceedings title after In. A chapter title is quoted and its book title is italicised. When the .bib entry has no place of publication for a book, the Harvard output shows the publisher alone — add the place by hand if your guide requires it.",
+        ],
+        table: {
+          headers: ["Entry type", "Quoted title", "Italic container"],
+          rows: [
+            ["@article", "Article title", "Journal name"],
+            ["@inproceedings", "Paper title", "Proceedings title"],
+            ["@book", "Book title (italic, not quoted)", "Place and publisher"],
+            ["@incollection", "Chapter title", "Book title"],
+            ["@phdthesis", "Thesis title (italic, not quoted)", "University"],
+            ["@online", "Page title", "Website name"],
+          ],
+        },
+      },
+      {
+        h2: "Check the converted entry against four points",
+        paragraphs: [
+          "Before you paste a converted BibTeX to Harvard entry anywhere, read it against four questions: at most three author names before et al., a quoted title followed by an italic journal, a volume(issue) block with a pp. range, and a doi: prefix at the very end. If your institution's Harvard guide disagrees with any of them, follow the guide — Harvard is a family of styles, not one manual.",
+          "Keep the BibTeX download if a second submission is likely. A formatted string cannot be turned back into fields, while a .bib file converts again for another style in seconds, and the .ris download carries the same records into EndNote or Zotero.",
+        ],
+        list: [
+          "Authors: three at most, et al. from four on.",
+          "Title: in quotation marks; journal in italics.",
+          "Numbers: volume(issue), pp. with a full range.",
+          "DOI: doi: plus the bare identifier, at the end.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "Which Harvard is this page about?",
+        a: "Cite Them Right 11th edition, the variant the converter uses and the one most UK universities base their guides on. Harvard has no single official manual, so check your institution's guide if it differs.",
+      },
+      {
+        q: "How many authors does Harvard list?",
+        a: "Three. With four or more authors, Cite Them Right Harvard lists the first author followed by et al., in the reference list and in the text.",
+      },
+      {
+        q: "Why is the DOI written as doi: instead of a link?",
+        a: "Because Cite Them Right 11th edition prints the bare identifier after a doi: prefix, with no space and no resolver URL. Other Harvard guides use the full https://doi.org/ link.",
+      },
+      {
+        q: "Does Harvard use single or double quotes for titles?",
+        a: "The converter renders the article title in double quotation marks, with the comma inside the closing quote: “Deep learning,”. Some university guides use single quotes — follow yours if it says so.",
+      },
+      {
+        q: "What happens to brace-protected capitals such as {DNA}?",
+        a: "The braces are removed and the inner text is kept as written, so {DNA} prints as DNA rather than Dna. That is one reason to convert instead of retyping titles.",
+      },
+      {
+        q: "Is my .bib file uploaded when I convert it?",
+        a: "No. The BibTeX to Harvard conversion runs inside your browser tab, nothing is posted to a server, and no account is needed.",
+      },
+    ],
+    relatedSlugs: ["bibtex-to-apa", "bibtex-to-mla", "doi-to-bibtex"],
+    ctaPrimary: "Paste your BibTeX and get the Harvard list",
+    ctaSecondary: "See the same entry as APA 7th",
+    updated: "2026-11-18",
+  },
+
+  "doi-to-mla": {
+    slug: "doi-to-mla",
+    keyword: "DOI to MLA 9th",
+    title: "DOI to MLA 9th: Crossref to Works Cited",
+    description:
+      "DOI to MLA 9th edition with live Crossref metadata: the one-author rule, the quoted title, the italic container and the DOI as a link.",
+    h1: "DOI to MLA 9th: Turning an Identifier Into a Works Cited Entry",
+    intro:
+      "A DOI is the cheapest way to get a complete MLA entry and the one most likely to arrive with pieces missing. A DOI to MLA 9th lookup resolves the identifier against Crossref, reads the deposited metadata, and formats it for MLA 9th edition. That works well for modern journal deposits and needs a second look for everything else.",
+    sections: [
+      {
+        h2: "What a DOI to MLA 9th lookup returns",
+        paragraphs: [
+          "The lookup is one request to the Crossref REST API for a single work identifier, asking for JSON. The response is the publisher's deposit rather than a curated catalogue record. From it the converter reads nine things: title, container title, authors split into family and given names, issued date, volume, issue, page, publisher and the identifier itself.",
+          "Those nine fields are exactly what an MLA 9th edition entry needs, which is why a bare DOI often produces a finished Works Cited entry. Everything else in the deposit, from abstracts to licence text to funder data, is discarded. Take 10.1038/nature14539: the lookup returns the LeCun, Bengio and Hinton paper Deep learning, published in Nature in 2015, volume 521, issue 7553, pages 436–444.",
+          "The catch is deposit quality. Older records sometimes carry capitalised titles, a missing volume, or an author list without given names. A DOI to MLA 9th result can be structurally correct and still need two edits, and knowing which fields to inspect makes that fast.",
+        ],
+        table: {
+          headers: ["Crossref field", "MLA 9th edition element", "In the LeCun example"],
+          rows: [
+            ["author[].family / given", "First author only, then et al.", "LeCun, Yann, et al."],
+            ["title", "In quotation marks, title case", "“Deep Learning.”"],
+            ["container-title", "Container, in italics", "Nature,"],
+            ["issued date-parts", "Year, after the issue number", "2015,"],
+            ["volume / issue", "vol. and no. abbreviations", "vol. 521, no. 7553,"],
+            ["page", "pp. with a shortened range", "pp. 436–44."],
+            ["DOI", "As a link, last element", "https://doi.org/10.1038/nature14539."],
+          ],
+        },
+      },
+      {
+        h2: "The MLA 9th shape: one author, quotes, italics",
+        paragraphs: [
+          "MLA 9th edition inverts only the first author's name. LeCun, Yann, et al. — the second and third authors never appear, because MLA lists the first author plus et al. once a work has three or more authors. With two authors, both appear: Doe, John, and Jane Smith.",
+          "The title takes quotation marks and title case — “Deep Learning.” — while the journal name is italicised as the container. Volume and issue become vol. 521, no. 7553, the page range is shortened to pp. 436–44, and the DOI closes the entry as a link. The year sits near the end, after the issue number, which is the detail that most often gives away an unconverted APA entry.",
+        ],
+      },
+      {
+        h2: "When the DOI is not registered with Crossref",
+        paragraphs: [
+          "Crossref is one registration agency among several, and a DOI to MLA 9th lookup can only read its own deposits. An arXiv DOI of the form 10.48550/arXiv.2301.00001 is registered with DataCite, so a Crossref request returns a not-found error however valid the identifier is. Paste the arXiv ID, such as 2301.00001, or the abs URL instead: the pattern is recognised separately, the version suffix is stripped, and the record is read from the arXiv API.",
+          "Zenodo, figshare and Dryad identifiers, including the 10.5281 family, are DataCite records too, so no DOI to MLA 9th lookup finds them at Crossref. Those describe datasets, so the entry is a dataset reference and the container is the repository rather than a journal. A pasted URL works as well: the input is scanned for a DOI-shaped string and trailing punctuation such as a semicolon or full stop is removed before the request.",
+        ],
+      },
+      {
+        h2: "In-text citations from the same record",
+        paragraphs: [
+          "MLA in-text citations point at a page, not a year. Where APA writes (LeCun et al., 2015), MLA writes (LeCun et al. 436) for a quotation from page 436, or (LeCun et al.) when the whole work is meant. The Works Cited list itself is alphabetical by author, so converting the list does not renumber anything the way a numeric system would.",
+          "That makes a DOI to MLA 9th migration mostly mechanical: the list keeps its order, the markers change shape, and the only manual step is finding the page numbers your quotations actually came from. The page numbers come from the same Crossref deposit, so a record without a page field cannot produce one.",
+        ],
+        list: [
+          "Three or more authors: (LeCun et al. 436) for a quotation.",
+          "Whole work: (LeCun et al.) with no page.",
+          "Two authors: (LeCun and Bengio 436).",
+          "The list stays alphabetical; nothing is renumbered.",
+        ],
+      },
+      {
+        h2: "DOI to MLA 9th at list scale",
+        paragraphs: [
+          "The DOI box resolves a single identifier: it reads the first DOI-shaped string or arXiv identifier in the input and returns one record. A list of forty identifiers would mean forty lookups, so use the other input modes when the references are already in front of you.",
+          "Paste them as APA text, one reference per blank line, or as BibTeX, and both are parsed locally in a single pass. Keep the DOI box for the reference that is garbled at the source, where a title is missing or a page range was lost in a copy-paste. For a long list, one DOI to MLA 9th lookup per broken entry is usually the whole job.",
+          "Lookups and conversions stay in your browser's local history, the most recent twenty, so an identifier you resolved yesterday is one click away. Output leaves as .bib, .ris or plain .txt, and the .ris route moves records into EndNote or Zotero without retyping.",
+        ],
+        list: [
+          "Paste the identifier, or the whole reference if you only have that.",
+          "Check the author count before you trust the list.",
+          "Fix missing volume or pages in the source record, then reformat.",
+          "Export as .ris if the list has to go back into a manager.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "Does a DOI lookup give me the page numbers?",
+        a: "Usually, because most publishers deposit a page range. Older records or article-number-only deposits have none, so the pp. element is missing and you add it.",
+      },
+      {
+        q: "Why does an arXiv DOI return nothing?",
+        a: "Because 10.48550 identifiers are registered with DataCite, not Crossref. Paste the arXiv ID such as 2301.00001 or the abs URL instead, and the record is read from the arXiv API.",
+      },
+      {
+        q: "How many DOIs can I convert at once?",
+        a: "The DOI box resolves one identifier per lookup. For a longer list, paste it as APA text or BibTeX, which is parsed in a single pass.",
+      },
+      {
+        q: "Does MLA use a DOI link or the short form?",
+        a: "The link: https://doi.org/10.1038/nature14539. MLA 9th edition prefers the DOI as a clickable link, so the resolver prefix stays.",
+      },
+      {
+        q: "Why does MLA list only one author for a three-author paper?",
+        a: "Because MLA 9th edition writes the first author plus et al. for three or more authors. APA lists up to twenty, so the same paper looks very different in the two lists.",
+      },
+      {
+        q: "Is a DOI to MLA 9th lookup private?",
+        a: "Only the identifier is sent, to the Crossref API, to fetch the publisher's metadata. There is no account, no upload of your bibliography, and no server-side copy of your list.",
+      },
+    ],
+    relatedSlugs: ["doi-to-apa", "doi-to-bibtex", "bibtex-to-mla"],
+    ctaPrimary: "Paste a DOI and get the MLA entry",
+    ctaSecondary: "Get the same record as APA 7th",
+    updated: "2026-11-18",
+  },
 };
 
 export default en;
