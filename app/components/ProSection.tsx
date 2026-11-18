@@ -117,40 +117,55 @@ export default function ProSection({ t, status, licenseKey, onActivate, onRemove
                   {status === "expired" ? t.proExpiredMsg : t.proInvalidMsg}
                 </div>
               )}
-              <div className="grid md:grid-cols-2 gap-4">
+              <div className="grid gap-4 md:grid-cols-3">
                 {/* 免费版 */}
-                <div className="rounded-xl border border-slate-200 p-4">
+                <div className="rounded-xl border border-slate-200 p-4 flex flex-col">
                   <p className="font-bold text-slate-800">{t.proFreeName}</p>
                   <p className="text-2xl font-bold text-slate-800 mt-1">{t.proFreePrice}</p>
+                  <p className="text-xs text-slate-400 mt-1">{t.proFreeNote}</p>
                   <ul className="mt-3 space-y-1.5 text-sm text-slate-600">
                     <li>✓ {t.proFreeFeature1}</li>
                     <li>✓ {t.proFreeFeature2}</li>
                     <li>✓ {t.proFreeFeature3}</li>
                   </ul>
                 </div>
-                {/* Pro */}
-                <div className="rounded-xl border-2 border-blue-600 p-4 bg-blue-50/40">
-                  <p className="font-bold text-slate-800">{t.proProName}</p>
-                  <p className="text-2xl font-bold text-slate-800 mt-1">{t.proProPrice}</p>
+                {/* Pro 按月 */}
+                <div className="rounded-xl border-2 border-blue-600 p-4 bg-blue-50/40 flex flex-col">
+                  <p className="font-bold text-slate-800">{t.proMonthlyName}</p>
+                  <p className="text-2xl font-bold text-slate-800 mt-1">{t.proMonthlyPrice}</p>
+                  <p className="text-xs text-slate-500 mt-1">{t.proMonthlyNote}</p>
                   <ul className="mt-3 space-y-1.5 text-sm text-slate-700">
                     <li>✓ {t.proFeature1}</li>
                     <li>✓ {t.proFeature2}</li>
                     <li>✓ {t.proFeature3}</li>
                   </ul>
-                  <div className="flex flex-col sm:flex-row gap-2 mt-4">
+                  <div className="mt-auto pt-4">
                     <a
                       href={CREEM_MONTHLY_URL}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex-1 text-center bg-blue-600 text-white text-sm font-bold rounded-lg px-3 py-2 hover:bg-blue-700 transition-colors"
+                      className="block text-center bg-blue-600 text-white text-sm font-bold rounded-lg px-3 py-2 hover:bg-blue-700 transition-colors"
                     >
                       {t.proMonthlyBtn}
                     </a>
+                  </div>
+                </div>
+                {/* Pro 买断 */}
+                <div className="rounded-xl border border-slate-200 p-4 flex flex-col">
+                  <p className="font-bold text-slate-800">{t.proLifetimeName}</p>
+                  <p className="text-2xl font-bold text-slate-800 mt-1">{t.proLifetimePrice}</p>
+                  <p className="text-xs text-slate-400 mt-1">{t.proLifetimeNote}</p>
+                  <ul className="mt-3 space-y-1.5 text-sm text-slate-700">
+                    <li>✓ {t.proFeature1}</li>
+                    <li>✓ {t.proFeature2}</li>
+                    <li>✓ {t.proFeature3}</li>
+                  </ul>
+                  <div className="mt-auto pt-4">
                     <a
                       href={CREEM_LIFETIME_URL}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex-1 text-center bg-white text-blue-700 text-sm font-bold rounded-lg px-3 py-2 border border-blue-600 hover:bg-blue-50 transition-colors"
+                      className="block text-center bg-white text-blue-700 text-sm font-bold rounded-lg px-3 py-2 border border-blue-600 hover:bg-blue-50 transition-colors"
                     >
                       {t.proLifetimeBtn}
                     </a>
