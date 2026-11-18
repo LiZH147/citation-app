@@ -36,6 +36,7 @@ export interface Translations {
   inputFormatBibtex: string;
   inputFormatApa: string;
   inputFormatDoi: string;
+  inputFormatCsl: string;
   inputFormatUnknown: string;
   manualEntryBtn: string;
   formTitle: string;
@@ -196,6 +197,7 @@ const zh: Translations = {
   inputFormatBibtex: "BibTeX 格式",
   inputFormatApa: "APA 格式",
   inputFormatDoi: "DOI 标识",
+  inputFormatCsl: "CSL-JSON 格式",
   inputFormatUnknown: "未知格式",
   manualEntryBtn: "手动录入",
   formTitle: "手动录入文献信息",
@@ -395,6 +397,7 @@ Example BibTeX:
   inputFormatBibtex: "BibTeX",
   inputFormatApa: "APA Format",
   inputFormatDoi: "DOI",
+  inputFormatCsl: "CSL-JSON",
   inputFormatUnknown: "Unknown Format",
   manualEntryBtn: "Manual Entry",
   formTitle: "Enter Citation Details",

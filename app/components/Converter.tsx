@@ -357,7 +357,7 @@ export default function Converter({ t, lang = "zh" }: Props) {
 
   const formatBadge = (fmt: InputFormat): string => {
     const map: Record<InputFormat, string> = {
-      bibtex: t.inputFormatBibtex, apa: t.inputFormatApa, doi: t.inputFormatDoi, url: t.inputFormatDoi, unknown: t.inputFormatUnknown,
+      bibtex: t.inputFormatBibtex, apa: t.inputFormatApa, doi: t.inputFormatDoi, url: t.inputFormatDoi, csl: t.inputFormatCsl, unknown: t.inputFormatUnknown,
     };
     return map[fmt] || map.unknown;
   };
@@ -446,7 +446,7 @@ export default function Converter({ t, lang = "zh" }: Props) {
               <div className="absolute top-2 right-3 z-10">
                 <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider ${
                   detectedFormat === "bibtex" ? "bg-purple-100 text-purple-700" :
-                  detectedFormat === "apa" ? "bg-green-100 text-green-700" :
+                  detectedFormat === "apa" || detectedFormat === "csl" ? "bg-green-100 text-green-700" :
                   detectedFormat === "doi" || detectedFormat === "url" ? "bg-amber-100 text-amber-700" :
                   "bg-slate-100 text-slate-500"
                 }`}>{formatBadge(detectedFormat)}</span>

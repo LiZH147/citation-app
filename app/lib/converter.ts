@@ -189,9 +189,10 @@ export function convertCitation(
   input: string,
   outFormat: string
 ): string {
-  // 优先尝试 citation-js 自动识别
+  // 优先尝试 citation-js 自动识别（先去掉开头的 `#` 注释行，否则 CSL-JSON 无法识别）
+  const clean = stripLeadingComments(input);
   try {
-    const cite = new Cite(input);
+    const cite = new Cite(clean);
     return cite.format("bibliography", {
       format: "html",
       template: outFormat,
@@ -199,7 +200,7 @@ export function convertCitation(
     });
   } catch {
     // 回退到 APA 解析 + 转换
-    const cslItems = parseAPA(input);
+    const cslItems = parseAPA(clean);
     if (cslItems.length === 0) {
       throw new Error("无法解析输入的引用格式");
     }
@@ -240,10 +241,11 @@ export function convertAndExport(
 
 /** 统一尝试 BibTeX 解析 → APA 启发式回退 */
 function tryParse(input: string): InstanceType<typeof Cite> {
+  const clean = stripLeadingComments(input);
   try {
-    return new Cite(input);
+    return new Cite(clean);
   } catch {
-    const items = parseAPA(input);
+    const items = parseAPA(clean);
     if (!items.length) throw new Error("无法解析输入的引用格式");
     return new Cite(items);
   }
@@ -255,26 +257,47 @@ function stripHtml(html: string): string {
 
 // ─── 输入格式检测 ────────────────────────────────────
 
-export type InputFormat = "bibtex" | "apa" | "doi" | "url" | "unknown";
+export type InputFormat = "bibtex" | "apa" | "doi" | "url" | "csl" | "unknown";
+
+/** 去掉输入开头的 `#` 注释行和空行。DOI 查找会把来源名和 DOI 以 `# ...` 形式写进输入框头部，
+// 它们会让 citation-js 无法识别后面的 CSL-JSON；去掉后正文保持原样，输入框里的注释仍可见。 */
+export function stripLeadingComments(input: string): string {
+  const lines = input.split(/\r?\n/);
+  let i = 0;
+  while (i < lines.length && /^\s*(#.*)?$/.test(lines[i])) i++;
+  return lines.slice(i).join("\n");
+}
 
 /** 自动检测输入格式类型 */
 export function detectInputFormat(input: string): InputFormat {
-  if (!input.trim()) return "unknown";
+  const text = stripLeadingComments(input);
+  if (!text.trim()) return "unknown";
 
   // DOI
-  if (/^\s*10\.\d{4,}\/[\S]+/.test(input) || /^\s*doi:\s*10\./i.test(input))
+  if (/^\s*10\.\d{4,}\/[\S]+/.test(text) || /^\s*doi:\s*10\./i.test(text))
     return "doi";
 
   // URL
-  if (/^\s*https?:\/\//i.test(input.trim()))
+  if (/^\s*https?:\/\//i.test(text.trim()))
     return "url";
 
   // BibTeX
-  if (/^\s*@\w+\s*\{/.test(input))
+  if (/^\s*@\w+\s*\{/.test(text))
     return "bibtex";
 
+  // CSL-JSON（DOI 查找写回的、或用户直接粘贴的；可能带 `#` 注释头，已在上面去掉）
+  const trimmed = text.trim();
+  if (trimmed.startsWith("{") || trimmed.startsWith("[")) {
+    try {
+      const parsed: unknown = JSON.parse(trimmed);
+      const first = Array.isArray(parsed) ? parsed[0] : parsed;
+      if (first && typeof first === "object" && ("type" in first || "title" in first || "id" in first))
+        return "csl";
+    } catch { /* 不是合法 JSON，继续走 APA 启发式 */ }
+  }
+
   // APA 文本 (Author (Year). Title.)
-  if (/^.+\(\d{4}[a-z]?\)\.\s+.+/i.test(input))
+  if (/^.+\(\d{4}[a-z]?\)\.\s+.+/i.test(text))
     return "apa";
 
   return "unknown";
