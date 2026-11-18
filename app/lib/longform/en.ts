@@ -527,7 +527,7 @@ const en: LongformSet = {
       {
         h2: "When the DOI is not registered with Crossref",
         paragraphs: [
-          "Crossref is one registration agency among several, and a DOI to citation lookup can only read its own deposits. An arXiv DOI of the form 10.48550/arXiv.2301.00001 is registered with DataCite, so a Crossref request returns a not-found error however valid the identifier is. Paste the arXiv ID, such as 2301.00001, or the abs URL instead: the pattern is recognised separately, the version suffix is stripped, and the record is read from the arXiv API.",
+          "Crossref is one registration agency among several, and a DOI to citation lookup can only read its own deposits. An arXiv DOI of the form 10.48550/arXiv.2301.00001 is registered with DataCite, so a Crossref request returns a not-found error however valid the identifier is. Paste the arXiv abs URL (e.g. https://arxiv.org/abs/2301.00001) or an arXiv:2301.00001 identifier instead: the pattern is recognised separately, the version suffix is stripped, and the record is read from the arXiv API.",
           "Zenodo, figshare and Dryad identifiers, including the 10.5281 family, are DataCite records too, so no DOI to citation lookup finds them at Crossref. Those describe datasets, so the code is [DS] and the container is the repository rather than a journal. If your template has no dataset code in use, cite the repository page as [EB/OL].",
           "A pasted URL works as well. The input is scanned for a DOI-shaped string and trailing punctuation such as a semicolon or full stop is removed before the request, which matters when the identifier came out of a PDF reference list with the sentence still attached.",
         ],
@@ -567,7 +567,7 @@ const en: LongformSet = {
       },
       {
         q: "Why does an arXiv DOI return nothing?",
-        a: "Because 10.48550 identifiers are registered with DataCite, not Crossref. Paste the arXiv ID such as 2301.00001 or the abs URL instead, and the record is read from the arXiv API.",
+        a: "Because 10.48550 identifiers are registered with DataCite, not Crossref. Paste the arXiv abs URL or an arXiv:2301.00001 identifier instead, and the record is read from the arXiv API.",
       },
       {
         q: "How many DOIs can I convert at once?",
@@ -1089,7 +1089,7 @@ const en: LongformSet = {
       {
         h2: "When Crossref has no record for the DOI",
         paragraphs: [
-          "Crossref is one registration agency among several, and a DOI to BibTeX lookup can only read its own deposits. An arXiv DOI of the form 10.48550/arXiv.2301.00001 is registered with DataCite, so a Crossref request returns a not-found error however valid the identifier is. Paste the arXiv ID, such as 2301.00001, or the abs URL instead: the pattern is recognised separately, the version suffix is stripped, and the record is read from the arXiv API.",
+          "Crossref is one registration agency among several, and a DOI to BibTeX lookup can only read its own deposits. An arXiv DOI of the form 10.48550/arXiv.2301.00001 is registered with DataCite, so a Crossref request returns a not-found error however valid the identifier is. Paste the arXiv abs URL (e.g. https://arxiv.org/abs/2301.00001) or an arXiv:2301.00001 identifier instead: the pattern is recognised separately, the version suffix is stripped, and the record is read from the arXiv API.",
           "Zenodo, figshare and Dryad identifiers, including the 10.5281 family, are DataCite records too, so no DOI to BibTeX lookup finds them at Crossref. Those describe datasets, so the entry type is @misc and the container is the repository rather than a journal. A pasted URL works as well: the input is scanned for a DOI-shaped string and trailing punctuation such as a semicolon or full stop is removed before the request, which matters when the identifier came out of a PDF reference list with the sentence still attached.",
         ],
       },
@@ -1115,7 +1115,7 @@ const en: LongformSet = {
       },
       {
         q: "Why does an arXiv DOI return nothing?",
-        a: "Because 10.48550 identifiers are registered with DataCite, not Crossref. Paste the arXiv ID such as 2301.00001 or the abs URL instead, and the record is read from the arXiv API.",
+        a: "Because 10.48550 identifiers are registered with DataCite, not Crossref. Paste the arXiv abs URL or an arXiv:2301.00001 identifier instead, and the record is read from the arXiv API.",
       },
       {
         q: "Does the .bib entry keep the DOI?",
@@ -1404,7 +1404,7 @@ const en: LongformSet = {
       {
         h2: "When the DOI is not registered with Crossref",
         paragraphs: [
-          "Crossref is one registration agency among several, and a DOI to APA 7th lookup can only read its own deposits. An arXiv DOI of the form 10.48550/arXiv.2301.00001 is registered with DataCite, so a Crossref request returns a not-found error however valid the identifier is. Paste the arXiv ID, such as 2301.00001, or the abs URL instead: the pattern is recognised separately, the version suffix is stripped, and the record is read from the arXiv API.",
+          "Crossref is one registration agency among several, and a DOI to APA 7th lookup can only read its own deposits. An arXiv DOI of the form 10.48550/arXiv.2301.00001 is registered with DataCite, so a Crossref request returns a not-found error however valid the identifier is. Paste the arXiv abs URL (e.g. https://arxiv.org/abs/2301.00001) or an arXiv:2301.00001 identifier instead: the pattern is recognised separately, the version suffix is stripped, and the record is read from the arXiv API.",
           "Zenodo, figshare and Dryad identifiers, including the 10.5281 family, are DataCite records too, so no DOI to APA 7th lookup finds them at Crossref. Those describe datasets, so the entry is a dataset reference and the container is the repository rather than a journal. A pasted URL works as well: the input is scanned for a DOI-shaped string and trailing punctuation such as a semicolon or full stop is removed before the request.",
         ],
       },
@@ -1443,7 +1443,7 @@ const en: LongformSet = {
       },
       {
         q: "Why does an arXiv DOI return nothing?",
-        a: "Because 10.48550 identifiers are registered with DataCite, not Crossref. Paste the arXiv ID such as 2301.00001 or the abs URL instead, and the record is read from the arXiv API.",
+        a: "Because 10.48550 identifiers are registered with DataCite, not Crossref. Paste the arXiv abs URL or an arXiv:2301.00001 identifier instead, and the record is read from the arXiv API.",
       },
       {
         q: "How many DOIs can I convert at once?",
@@ -1621,7 +1621,7 @@ const en: LongformSet = {
       {
         h2: "When the DOI is not registered with Crossref",
         paragraphs: [
-          "Crossref is one registration agency among several, and a DOI to MLA 9th lookup can only read its own deposits. An arXiv DOI of the form 10.48550/arXiv.2301.00001 is registered with DataCite, so a Crossref request returns a not-found error however valid the identifier is. Paste the arXiv ID, such as 2301.00001, or the abs URL instead: the pattern is recognised separately, the version suffix is stripped, and the record is read from the arXiv API.",
+          "Crossref is one registration agency among several, and a DOI to MLA 9th lookup can only read its own deposits. An arXiv DOI of the form 10.48550/arXiv.2301.00001 is registered with DataCite, so a Crossref request returns a not-found error however valid the identifier is. Paste the arXiv abs URL (e.g. https://arxiv.org/abs/2301.00001) or an arXiv:2301.00001 identifier instead: the pattern is recognised separately, the version suffix is stripped, and the record is read from the arXiv API.",
           "Zenodo, figshare and Dryad identifiers, including the 10.5281 family, are DataCite records too, so no DOI to MLA 9th lookup finds them at Crossref. Those describe datasets, so the entry is a dataset reference and the container is the repository rather than a journal. A pasted URL works as well: the input is scanned for a DOI-shaped string and trailing punctuation such as a semicolon or full stop is removed before the request.",
         ],
       },
@@ -1660,7 +1660,7 @@ const en: LongformSet = {
       },
       {
         q: "Why does an arXiv DOI return nothing?",
-        a: "Because 10.48550 identifiers are registered with DataCite, not Crossref. Paste the arXiv ID such as 2301.00001 or the abs URL instead, and the record is read from the arXiv API.",
+        a: "Because 10.48550 identifiers are registered with DataCite, not Crossref. Paste the arXiv abs URL or an arXiv:2301.00001 identifier instead, and the record is read from the arXiv API.",
       },
       {
         q: "How many DOIs can I convert at once?",
@@ -1689,7 +1689,7 @@ const en: LongformSet = {
     keyword: "arXiv to IEEE",
     title: "arXiv to IEEE: Preprint to Numbered [1]",
     description:
-      "arXiv to IEEE: paste the abs URL or arXiv ID, fetch metadata from the arXiv API, and get a numbered IEEE reference with an [Online] link.",
+      "arXiv to IEEE: paste the abs URL or an arXiv: identifier, fetch metadata from the arXiv API, and get a numbered IEEE reference with an [Online] link.",
     h1: "arXiv to IEEE: Turning a Preprint Into a Numbered Reference",
     intro:
       "A preprint has no journal volume, no issue and no pages, so an arXiv to IEEE conversion is a different job from converting a published paper. The lookup reads the record from the arXiv API, and the IEEE style numbers it, quotes the title and closes with an [Online]. Available link. This guide shows what the lookup actually accepts, what the record contains, and what the finished entry looks like.",

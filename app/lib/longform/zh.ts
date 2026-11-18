@@ -507,7 +507,7 @@ const zh: LongformSet = {
       {
         h2: "四类文献 Crossref 拿不全",
         paragraphs: [
-          "不是所有 DOI 都存在 Crossref。DOI 转参考文献格式时如果查不到记录，先看前缀：10.48550 开头的 arXiv DOI 由 DataCite 注册，改用 arXiv ID 输入更稳。",
+          "不是所有 DOI 都存在 Crossref。DOI 转参考文献格式时如果查不到记录，先看前缀：10.48550 开头的 arXiv DOI 由 DataCite 注册，改用 arXiv 文章链接或 arXiv: 编号输入更稳。",
           "另外版权页信息常不全，页码缺失尤其常见，不少出版社只登记了起始页。",
         ],
         list: [
@@ -548,7 +548,7 @@ const zh: LongformSet = {
     faqs: [
       {
         q: "arXiv 的 DOI（10.48550）为什么查不到？",
-        a: "10.48550 由 DataCite 注册而非 Crossref，Crossref 元数据里没有这条记录。改用 arXiv ID 或文章链接作为输入即可。",
+        a: "10.48550 由 DataCite 注册而非 Crossref，Crossref 元数据里没有这条记录。改用 arXiv 文章链接或 arXiv: 编号作为输入即可。",
       },
       {
         q: "Crossref 返回的刊名是全称，能改成期刊要求的缩写吗？",
@@ -986,7 +986,7 @@ const zh: LongformSet = {
       {
         h2: "Crossref 里没有这条 DOI",
         paragraphs: [
-          "Crossref 只是注册机构之一，DOI 转 BibTeX 只能读它自己的登记。10.48550/arXiv.2301.00001 这种 arXiv DOI 由 DataCite 注册，Crossref 再怎么查都是查无此号。改贴 arXiv ID，例如 2301.00001，或者 abs 链接：系统另外认这个格式，版本号去掉，从 arXiv 接口读记录。",
+          "Crossref 只是注册机构之一，DOI 转 BibTeX 只能读它自己的登记。10.48550/arXiv.2301.00001 这种 arXiv DOI 由 DataCite 注册，Crossref 再怎么查都是查无此号。改贴 arXiv 文章链接（例如 https://arxiv.org/abs/2301.00001）或 arXiv:2301.00001 编号：系统另外认这个格式，版本号去掉，从 arXiv 接口读记录。",
           "Zenodo、figshare、Dryad 的标识，包括 10.5281 这一家，也都是 DataCite 的记录，Crossref 里没有。它们是数据集，条目类型是 @misc，容器是仓储库而不是期刊。直接粘 https://doi.org/ 开头的链接也能识别，系统会先扫出 DOI 形状的字串，句末的分号、句点先去掉再查，从 PDF 参考文献里复制出来带句子的情况就靠这个。",
         ],
       },
@@ -1012,7 +1012,7 @@ const zh: LongformSet = {
       },
       {
         q: "arXiv 的 DOI（10.48550）为什么查不到？",
-        a: "10.48550 由 DataCite 注册而非 Crossref，Crossref 元数据里没有这条记录。改用 arXiv ID 或文章链接作为输入即可。",
+        a: "10.48550 由 DataCite 注册而非 Crossref，Crossref 元数据里没有这条记录。改用 arXiv 文章链接或 arXiv: 编号作为输入即可。",
       },
       {
         q: ".bib 条目里还留着 DOI 吗？",
@@ -1301,7 +1301,7 @@ const zh: LongformSet = {
       {
         h2: "Crossref 里没有这条 DOI",
         paragraphs: [
-          "Crossref 只是注册机构之一，DOI 转 APA 第 7 版只能读它自己的登记。10.48550/arXiv.2301.00001 这种 arXiv DOI 由 DataCite 注册，Crossref 再怎么查都是查无此号。改贴 arXiv ID，例如 2301.00001，或者 abs 链接：系统另外认这个格式，版本号去掉，从 arXiv 接口读记录。",
+          "Crossref 只是注册机构之一，DOI 转 APA 第 7 版只能读它自己的登记。10.48550/arXiv.2301.00001 这种 arXiv DOI 由 DataCite 注册，Crossref 再怎么查都是查无此号。改贴 arXiv 文章链接（例如 https://arxiv.org/abs/2301.00001）或 arXiv:2301.00001 编号：系统另外认这个格式，版本号去掉，从 arXiv 接口读记录。",
           "Zenodo、figshare、Dryad 的标识，包括 10.5281 这一家，也都是 DataCite 的记录，Crossref 里没有。它们是数据集，条目是数据集参考文献，容器是仓储库而不是期刊。直接粘 https://doi.org/ 开头的链接也能识别，系统会先扫出 DOI 形状的字串，句末的分号、句点先去掉再查。",
         ],
       },
@@ -1340,7 +1340,7 @@ const zh: LongformSet = {
       },
       {
         q: "arXiv 的 DOI（10.48550）为什么查不到？",
-        a: "10.48550 由 DataCite 注册而非 Crossref，Crossref 元数据里没有这条记录。改用 arXiv ID 或文章链接作为输入即可。",
+        a: "10.48550 由 DataCite 注册而非 Crossref，Crossref 元数据里没有这条记录。改用 arXiv 文章链接或 arXiv: 编号作为输入即可。",
       },
       {
         q: "一次能转多少条 DOI？",
@@ -1518,7 +1518,7 @@ const zh: LongformSet = {
       {
         h2: "Crossref 里没有这条 DOI",
         paragraphs: [
-          "Crossref 只是注册机构之一，DOI 转 MLA 第 9 版只能读它自己的登记。10.48550/arXiv.2301.00001 这种 arXiv DOI 由 DataCite 注册，Crossref 再怎么查都是查无此号。改贴 arXiv ID，例如 2301.00001，或者 abs 链接：系统另外认这个格式，版本号去掉，从 arXiv 接口读记录。",
+          "Crossref 只是注册机构之一，DOI 转 MLA 第 9 版只能读它自己的登记。10.48550/arXiv.2301.00001 这种 arXiv DOI 由 DataCite 注册，Crossref 再怎么查都是查无此号。改贴 arXiv 文章链接（例如 https://arxiv.org/abs/2301.00001）或 arXiv:2301.00001 编号：系统另外认这个格式，版本号去掉，从 arXiv 接口读记录。",
           "Zenodo、figshare、Dryad 的标识，包括 10.5281 这一家，也都是 DataCite 的记录，Crossref 里没有。它们是数据集，条目是数据集参考文献，容器是仓储库而不是期刊。直接粘 https://doi.org/ 开头的链接也能识别，系统会先扫出 DOI 形状的字串，句末的分号、句点先去掉再查。",
         ],
       },
@@ -1557,7 +1557,7 @@ const zh: LongformSet = {
       },
       {
         q: "arXiv 的 DOI（10.48550）为什么查不到？",
-        a: "10.48550 由 DataCite 注册而非 Crossref，Crossref 元数据里没有这条记录。改用 arXiv ID 或文章链接作为输入即可。",
+        a: "10.48550 由 DataCite 注册而非 Crossref，Crossref 元数据里没有这条记录。改用 arXiv 文章链接或 arXiv: 编号作为输入即可。",
       },
       {
         q: "一次能转多少条 DOI？",
@@ -1586,7 +1586,7 @@ const zh: LongformSet = {
     keyword: "arXiv 转 IEEE",
     title: "arXiv 转 IEEE：预印本变编号引用",
     description:
-      "arXiv 转 IEEE：贴 abs 链接或 arXiv 编号，从 arXiv 接口抓元数据，生成带编号的 IEEE 引用和 [Online] 链接。",
+      "arXiv 转 IEEE：贴 abs 链接或 arXiv: 编号，从 arXiv 接口抓元数据，生成带编号的 IEEE 引用和 [Online] 链接。",
     h1: "arXiv 转 IEEE：预印本变编号引用",
     intro:
       "预印本没有期刊卷、期和页码，所以 arXiv 转 IEEE 和转已发表论文不是一回事。查找从 arXiv 接口读记录，IEEE 排版给它编号、题名加引号，末尾写 [Online]. Available 链接。这篇讲查找到底接受什么输入、记录里有什么、成品长什么样。",
