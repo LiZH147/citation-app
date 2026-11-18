@@ -115,6 +115,18 @@ export default function Converter({ t, lang = "zh" }: Props) {
   // 加载历史
   useEffect(() => { setHistory(loadHistory()); }, []);
 
+  // 方案确定后按当前上限截断历史：Pro 到期、失效或被移除时，多余记录
+  // 立刻清理，而不是等到下一次转换才处理。校验完成前（unknown）不动
+  // 历史，避免 Pro 用户在校验完成前被误截断。
+  useEffect(() => {
+    if (proStatus === "unknown") return;
+    if (history.length > historyLimit) {
+      const capped = history.slice(0, historyLimit);
+      setHistory(capped);
+      saveHistory(capped, historyLimit);
+    }
+  }, [proStatus, historyLimit, history]);
+
   // 实时格式检测
   useEffect(() => {
     setDetectedFormat(detectInputFormat(input));
