@@ -1684,6 +1684,225 @@ const en: LongformSet = {
     ctaSecondary: "Get the same record as APA 7th",
     updated: "2026-11-18",
   },
+  "arxiv-to-ieee": {
+    slug: "arxiv-to-ieee",
+    keyword: "arXiv to IEEE",
+    title: "arXiv to IEEE: Preprint to Numbered [1]",
+    description:
+      "arXiv to IEEE: paste the abs URL or arXiv ID, fetch metadata from the arXiv API, and get a numbered IEEE reference with an [Online] link.",
+    h1: "arXiv to IEEE: Turning a Preprint Into a Numbered Reference",
+    intro:
+      "A preprint has no journal volume, no issue and no pages, so an arXiv to IEEE conversion is a different job from converting a published paper. The lookup reads the record from the arXiv API, and the IEEE style numbers it, quotes the title and closes with an [Online]. Available link. This guide shows what the lookup actually accepts, what the record contains, and what the finished entry looks like.",
+    sections: [
+      {
+        h2: "What an arXiv to IEEE lookup returns",
+        paragraphs: [
+          "The lookup is one request to the arXiv API for a single identifier, asking for the Atom feed entry. The response is the preprint's own record rather than a publisher deposit. From it the converter reads six things: title, authors split into family and given names, the year the preprint was first published, the abs URL, the publisher arXiv, and the container label arXiv preprint.",
+          "Those six fields are the whole record, which is why an arXiv to IEEE entry is short. There is no volume, no issue, no page range and no DOI to place, so the finished entry has fewer elements than a journal entry and nothing to invent. Take 1706.03762: the lookup returns the Vaswani, Shazeer, Parmar, Uszkoreit, Jones, Gomez, Kaiser and Polosukhin paper Attention is all you need, published on arXiv in 2017.",
+          "The author split is mechanical: the last word of each name becomes the family name and the rest becomes the given names. That works for most Western names and misfires on names where the family name is not last, so check the author line before you trust it on a long list.",
+        ],
+        table: {
+          headers: ["arXiv API field", "IEEE element", "In the Attention example"],
+          rows: [
+            ["title", "In quotation marks, sentence case", "“Attention is all you need,”"],
+            ["author names", "First author plus et al. for a long list", "A. Vaswani et al.,"],
+            ["published year", "Year, after the title", "2017,"],
+            ["publisher", "Shown as the container", "arXiv."],
+            ["abs URL", "[Online]. Available: link, last element", "https://arxiv.org/abs/1706.03762"],
+            ["volume / issue / pages", "Absent: a preprint has none", "—"],
+          ],
+        },
+      },
+      {
+        h2: "Paste the abs URL, not the bare ID",
+        paragraphs: [
+          "The DOI lookup box accepts two arXiv forms: the full abs URL, https://arxiv.org/abs/1706.03762, or the prefixed ID, arXiv:1706.03762. A bare ID on its own, 1706.03762, is not recognised: the box only understands DOI-shaped strings and those two arXiv forms, so a bare number comes back as an error instead of a record.",
+          "A version suffix is stripped before the request, so 1706.03762v2 is looked up as 1706.03762 and returns the current version of the record. The other trap is the arXiv DOI itself: 10.48550/arXiv.1706.03762 is registered with DataCite, not Crossref, so a DOI lookup for it returns not found. Paste the arXiv URL instead and the record comes from the arXiv API.",
+        ],
+        list: [
+          "Works: https://arxiv.org/abs/1706.03762",
+          "Works: arXiv:1706.03762 (v2, v3 suffixes are stripped).",
+          "Fails: a bare 1706.03762 with no prefix or URL.",
+          "Fails at Crossref: 10.48550/arXiv.1706.03762 — use the arXiv URL.",
+        ],
+      },
+      {
+        h2: "The IEEE shape: [1], one author, [Online]",
+        paragraphs: [
+          "The finished entry for the Attention paper is exactly this: `[1] A. Vaswani et al., “Attention is all you need,” 2017, arXiv. [Online]. Available: https://arxiv.org/abs/1706.03762`. The bracketed number opens the entry, the title takes quotation marks, the year follows the title, and the container is the publisher arXiv rather than a journal name. Eight authors collapse to the first author plus et al., because the preprint arrives as a generic article record and the style shortens long author lists.",
+          "That shortness is the point to check. A journal entry carries vol., no. and pp. to prove where it was published; a preprint entry carries the [Online]. Available link instead, because the URL is the only stable locator. If the paper was later published in a journal, convert the published DOI instead: the journal entry has the volume and pages, and the arXiv version is only for citing the preprint itself.",
+        ],
+      },
+      {
+        h2: "In-text citations and the reference list",
+        paragraphs: [
+          "IEEE numbers entries in the order they are first cited in the text: the first work cited is [1], the second is [2], and the list is printed in that order. An arXiv to IEEE conversion numbers the list in the order you paste it, so paste in citation order or renumber afterwards. The marker in the text is the number in square brackets: `... as shown in [1].` The same work cited twice keeps the same number, and a range is written [1]–[3].",
+          "There is no author-date marker anywhere in IEEE, so (Vaswani, 2017) never appears. The list is not alphabetical either, which is the detail that most often gives away an unconverted APA list. Insert one source in paragraph two and every later number shifts by one, so numbering belongs in your last pass over the manuscript.",
+        ],
+        list: [
+          "Paste references in the order they are first cited.",
+          "Cite with [1], not with the author name or year.",
+          "Renumber after any insertion, since a new [2] shifts every later reference.",
+          "The same work always keeps the same number.",
+        ],
+      },
+      {
+        h2: "arXiv to IEEE at list scale",
+        paragraphs: [
+          "The DOI box resolves a single identifier: it reads the first DOI-shaped string or arXiv identifier in the input and returns one record. A reading list of forty preprints would mean forty lookups, so use the other input modes when the references are already in front of you.",
+          "Paste them as BibTeX, one entry per @article block, and the whole list is parsed locally in a single pass. The .bib export of an arXiv record keeps the preprint as an @article with journal = {arXiv preprint} and the abs URL, and the citation key follows the surname-year-first-title-word pattern: Vaswani2017Attention. For a long list, one arXiv to IEEE lookup per preprint that only exists on arXiv is usually the whole job.",
+          "Lookups and conversions stay in your browser's local history, the most recent twenty, so an identifier you resolved yesterday is one click away. Output leaves as .bib, .ris or plain .txt, and the .ris route moves records into EndNote or Zotero without retyping.",
+        ],
+        list: [
+          "Paste the abs URL, or the arXiv: prefixed ID.",
+          "Check the author line before you trust a long list.",
+          "Fix the author split in the source record, then reformat.",
+          "Export as .ris if the list has to go back into a manager.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "Can I paste just the arXiv ID?",
+        a: "No — paste the abs URL, https://arxiv.org/abs/1706.03762, or the prefixed form arXiv:1706.03762. A bare ID such as 1706.03762 is not recognised by the lookup box.",
+      },
+      {
+        q: "What if the paper has a v2 or v3 version?",
+        a: "The version suffix is stripped before the request, so 1706.03762v2 is looked up as 1706.03762 and returns the current version of the record.",
+      },
+      {
+        q: "Why does the IEEE entry show only the first author?",
+        a: "The arXiv record arrives as a generic article, and the IEEE rendering shortens long author lists to the first author plus et al. The eight-author Attention paper renders as A. Vaswani et al.",
+      },
+      {
+        q: "Does the entry include a DOI?",
+        a: "No — the arXiv record has no DOI, so the entry ends with [Online]. Available: and the abs URL. If the paper was later published, convert the published DOI for a journal entry with volume and pages.",
+      },
+      {
+        q: "Can I convert several arXiv papers at once?",
+        a: "The DOI box resolves one identifier per lookup. For a longer list, paste it as BibTeX, which is parsed in a single pass.",
+      },
+      {
+        q: "Is an arXiv to IEEE lookup private?",
+        a: "Only the identifier is sent, to the arXiv API, to fetch the preprint's metadata. There is no account, no upload of your bibliography, and no server-side copy of your list.",
+      },
+    ],
+    relatedSlugs: ["bibtex-to-ieee", "doi-to-bibtex", "batch-convert-bibtex"],
+    ctaPrimary: "Paste an arXiv URL and get the IEEE entry",
+    ctaSecondary: "See the same record as BibTeX",
+    updated: "2026-11-18",
+  },
+  "batch-convert-bibtex": {
+    slug: "batch-convert-bibtex",
+    keyword: "batch convert BibTeX",
+    title: "Batch Convert BibTeX: Whole .bib in One Pass",
+    description:
+      "Batch convert BibTeX: paste a whole .bib file's text or upload it with Pro, convert every entry at once to APA, MLA, IEEE and more — no retyping.",
+    h1: "Batch Convert BibTeX: A Whole .bib File in One Pass",
+    intro:
+      "A .bib file is already a batch: one file, dozens of entries, one format. A batch convert BibTeX job is therefore not a special mode — it is the normal converter fed the whole file at once, with every entry parsed in a single pass and formatted in the style you chose. This guide shows how to get the file out of your reference manager, what is free and what is Pro, and what to check before the list goes into a paper.",
+    sections: [
+      {
+        h2: "What batch conversion means here",
+        paragraphs: [
+          "Paste the whole .bib text into the input box and the converter parses every @article, @book and @inproceedings block in one pass, then formats the entire list in the output style you selected. There is no per-entry button and no entry-count limit in the tool: the list goes in as text and comes out as a formatted reference list.",
+          "The file-upload button does the same thing without the copy-paste step: it reads the .bib or .txt file in your browser and appends its contents to the input box. The file never leaves your computer — it is read with the browser's local file reader, and the conversion itself runs client-side. Switching the output format re-renders the same pasted list instantly, so one paste produces an APA list, an IEEE list and a fresh .bib export without re-entering anything.",
+        ],
+        table: {
+          headers: ["Source", "How the list gets in", "What comes out"],
+          rows: [
+            ["Zotero library", "Export as BibTeX, then paste or upload the .bib", "The whole library in the chosen style"],
+            ["JabRef database", "Save as .bib, then paste or upload", "Every entry, same order as the file"],
+            ["Google Scholar", "Export one .bib per paper, paste them together", "A combined list in one pass"],
+            ["A .bib from a co-author", "Paste the file text as-is", "Formatted list, no retyping"],
+            ["Back into a manager", "Download the result as .bib or .ris", "Records ready for Zotero or EndNote"],
+          ],
+        },
+      },
+      {
+        h2: "Export a .bib file from Zotero or JabRef",
+        paragraphs: [
+          "In Zotero, select the items (or the whole collection), open the export dialog and choose BibTeX as the format, then save the .bib file. In JabRef, the database already is a .bib file — save it and paste or upload it directly. Both exporters write one @entry block per reference, with the citation key in the first line and one field per line after it.",
+          "Two details decide whether the batch parses cleanly. First, the file must be UTF-8: accented characters such as é or ü survive in UTF-8 and turn into replacement characters in a Latin-1 export, so re-export if names look wrong. Second, corporate authors need double braces — {{World Health Organization}} — or the converter reads them as three people. A missing and between two authors merges them into one, which is the most common silent error in a batch.",
+        ],
+        list: [
+          "Zotero: select items, export as BibTeX, save the .bib file.",
+          "JabRef: the database is already .bib — save and use it directly.",
+          "Check the export is UTF-8 before pasting.",
+          "Double-brace every corporate author.",
+          "Search the file for and and count names in each author field.",
+        ],
+      },
+      {
+        h2: "Paste or upload: what is free and what is Pro",
+        paragraphs: [
+          "Pasting is free and unlimited by entry count: the whole .bib text goes into the input box and converts in one pass. The upload button is the Pro part — it lets you pick .bib or .txt files (several at once) instead of opening the file and copying its text. Pro also keeps 100 history items instead of 20, so a batch you converted last week is still one click away.",
+          "Nothing about the conversion itself is gated: the same parser, the same output styles and the same .bib, .ris and .txt downloads work on the free plan. The Pro difference is convenience — no copy-paste for long files — plus the longer history. If the button shows a Pro label, clicking it scrolls to the Pro section instead of opening the file picker.",
+        ],
+        table: {
+          headers: ["Action", "Free", "Pro"],
+          rows: [
+            ["Paste .bib text", "Yes, any number of entries", "Yes"],
+            ["Upload .bib / .txt files", "No — the button is Pro-only", "Yes, several files at once"],
+            ["Convert the whole list at once", "Yes", "Yes"],
+            ["Download .bib / .ris / .txt", "Yes", "Yes"],
+            ["Conversion history", "Most recent 20", "Most recent 100"],
+          ],
+        },
+      },
+      {
+        h2: "One list, many formats",
+        paragraphs: [
+          "The pasted list is the source of truth, and the output format is just a view of it. Convert the same .bib text to APA 7th for a psychology submission, switch the dropdown to IEEE for an engineering one, and download the .bib again when a co-author needs the raw entries. Nothing is re-entered and nothing is re-parsed by hand.",
+          "That is also why the .bib file is worth keeping after the conversion. A formatted string cannot be turned back into fields, while the .bib converts again for another style in seconds. The .ris download carries the same records into EndNote or Zotero, so the list survives the round trip between tools without anyone retyping author names.",
+        ],
+      },
+      {
+        h2: "Check the batch before you paste it anywhere",
+        paragraphs: [
+          "Before a converted batch goes into a manuscript, read it against four questions: does the output have the same number of entries as the input, is every author list complete, is there exactly one bracketed code or number pattern per entry in the chosen style, and does every entry end with its DOI or URL where the source had one. A count mismatch is the fastest signal that an entry broke in the parse.",
+          "The usual causes are small: unbalanced braces, a missing comma after a field, or an author field without and between two names. Fix the entry in Zotero or in the pasted text and convert again — do not hand-edit the formatted output, because the next conversion overwrites it. A chapter in an edited book deserves one extra look, since the // separator between the chapter and the book title is the element most often lost when the editor field is empty.",
+        ],
+        list: [
+          "Count entries: output count must match input count.",
+          "Check every author list for merged or missing names.",
+          "Look for unbalanced braces or a missing comma in the source.",
+          "Fix the source entry, never the formatted output.",
+          "Keep the .bib file for the next submission.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "How many entries can I convert at once?",
+        a: "There is no entry-count limit in the tool: the whole pasted .bib text is parsed in a single pass. For a very long file, paste it in two chunks if the browser feels slow.",
+      },
+      {
+        q: "Is the .bib file upload free?",
+        a: "No — the upload button is a Pro feature. Pasting the .bib text into the input box is free and converts the same entries.",
+      },
+      {
+        q: "Does the uploaded file leave my computer?",
+        a: "No. The file is read with the browser's local file reader and the conversion runs client-side. Nothing is uploaded to any server.",
+      },
+      {
+        q: "Can I upload several .bib files at once?",
+        a: "Yes — the file picker accepts multiple files, and their contents are joined and converted together.",
+      },
+      {
+        q: "What if one entry in the file is broken?",
+        a: "Compare the entry count in the output with the input. A mismatch usually means unbalanced braces or a missing comma in the source entry — fix it in Zotero or in the pasted text and convert again.",
+      },
+      {
+        q: "Can I get the batch back as .bib or .ris?",
+        a: "Yes. The export buttons download the converted list as .bib, .ris or plain text, and the .ris file goes straight back into EndNote or Zotero.",
+      },
+    ],
+    relatedSlugs: ["bibtex-to-apa", "bibtex-to-ieee", "arxiv-to-ieee"],
+    ctaPrimary: "Paste a .bib file and convert it all",
+    ctaSecondary: "Convert one DOI at a time instead",
+    updated: "2026-11-18",
+  },
 };
 
 export default en;

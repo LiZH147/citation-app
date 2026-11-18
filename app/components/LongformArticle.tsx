@@ -76,8 +76,8 @@ export default function LongformArticle({ page, lang, related }: Props) {
       <div className="bg-blue-50 border border-blue-200 rounded-xl px-5 py-4 mb-10">
         <p className="text-sm text-blue-900 leading-relaxed mb-3">
           {isZh
-            ? "不想手动改格式？把文献粘贴进转换器，直接得到 GB/T 7714-2015 结果，全程在你的浏览器里完成。"
-            : "Don't want to reformat by hand? Paste your references into the converter and get GB/T 7714-2015 output — processed entirely in your browser."}
+            ? "不想手动改格式？把文献粘贴进转换器，直接得到排好格式的结果，全程在浏览器本地完成。"
+            : "Don't want to reformat by hand? Paste your references into the converter and get a formatted result — processed entirely in your browser."}
         </p>
         <a
           href={`/${lang}#converter`}
@@ -171,8 +171,8 @@ export default function LongformArticle({ page, lang, related }: Props) {
         <h2 className="text-lg md:text-xl font-bold text-white mb-3">{page.ctaPrimary}</h2>
         <p className="text-sm leading-relaxed mb-5">
           {isZh
-            ? "支持 BibTeX、APA 文本、DOI 与 arXiv 链接输入，输出 GB/T 7714-2015、APA、BibTeX。不上传服务器，不需要注册。"
-            : "Input BibTeX, APA text, a DOI or an arXiv link. Output GB/T 7714-2015, APA or BibTeX. Nothing is uploaded, no signup."}
+            ? "支持 BibTeX、APA 文本、DOI 与 arXiv 链接输入，输出 APA、MLA、Chicago、Harvard、IEEE、BibTeX 与 GB/T 7714。不上传服务器，不需要注册。"
+            : "Input BibTeX, APA text, a DOI or an arXiv link. Output APA, MLA, Chicago, Harvard, IEEE, BibTeX and GB/T 7714. Nothing is uploaded, no signup."}
         </p>
         <a
           href={`/${lang}#converter`}
