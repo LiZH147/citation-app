@@ -316,6 +316,26 @@ const zh: Translations = {
       q: "为什么转换后格式看起来不太对？",
       a: "请检查输入的引用数据是否完整——缺失的字段（如作者、期刊名、页码）会导致输出不完整。如果 BibTeX 文本格式不规范，请尝试在 Zotero 等工具中先做清理再粘贴。",
     },
+    {
+      q: "BibTeX 怎么免费转 APA 第 7 版？",
+      a: "把 BibTeX 粘贴进转换器，输出格式选 APA（第 7 版），直接复制结果，不用注册也不用下载。@article、@book、@inproceedings 等条目类型一次解析完。字段对照和步骤见指南 convertgb.shop/zh/bibtex-to-apa。",
+    },
+    {
+      q: "DOI 怎么自动转成 APA 引用？",
+      a: "把 DOI（例如 10.1038/nature14539）粘贴到 DOI 查找框，工具自动向 Crossref 查询元数据，按 APA 第 7 版排版：作者、年份、题名、刊名、卷、期、页码和 DOI 链接一次生成。步骤见指南 convertgb.shop/zh/doi-to-apa。",
+    },
+    {
+      q: "arXiv 论文怎么转成 IEEE 引用？",
+      a: "可以。把 arXiv 文章页链接（例如 https://arxiv.org/abs/1706.03762）或 arXiv:1706.03762 粘贴到 DOI 查找框，工具从 arXiv 接口读取元数据，按 IEEE 排版：带编号的引用和 [Online]. Available 链接。只贴裸 ID（例如 1706.03762）识别不到，要带链接或 arXiv: 前缀。详细步骤见指南 convertgb.shop/zh/arxiv-to-ieee。",
+    },
+    {
+      q: "怎么批量转换 BibTeX 文献？",
+      a: "把整段 .bib 文本粘贴进转换器，一次解析全部条目，按选定的输出格式一次出结果。如果想直接上传文件，上传 .bib 文件按钮是 Pro 功能，Pro 历史记录也从 20 条延长到 100 条。批量做法见指南 convertgb.shop/zh/batch-convert-bibtex。",
+    },
+    {
+      q: "ConvertGB 能替代 Zotero 吗？",
+      a: "不能——它不是文献管理软件，不替代 Zotero。ConvertGB 是一个免安装的格式转换器，只做一件事：把 BibTeX、APA 文本、DOI 和 arXiv 链接转成 APA、MLA、Chicago、Harvard、IEEE 或 GB/T 7714。它和 Zotero 配合用：从 Zotero 导出 BibTeX，在这里转换，再把结果下载为 .bib 或 .ris 导回 Zotero 或 EndNote。",
+    },
   ],
   faqKeywords: [
     "#APA转国标",
@@ -519,6 +539,26 @@ Example BibTeX:
     {
       q: "Why does the output format look incorrect?",
       a: "Please check that your input citation data is complete — missing fields (author, journal name, pages) will result in incomplete output. If your BibTeX text has formatting issues, try cleaning it up in Zotero or another reference manager before pasting.",
+    },
+    {
+      q: "How do I convert BibTeX to APA 7th format online for free?",
+      a: "Paste your BibTeX into the converter, choose APA (7th edition) as the output format, and copy the result — no account or download needed. @article, @book, @inproceedings and other entry types are parsed in one pass. For a field-by-field walkthrough, see the guide at convertgb.shop/en/bibtex-to-apa.",
+    },
+    {
+      q: "How do I convert a DOI to an APA citation automatically?",
+      a: "Paste the DOI (for example 10.1038/nature14539) into the DOI lookup box. The tool fetches the metadata from Crossref and formats it as APA 7th edition automatically — author, year, title, journal, volume, issue, pages and the DOI link. The step-by-step guide is at convertgb.shop/en/doi-to-apa.",
+    },
+    {
+      q: "Can I convert arXiv papers into IEEE citations?",
+      a: "Yes. Paste the arXiv page URL (for example https://arxiv.org/abs/1706.03762) or arXiv:1706.03762 into the DOI lookup box — the tool reads the metadata from the arXiv API and formats it as IEEE, with a numbered reference and an [Online]. Available link. A bare ID alone (1706.03762) is not recognised. The full walkthrough is at convertgb.shop/en/arxiv-to-ieee.",
+    },
+    {
+      q: "How do I batch convert BibTeX references?",
+      a: "Paste your whole .bib text into the converter and it converts every entry in one pass, in whichever output format you choose. If you would rather upload the file itself, the .bib file upload button is a Pro feature — Pro also keeps 100 history items instead of 20. The batch guide is at convertgb.shop/en/batch-convert-bibtex.",
+    },
+    {
+      q: "Is ConvertGB an alternative to Zotero?",
+      a: "No — it is not a reference manager and does not replace Zotero. ConvertGB is a no-install format converter for one job: turning BibTeX, APA text, DOIs and arXiv links into APA, MLA, Chicago, Harvard, IEEE or GB/T 7714 output. It works alongside Zotero: export BibTeX from Zotero, convert it here, and download the result as .bib or .ris to bring it back into Zotero or EndNote.",
     },
   ],
   faqKeywords: [
