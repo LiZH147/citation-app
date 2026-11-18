@@ -68,9 +68,14 @@ export interface Translations {
   proTitle: string;
   proSubtitle: string;
   proFreeName: string;
-  proProName: string;
   proFreePrice: string;
-  proProPrice: string;
+  proFreeNote: string;
+  proMonthlyName: string;
+  proMonthlyPrice: string;
+  proMonthlyNote: string;
+  proLifetimeName: string;
+  proLifetimePrice: string;
+  proLifetimeNote: string;
   proFreeFeature1: string;
   proFreeFeature2: string;
   proFreeFeature3: string;
@@ -222,17 +227,22 @@ const zh: Translations = {
   proTitle: "升级 Pro",
   proSubtitle: "批量转换 .bib 文件，保留更长的转换记录。",
   proFreeName: "免费版",
-  proProName: "Pro",
   proFreePrice: "$0",
-  proProPrice: "$4.99/月 或 $19 买断",
+  proFreeNote: "免费使用，无需注册",
+  proMonthlyName: "Pro 按月",
+  proMonthlyPrice: "$4.99/月",
+  proMonthlyNote: "按月续费，随时取消",
+  proLifetimeName: "Pro 买断",
+  proLifetimePrice: "$19",
+  proLifetimeNote: "一次付清，永久使用",
   proFreeFeature1: "全部 6 种输出格式",
   proFreeFeature2: "DOI 与 arXiv 查找",
   proFreeFeature3: "复制与下载（.bib / .ris / .txt）",
   proFeature1: "免费版全部功能",
   proFeature2: "批量转换：直接上传 .bib 文件",
   proFeature3: "100 条转换记录（免费版 20 条）",
-  proMonthlyBtn: "按月订阅 — $4.99/月",
-  proLifetimeBtn: "一次买断 — $19",
+  proMonthlyBtn: "按月订阅",
+  proLifetimeBtn: "一次买断",
   proActivateTitle: "已有 Pro？输入激活码",
   proKeyPlaceholder: "粘贴你的激活码",
   proActivateBtn: "激活 Pro",
@@ -416,17 +426,22 @@ Example BibTeX:
   proTitle: "Upgrade to Pro",
   proSubtitle: "Batch-convert .bib files and keep a longer conversion history.",
   proFreeName: "Free",
-  proProName: "Pro",
   proFreePrice: "$0",
-  proProPrice: "$4.99/mo or $19 once",
+  proFreeNote: "Free forever, no sign-up",
+  proMonthlyName: "Pro Monthly",
+  proMonthlyPrice: "$4.99/mo",
+  proMonthlyNote: "Billed monthly, cancel anytime",
+  proLifetimeName: "Pro Lifetime",
+  proLifetimePrice: "$19",
+  proLifetimeNote: "One-time payment, yours forever",
   proFreeFeature1: "All 6 output styles",
   proFreeFeature2: "DOI & arXiv lookup",
   proFreeFeature3: "Copy & download (.bib / .ris / .txt)",
   proFeature1: "Everything in Free",
   proFeature2: "Batch conversion — upload .bib files directly",
   proFeature3: "100-item conversion history (Free keeps 20)",
-  proMonthlyBtn: "Monthly — $4.99/mo",
-  proLifetimeBtn: "Lifetime — $19 one-time",
+  proMonthlyBtn: "Subscribe monthly",
+  proLifetimeBtn: "Buy lifetime",
   proActivateTitle: "Already bought Pro? Enter your license key",
   proKeyPlaceholder: "Paste your license key",
   proActivateBtn: "Activate Pro",
