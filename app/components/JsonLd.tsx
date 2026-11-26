@@ -24,7 +24,7 @@ export default function JsonLd({ lang, t }: Props) {
         url: baseUrl,
         description: isZh
           ? "免费在线学术文献格式转换工具，BibTeX/APA 转 GB/T 7714-2015 国标格式，支持 DOI 与 arXiv 抓取。"
-          : "Free online citation format converter — BibTeX or APA to GB/T 7714-2015, with DOI and arXiv lookup.",
+          : "Free online citation format converter — BibTeX or APA to APA 7th, MLA 9th, Chicago 17th, Harvard or IEEE, plus GB/T 7714-2015, with DOI and arXiv lookup.",
         inLanguage: isZh ? "zh-CN" : "en",
         potentialAction: {
           "@type": "SearchAction",

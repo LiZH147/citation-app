@@ -377,7 +377,7 @@ const en: Translations = {
   navConvert: "Converter",
   navGuide: "Guide",
   navFAQ: "FAQ",
-  heroTitle: "Citation Format Converter",
+  heroTitle: "Free Citation Converter",
   heroDesc:
     "Free online citation format converter. One-click conversion from BibTeX or APA to APA 7th, MLA 9th, Chicago 17th (Author-Date), Harvard, IEEE, or China National Standard GB/T 7714-2015, with DOI and arXiv lookup. Compatible with Google Scholar, Zotero, and EndNote exports. All processing happens locally — your academic privacy is protected.",
   heroCTA: "Start Converting",

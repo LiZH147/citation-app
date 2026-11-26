@@ -847,11 +847,11 @@ const en: LongformSet = {
       {
         h2: "Author-date or notes: pick the system first",
         paragraphs: [
-          "Chicago defines two systems, and a BibTeX to Chicago conversion has to know which one you want. The author-date system, used here, puts (LeCun et al. 2015) in the text and a reference list at the end. The notes-and-bibliography system uses footnotes instead, and its entries start with the same author block but end with a period after the DOI rather than a URL in the text.",
+          "Chicago defines two systems, and a BibTeX to Chicago conversion has to know which one you want. The author-date system, used here, puts (LeCun, Bengio, and Hinton 2015) in the text and a reference list at the end. The notes-and-bibliography system uses footnotes instead, and its entries start with the same author block but end with a period after the DOI rather than a URL in the text.",
           "Most science and social-science journals that ask for Chicago want author-date. If your style sheet says footnotes, convert with the same tool but check the output against the notes format: the first footnote for a work spells out all authors and ends with the page cited, while later notes shorten to author and title.",
         ],
         list: [
-          "Author-date in text: (LeCun et al. 2015, 437).",
+          "Author-date in text: (LeCun, Bengio, and Hinton 2015, 437).",
           "Notes first citation: full entry plus the cited page.",
           "Notes later citations: LeCun et al., \"Deep Learning,\" 437.",
           "Bibliography: one entry per work, alphabetical by author.",
@@ -885,7 +885,7 @@ const en: LongformSet = {
       },
       {
         q: "What is the difference between author-date and notes?",
-        a: "Author-date puts (LeCun et al. 2015) in the text and a reference list at the end. Notes-and-bibliography uses footnotes instead. Most science journals want author-date.",
+        a: "Author-date puts (LeCun, Bengio, and Hinton 2015) in the text and a reference list at the end. Notes-and-bibliography uses footnotes instead. Most science journals want author-date.",
       },
       {
         q: "Why is the page range 436–44 and not 436–444?",
@@ -893,7 +893,7 @@ const en: LongformSet = {
       },
       {
         q: "Where does the year go in Chicago author-date?",
-        a: "Directly after the author block, before the title: LeCun, Yann, et al. 2015. \"Deep Learning.\" That position is what makes the system author-date.",
+        a: "Directly after the author block, before the title: LeCun, Yann, Yoshua Bengio, and Geoffrey Hinton. 2015. \"Deep Learning.\" That position is what makes the system author-date.",
       },
       {
         q: "Does Chicago use a DOI link or the short form?",
@@ -907,7 +907,7 @@ const en: LongformSet = {
     relatedSlugs: ["bibtex-to-mla", "apa-to-mla", "bibtex-to-ieee"],
     ctaPrimary: "Paste your BibTeX and get the Chicago list",
     ctaSecondary: "See how IEEE numbers the same entry",
-    updated: "2026-11-12",
+    updated: "2026-11-26",
   },
 
   "bibtex-to-ieee": {
@@ -1266,7 +1266,7 @@ const en: LongformSet = {
       {
         h2: "APA to BibTeX: the shape the parser recognises",
         paragraphs: [
-          "The shape a parser recognises is author block, year in parentheses, period. LeCun, Y., Bengio, Y., & Hinton, G. (2015). Deep learning. Nature, 521(7553), 436–444. https://doi.org/10.1038/nature14539 splits exactly there: the author block ends at the year, the title ends at the first period after it, and the rest is container, volume, issue and pages. Paste one reference per blank line and the whole list is read in a single pass.",
+          "The shape a parser recognises is author block, year in parentheses, period. LeCun, Y., Bengio, Y., & Hinton, G. (2015). Deep learning. Nature, 521(7553), 436–444. https://doi.org/10.1038/nature14539 splits exactly there: the author block ends at the year, the title ends at the first period after it, and the rest is container, volume, issue and pages. Paste one reference per blank line and the whole list is read in a single pass. One exception: a trailing DOI link is not a field the parser knows — strip it before pasting, or it is swallowed into the journal field (see the DOI row below).",
           "That shape is also the failure mode. Entries that break it include legal citations, web pages with no personal author, and anything whose date is a range such as (2020-2023). Those are faster to type into the manual entry form than to repair afterwards, and the parser says so instead of guessing.",
         ],
         table: {
@@ -1277,7 +1277,7 @@ const en: LongformSet = {
             ["Title, sentence case", "title", "Deep learning"],
             ["Journal, volume(issue)", "journal, volume, number", "Nature, 521, 7553"],
             ["Page range", "pages, double hyphen", "436--444"],
-            ["DOI link", "doi", "10.1038/nature14539"],
+            ["DOI link", "not kept — strip it first", "Without stripping: journal swallows the link, pages becomes 14539"],
           ],
         },
       },
@@ -1285,13 +1285,13 @@ const en: LongformSet = {
         h2: "The rebuilt entry and its key",
         paragraphs: [
           "The rebuilt entry is a plain @article with a generated key: the first author's surname, the year and the first word of the title, so the LeCun paper becomes @article{LeCun2015Deep, ...}. The key is only a label, so rename it freely — but keep it unique inside one .bib file, because two entries with the same key break the compile.",
-          "Page ranges come back with a double hyphen, 436--444, which is the BibTeX way of writing an en dash. The DOI link is stripped back to the bare identifier in the doi field, and the resolver URL is kept as the url field, so nothing is lost in the round trip.",
+          "Page ranges come back with a double hyphen, 436--444, which is the BibTeX way of writing an en dash. The DOI link is the one thing that does not survive the round trip. Pasted at the end of an APA entry, the link is swallowed into the journal field and its tail becomes the page number — the LeCun entry comes back with pages 14539 and no doi field at all. Strip the https://doi.org/ link before pasting; to keep the DOI, paste the DOI itself into the lookup box, which reads the record from Crossref.",
         ],
         list: [
           "Paste one reference per blank line; the list is read in one pass.",
           "Check the key: two papers by the same author in one year can collide.",
           "Page ranges return with a double hyphen, 436--444.",
-          "The DOI survives as the doi field plus a url field.",
+          "Strip the DOI link before pasting: it is not kept, and its tail becomes the page number.",
         ],
       },
       {
@@ -1351,7 +1351,7 @@ const en: LongformSet = {
       },
       {
         q: "Does the rebuilt entry keep the DOI?",
-        a: "Yes, as the doi field with the bare identifier, plus a url field holding the https://doi.org/ link. Both survive a round trip through a reference manager.",
+        a: "No. A DOI link pasted at the end of an APA entry is swallowed into the journal field and its tail becomes the page number, so the rebuilt entry has no doi field. Strip the https://doi.org/ link before pasting; to keep the DOI, paste the DOI itself into the lookup box, which reads the record from Crossref.",
       },
       {
         q: "Is my APA list uploaded when I convert it?",
@@ -1361,7 +1361,7 @@ const en: LongformSet = {
     relatedSlugs: ["bibtex-to-apa", "doi-to-bibtex", "bibtex-to-mla"],
     ctaPrimary: "Paste the APA list and rebuild the .bib",
     ctaSecondary: "See how BibTeX turns into APA",
-    updated: "2026-11-18",
+    updated: "2026-11-26",
   },
 
   "doi-to-apa": {
@@ -1902,6 +1902,672 @@ const en: LongformSet = {
     ctaPrimary: "Paste a .bib file and convert it all",
     ctaSecondary: "Convert one DOI at a time instead",
     updated: "2026-11-18",
+  },
+  "doi-to-chicago": {
+    slug: "doi-to-chicago",
+    keyword: "DOI to Chicago",
+    title: "DOI to Chicago: Author-Date in Practice",
+    description:
+      "DOI to Chicago 17th edition author-date: paste a DOI, read the Crossref record, and get a full author list, a quoted title, and a shortened page range.",
+    h1: "DOI to Chicago: Turning an Identifier Into a Reference",
+    intro:
+      "A DOI is the cheapest way to get a complete Chicago reference and the one most likely to arrive with pieces missing. A DOI to Chicago lookup resolves the identifier against Crossref, reads the deposited metadata, and formats it for the Chicago Manual of Style 17th edition author-date system. That works well for modern journal deposits and needs a second look for everything else.",
+    sections: [
+      {
+        h2: "What a DOI to Chicago lookup returns",
+        paragraphs: [
+          "The lookup is one request to the Crossref REST API for a single work identifier, asking for JSON. The response is the publisher's deposit, not a curated catalogue record, and the converter reads nine things from it: title, container title, authors split into family and given names, issued date, volume, issue, page, publisher and the identifier itself.",
+          "Those nine fields are exactly what a Chicago 17th edition author-date entry needs, so a bare DOI often produces a finished reference; the rest of the deposit — abstracts, licence text, funder data — is discarded. Take 10.1038/nature14539: the LeCun, Bengio and Hinton paper Deep learning, published in Nature in 2015, volume 521, issue 7553, pages 436–444.",
+          "The catch is deposit quality: older records sometimes carry capitalised titles, a missing volume, or an author list without given names. A result can be structurally correct and still need two edits.",
+        ],
+        table: {
+          headers: ["Crossref field", "Chicago 17th author-date element", "In the LeCun example"],
+          rows: [
+            ["author[].family / given", "Full names, first surname first", "LeCun, Yann, Yoshua Bengio, and Geoffrey Hinton."],
+            ["issued date-parts", "Year after the author block", "2015."],
+            ["title", "In quotation marks, headline style", "“Deep Learning.”"],
+            ["container-title", "Journal, in italics", "Nature"],
+            ["volume / issue", "Volume (issue), colon before pages", "521 (7553):"],
+            ["page", "Shortened range after the colon", "436–44."],
+            ["DOI", "Resolver URL, last element", "https://doi.org/10.1038/nature14539"],
+          ],
+        },
+      },
+      {
+        h2: "The Chicago 17th author-date shape: full names, year first",
+        paragraphs: [
+          "The finished entry for the LeCun paper is exactly this: `LeCun, Yann, Yoshua Bengio, and Geoffrey Hinton. 2015. “Deep Learning.” Nature 521 (7553): 436–44. https://doi.org/10.1038/nature14539.` All three authors appear in full — only the first surname first, the rest in natural order — the year follows the author block, the title is quoted in headline style, and the journal is italicised while the volume stays roman.",
+          "Two details separate this from the APA entry for the same paper. Chicago shortens the page range — 436–444 becomes 436–44 — and the DOI keeps its trailing period, because the resolver URL is the entry's last element. With no issue number, the block collapses to the volume alone, 521: 436–44.",
+        ],
+        list: [
+          "All authors in full, to ten; eleven or more list the first seven plus et al.",
+          "Year directly after the author block, then a period.",
+          "Title in quotation marks, headline style; journal in italics.",
+          "Volume (issue): shortened page range, DOI last.",
+        ],
+      },
+      {
+        h2: "In-text citations: (LeCun, Bengio, and Hinton 2015)",
+        paragraphs: [
+          "The reference list is only half the job; the in-text citation has to match it. Chicago author-date names all three authors for a three-author work: (LeCun, Bengio, and Hinton 2015). No comma follows the names, none precedes the year — the detail that most often gives away an APA citation pasted into a Chicago paper.",
+          "One author is (LeCun 2015), two are (LeCun and Bengio 2015), and from four on it shortens to (LeCun et al. 2015). A quotation adds the page — (LeCun, Bengio, and Hinton 2015, 437) — and the narrative form is LeCun, Bengio, and Hinton (2015) argued …",
+        ],
+        list: [
+          "Three authors: (LeCun, Bengio, and Hinton 2015).",
+          "Two authors: (LeCun and Bengio 2015), and in narrative text.",
+          "Four or more authors: (LeCun et al. 2015) from the first mention.",
+          "Quotations: add a comma and the page you quoted from.",
+        ],
+      },
+      {
+        h2: "Author-date or notes: pick the system first",
+        paragraphs: [
+          "Chicago defines two systems, and a DOI to Chicago conversion has to know which one you want. The converter uses author-date: a parenthetical citation in the text and a reference list at the end. Notes-and-bibliography uses footnotes instead, starting from the same author block with different punctuation.",
+          "Most science and social-science journals that ask for Chicago want author-date. If your style sheet says footnotes, do not paste the author-date entry into a footnote: the first footnote spells out all authors and ends with the page cited, while later notes shorten to author and title. Convert with the same tool, then check the output against the notes format before it goes in.",
+        ],
+        list: [
+          "Author-date in text: (LeCun, Bengio, and Hinton 2015, 437).",
+          "Notes later citations: LeCun et al., “Deep Learning,” 437.",
+        ],
+      },
+      {
+        h2: "When the DOI is not registered with Crossref",
+        paragraphs: [
+          "Crossref is one registration agency among several, and a DOI to Chicago lookup can only read its own deposits. An arXiv DOI such as 10.48550/arXiv.2301.00001 is registered with DataCite, so Crossref returns not found however valid it is. Paste the arXiv abs URL (e.g. https://arxiv.org/abs/2301.00001) or an arXiv:2301.00001 identifier instead: the pattern is recognised separately, the version suffix stripped, and the record read from the arXiv API.",
+          "Zenodo, figshare and Dryad identifiers, including the 10.5281 family, are DataCite records too, so no DOI to Chicago lookup finds them at Crossref. Those describe datasets, so the entry is a dataset reference and the container is the repository rather than a journal. A pasted URL works as well: the input is scanned for a DOI-shaped string and trailing punctuation is removed before the request.",
+        ],
+      },
+      {
+        h2: "DOI to Chicago at list scale",
+        paragraphs: [
+          "The DOI box resolves a single identifier — the first DOI-shaped string or arXiv identifier in the input — and returns one record. Forty identifiers would mean forty lookups, so use the other input modes when the references are already in front of you.",
+          "Paste them as APA text, one reference per blank line, or as BibTeX, and both are parsed locally in a single pass. Chicago, Harvard, MLA and IEEE text cannot be parsed as input — only APA text can — so keep the DOI box for the reference that is garbled at the source. For a long list, one DOI to Chicago lookup per broken entry is usually the whole job.",
+          "Lookups and conversions stay in your browser's local history, the most recent twenty, so yesterday's identifier is one click away. Output leaves as .bib, .ris or plain .txt, and .ris moves records into EndNote or Zotero without retyping. RIS is output only: it cannot be pasted back in as input.",
+        ],
+        list: [
+          "Paste the identifier, or the whole reference.",
+          "Check the author count before you trust the list.",
+          "Fix missing volume or pages in the source, then reformat.",
+          "Export as .ris if the list has to go back into a manager.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "How many authors does Chicago list in the reference list?",
+        a: "Up to ten in full. With eleven or more, it lists the first seven followed by et al.",
+      },
+      {
+        q: "What does the in-text citation look like for three authors?",
+        a: "All three names: (LeCun, Bengio, and Hinton 2015). Et al. appears only from four authors on.",
+      },
+      {
+        q: "Why is the page range 436–44 and not 436–444?",
+        a: "Chicago shortens page ranges by dropping repeated digits: 436–444 becomes 436–44. The converter applies that rule automatically.",
+      },
+      {
+        q: "Why does an arXiv DOI return nothing?",
+        a: "Because 10.48550 identifiers are registered with DataCite, not Crossref. Paste the arXiv abs URL or an arXiv:2301.00001 identifier instead, and the record is read from the arXiv API.",
+      },
+      {
+        q: "Does Chicago use author-date or footnotes?",
+        a: "The converter uses author-date: (LeCun, Bengio, and Hinton 2015) in the text and a reference list at the end. Notes-and-bibliography uses footnotes instead, so check your style sheet first.",
+      },
+      {
+        q: "Is a DOI to Chicago lookup private?",
+        a: "Only the identifier is sent, to the Crossref API, to fetch the publisher's metadata. There is no account, no upload of your bibliography, and no server-side copy of your list.",
+      },
+    ],
+    relatedSlugs: ["doi-to-apa", "bibtex-to-chicago", "doi-to-harvard"],
+    ctaPrimary: "Paste a DOI and get the Chicago reference",
+    ctaSecondary: "Get the same record as BibTeX",
+    updated: "2026-11-26",
+  },
+  "doi-to-harvard": {
+    slug: "doi-to-harvard",
+    keyword: "DOI to Harvard",
+    title: "DOI to Harvard: Cite Them Right 11th",
+    description:
+      "DOI to Harvard (Cite Them Right 11th): paste a DOI, read the Crossref record, and get a three-author list, a quoted title, and a doi: identifier.",
+    h1: "DOI to Harvard: Turning an Identifier Into a Reference",
+    intro:
+      "A DOI is the cheapest way to get a complete Harvard reference and the one most likely to arrive with pieces missing. A DOI to Harvard lookup resolves the identifier against Crossref, reads the deposited metadata, and formats it for Cite Them Right 11th edition, the Harvard variant the converter uses. That works well for modern journal deposits and needs a second look for everything else.",
+    sections: [
+      {
+        h2: "What a DOI to Harvard lookup returns",
+        paragraphs: [
+          "The lookup is one request to the Crossref REST API for a single work identifier, asking for JSON. The response is the publisher's deposit, not a curated catalogue record, and the converter reads nine things from it: title, container title, authors split into family and given names, issued date, volume, issue, page, publisher and the identifier itself.",
+          "Those nine fields are exactly what a Cite Them Right Harvard entry needs, so a bare DOI often produces a finished reference; the rest of the deposit — abstracts, licence text, funder data — is discarded. Take 10.1038/nature14539: the LeCun, Bengio and Hinton paper Deep learning, published in Nature in 2015, volume 521, issue 7553, pages 436–444.",
+          "The catch is deposit quality: older records sometimes carry capitalised titles, a missing volume, or an author list without given names. A result can be structurally correct and still need two edits.",
+        ],
+        table: {
+          headers: ["Crossref field", "Harvard element (Cite Them Right 11th)", "In the LeCun example"],
+          rows: [
+            ["author[].family / given", "Surname plus initials, and before the last", "LeCun, Y., Bengio, Y. and Hinton, G."],
+            ["issued date-parts", "Year in parentheses after the authors", "(2015)"],
+            ["title", "In quotation marks, sentence case", "“Deep learning,”"],
+            ["container-title", "Journal, in italics", "Nature,"],
+            ["volume / issue", "Volume(issue), no space", "521(7553),"],
+            ["page", "pp. with a full range", "pp. 436–444."],
+            ["DOI", "doi: plus the bare identifier", "doi:10.1038/nature14539."],
+          ],
+        },
+      },
+      {
+        h2: "The Harvard shape: three authors, quoted title, doi:",
+        paragraphs: [
+          "The finished entry for the LeCun paper is exactly this: `LeCun, Y., Bengio, Y. and Hinton, G. (2015) “Deep learning,” Nature, 521(7553), pp. 436–444. doi:10.1038/nature14539.` Only three authors survive, the title is quoted in sentence case, and the journal is italicised while the volume stays roman.",
+          "Two details separate this from the APA entry for the same paper. The page range keeps its full length with a pp. prefix — pp. 436–444, never shortened the way Chicago shortens it — and the DOI is a bare identifier with a doi: prefix, no resolver URL and no space after the colon. The year sits in parentheses directly after the authors.",
+        ],
+        list: [
+          "Authors: three at most, et al. from four on.",
+          "Title: in quotation marks; journal in italics.",
+          "Numbers: volume(issue), pp. with a full range.",
+          "DOI: doi: plus the bare identifier, at the end.",
+        ],
+      },
+      {
+        h2: "In-text citations: (LeCun, Bengio and Hinton, 2015)",
+        paragraphs: [
+          "The reference list is only half the job; the in-text citation has to match it. Cite Them Right Harvard names all three authors in the text for a three-author work: (LeCun, Bengio and Hinton, 2015). The separator is and, never an ampersand, and the year follows a comma after the names — the detail that most often gives away an APA citation pasted into a Harvard paper.",
+          "One author is (LeCun, 2015), two are (LeCun and Bengio, 2015), and from four on it shortens to (LeCun et al., 2015). A quotation adds the page — (LeCun, Bengio and Hinton, 2015, p. 436) — and the narrative form is LeCun, Bengio and Hinton (2015) argued …",
+        ],
+        list: [
+          "Three authors: (LeCun, Bengio and Hinton, 2015).",
+          "Two authors: (LeCun and Bengio, 2015), and in narrative text.",
+          "Four or more authors: (LeCun et al., 2015) from the first mention.",
+          "Quotations: add a comma, p. or pp., and the page you quoted from.",
+        ],
+      },
+      {
+        h2: "Harvard is a family of styles, not one manual",
+        paragraphs: [
+          "Harvard has no single official manual, which is the first thing to know about a DOI to Harvard conversion. This page follows Cite Them Right 11th edition, the Harvard variant the converter uses — and the one most UK universities base their guides on. If your institution publishes its own Harvard guide, check it against the four points at the end of this section.",
+          "The usual differences are small but visible: some guides print the DOI as a full https://doi.org/ link instead of the bare doi: identifier, some use single quotation marks instead of double, and some list every author instead of cutting at three. When a guide disagrees with this page, follow the guide.",
+        ],
+        list: [
+          "DOI: doi: here; a full link in some guides.",
+          "Title quotes: double here; single in some guides.",
+          "Authors: three here; every author in some guides.",
+          "Your institution's guide wins any disagreement.",
+        ],
+      },
+      {
+        h2: "When the DOI is not registered with Crossref",
+        paragraphs: [
+          "Crossref is one registration agency among several, and a DOI to Harvard lookup can only read its own deposits. An arXiv DOI such as 10.48550/arXiv.2301.00001 is registered with DataCite, so Crossref returns not found however valid it is. Paste the arXiv abs URL (e.g. https://arxiv.org/abs/2301.00001) or an arXiv:2301.00001 identifier instead: the pattern is recognised separately, the version suffix stripped, and the record read from the arXiv API.",
+          "Zenodo, figshare and Dryad identifiers, including the 10.5281 family, are DataCite records too, so no DOI to Harvard lookup finds them at Crossref. Those describe datasets, so the entry is a dataset reference and the container is the repository rather than a journal. A pasted URL works as well: the input is scanned for a DOI-shaped string and trailing punctuation is removed before the request.",
+        ],
+      },
+      {
+        h2: "DOI to Harvard at list scale",
+        paragraphs: [
+          "The DOI box resolves a single identifier — the first DOI-shaped string or arXiv identifier in the input — and returns one record. Forty identifiers would mean forty lookups, so use the other input modes when the references are already in front of you.",
+          "Paste them as APA text, one reference per blank line, or as BibTeX, and both are parsed locally in a single pass. Chicago, Harvard, MLA and IEEE text cannot be parsed as input — only APA text can — so keep the DOI box for the reference that is garbled at the source. For a long list, one DOI to Harvard lookup per broken entry is usually the whole job.",
+          "Lookups and conversions stay in your browser's local history, the most recent twenty, so yesterday's identifier is one click away. Output leaves as .bib, .ris or plain .txt, and .ris moves records into EndNote or Zotero without retyping. RIS is output only: it cannot be pasted back in as input.",
+        ],
+        list: [
+          "Paste the identifier, or the whole reference.",
+          "Check the author count before you trust the list.",
+          "Fix missing volume or pages in the source, then reformat.",
+          "Export as .ris if the list has to go back into a manager.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "Which Harvard is this page about?",
+        a: "Cite Them Right 11th edition, the variant the converter uses and the one most UK universities base their guides on. Harvard has no single official manual, so check your institution's guide if it differs.",
+      },
+      {
+        q: "How many authors does Harvard list?",
+        a: "Three. With four or more authors, Cite Them Right Harvard lists the first author followed by et al., in the reference list and in the text.",
+      },
+      {
+        q: "Why is the DOI written as doi: instead of a link?",
+        a: "Because Cite Them Right 11th edition prints the bare identifier after a doi: prefix, with no space and no resolver URL. Other Harvard guides use the full https://doi.org/ link.",
+      },
+      {
+        q: "Why does an arXiv DOI return nothing?",
+        a: "Because 10.48550 identifiers are registered with DataCite, not Crossref. Paste the arXiv abs URL or an arXiv:2301.00001 identifier instead, and the record is read from the arXiv API.",
+      },
+      {
+        q: "How many DOIs can I convert at once?",
+        a: "The DOI box resolves one identifier per lookup. For a longer list, paste it as APA text or BibTeX, which is parsed in a single pass.",
+      },
+      {
+        q: "Is a DOI to Harvard lookup private?",
+        a: "Only the identifier is sent, to the Crossref API, to fetch the publisher's metadata. There is no account, no upload of your bibliography, and no server-side copy of your list.",
+      },
+    ],
+    relatedSlugs: ["doi-to-apa", "bibtex-to-harvard", "doi-to-ieee"],
+    ctaPrimary: "Paste a DOI and get the Harvard reference",
+    ctaSecondary: "See the same record as APA 7th",
+    updated: "2026-11-26",
+  },
+
+  "doi-to-ieee": {
+    slug: "doi-to-ieee",
+    keyword: "DOI to IEEE",
+    title: "DOI to IEEE: Crossref to Numbered [1]",
+    description:
+      "DOI to IEEE: paste a DOI, fetch the publisher metadata from Crossref, and get a numbered IEEE reference with vol., no., pp. and the short doi form.",
+    h1: "DOI to IEEE: Turning an Identifier Into a Numbered Reference",
+    intro:
+      "A DOI is the shortest route to a complete IEEE reference and the one most likely to arrive with pieces missing. A DOI to IEEE lookup resolves the identifier against Crossref, reads the publisher's deposited metadata, and formats it as a numbered IEEE entry. That works well for modern journal deposits and needs a second look for everything else.",
+    sections: [
+      {
+        h2: "What a DOI to IEEE lookup returns",
+        paragraphs: [
+          "The lookup is one request to the Crossref REST API for a single work identifier, asking for JSON. The response is the publisher's deposit rather than a curated catalogue record. From it the converter reads nine things: title, container title, authors split into family and given names, issued date, volume, issue, page, publisher and the identifier itself.",
+          "Those nine fields are exactly what an IEEE entry needs, which is why a bare DOI often produces a finished reference. Everything else in the deposit, from abstracts to licence text to funder data, is discarded. Take 10.1038/nature14539: the lookup returns the LeCun, Bengio and Hinton paper Deep learning, published in Nature in 2015, volume 521, issue 7553, pages 436–444.",
+          "The catch is deposit quality. Older records sometimes carry capitalised titles, a missing volume, or an author list without given names. A DOI to IEEE result can be structurally correct and still need two edits, and knowing which fields to inspect makes that fast.",
+        ],
+        table: {
+          headers: ["Crossref field", "IEEE element", "In the LeCun example"],
+          rows: [
+            ["author[].family / given", "Initials before surnames", "Y. LeCun, Y. Bengio, and G. Hinton,"],
+            ["title", "In quotation marks, sentence case", "“Deep learning,”"],
+            ["container-title", "Journal, in italics", "Nature,"],
+            ["volume / issue", "vol. and no. abbreviations", "vol. 521, no. 7553,"],
+            ["page", "pp. with an en-dash range", "pp. 436–444,"],
+            ["issued date-parts", "Month and year near the end", "May 2015,"],
+            ["DOI", "Short form, last element", "doi: 10.1038/nature14539."],
+          ],
+        },
+      },
+      {
+        h2: "The finished entry, element by element",
+        paragraphs: [
+          "The finished entry for the LeCun paper is exactly this: `[1] Y. LeCun, Y. Bengio, and G. Hinton, “Deep learning,” Nature, vol. 521, no. 7553, pp. 436–444, May 2015, doi: 10.1038/nature14539.` The bracketed number opens the entry, the title takes quotation marks in sentence case, the journal is italicised, the volume and issue are spelled out as vol. and no., the page range uses an en dash, and the DOI closes the entry in short form.",
+          "The month appears only when the deposit carries it: the Crossref record for this paper is issued 28 May 2015, so May 2015 prints after the pages. A year-only deposit prints the year alone, and there is nothing to add by hand. The number is [1] because this is the first entry rendered; in a list the numbers follow the order the works are first cited, not the alphabet.",
+        ],
+      },
+      {
+        h2: "When Crossref cannot find the DOI",
+        paragraphs: [
+          "Crossref is one registration agency among several, and a DOI to IEEE lookup can only read its own deposits. An arXiv DOI of the form 10.48550/arXiv.2301.00001 is registered with DataCite, so a Crossref request returns a not-found error however valid the identifier is. Paste the arXiv abs URL, https://arxiv.org/abs/2301.00001, or an arXiv:2301.00001 identifier instead: the pattern is recognised separately and the record is read from the arXiv API.",
+          "Zenodo, figshare and Dryad identifiers, including the 10.5281 family, are DataCite records too, so no DOI to IEEE lookup finds them at Crossref. A pasted URL works as well: the input is scanned for the first DOI-shaped string, and trailing punctuation such as a semicolon or full stop is removed before the request.",
+        ],
+        list: [
+          "Works: a bare DOI, 10.1038/nature14539.",
+          "Works: the resolver URL, https://doi.org/10.1038/nature14539.",
+          "Works: a DOI embedded in a pasted reference — the first one is read.",
+          "Fails at Crossref: 10.48550/arXiv.2301.00001 — use the arXiv URL.",
+          "Fails at Crossref: 10.5281/zenodo records — DataCite, not Crossref.",
+        ],
+      },
+      {
+        h2: "In-text citations and the reference list",
+        paragraphs: [
+          "IEEE numbers entries in the order they are first cited in the text: the first work cited is [1], the second is [2], and the list is printed in that order. A DOI to IEEE conversion numbers the list in the order you paste it, so paste in citation order or renumber afterwards. The marker in the text is the number in square brackets: `... as shown in [1].` The same work cited twice keeps the same number, and a range is written [1]–[3].",
+          "There is no author-date marker anywhere in IEEE, so (LeCun, 2015) never appears. The list is not alphabetical either, which is the detail that most often gives away an unconverted APA list. Insert one source in paragraph two and every later number shifts by one, so numbering belongs in your last pass over the manuscript.",
+        ],
+        list: [
+          "Paste references in the order they are first cited.",
+          "Cite with [1], not with the author name or year.",
+          "Renumber after any insertion, since a new [2] shifts every later reference.",
+          "The same work always keeps the same number.",
+        ],
+      },
+      {
+        h2: "DOI to IEEE at list scale",
+        paragraphs: [
+          "The DOI box resolves a single identifier: it reads the first DOI-shaped string or arXiv identifier in the input and returns one record. A list of forty identifiers would mean forty lookups, so use the other input modes when the references are already in front of you.",
+          "Paste them as BibTeX, one entry per @article block, or as APA text, one reference per blank line, and both are parsed locally in a single pass. Keep the DOI box for the reference that is garbled at the source, where a title is missing or a page range was lost in a copy-paste. For a long list, one DOI to IEEE lookup per broken entry is usually the whole job.",
+          "Lookups and conversions stay in your browser's local history, the most recent twenty, so an identifier you resolved yesterday is one click away. Output leaves as .bib, .ris or plain .txt, and the .ris route moves records into EndNote or Zotero without retyping.",
+        ],
+        list: [
+          "Paste the identifier, or the whole reference if you only have that.",
+          "Check the author count before you trust the list.",
+          "Fix missing volume or pages in the source record, then reformat.",
+          "Export as .ris if the list has to go back into a manager.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "Can I paste the DOI as a full URL?",
+        a: "Yes. A bare 10.1038/nature14539, the https://doi.org/10.1038/nature14539 link, or a DOI embedded in a pasted reference all work: the first DOI-shaped string is read and trailing punctuation is stripped.",
+      },
+      {
+        q: "Why does my entry have no volume or pages?",
+        a: "The publisher's deposit did not carry them. Older records and article-number-only deposits often have no page range, so the pages element is missing and you add it from the publisher's page.",
+      },
+      {
+        q: "Why does an arXiv DOI return nothing?",
+        a: "Because 10.48550 identifiers are registered with DataCite, not Crossref. Paste the arXiv abs URL or an arXiv:2301.00001 identifier instead, and the record is read from the arXiv API.",
+      },
+      {
+        q: "Does IEEE use a DOI link or the short form?",
+        a: "The short form: doi: 10.1038/nature14539. The https://doi.org/ resolver URL is APA practice, not IEEE.",
+      },
+      {
+        q: "How many DOIs can I convert at once?",
+        a: "The DOI box resolves one identifier per lookup. For a longer list, paste it as BibTeX or APA text, which is parsed in a single pass.",
+      },
+      {
+        q: "Is a DOI to IEEE lookup private?",
+        a: "Only the identifier is sent, to the Crossref API, to fetch the publisher's metadata. There is no account, no upload of your bibliography, and no server-side copy of your list.",
+      },
+    ],
+    relatedSlugs: ["doi-to-apa", "bibtex-to-ieee", "arxiv-to-ieee"],
+    ctaPrimary: "Paste a DOI and get the IEEE entry",
+    ctaSecondary: "See the same record as APA",
+    updated: "2026-11-26",
+  },
+
+  "apa-to-chicago": {
+    slug: "apa-to-chicago",
+    keyword: "APA to Chicago",
+    title: "APA to Chicago: Author-Date, Rebuilt",
+    description:
+      "APA to Chicago: paste the APA list and get Chicago 17th author-date back. Initials stay initials, and the DOI link must come off first.",
+    h1: "APA to Chicago: Turning an APA List Into Author-Date References",
+    intro:
+      "A Chicago author-date entry is not an APA string with the punctuation swapped: the tool first parses the APA text back into a structured record, then renders that record with the Chicago 17th edition author-date template. That two-step job is why an APA to Chicago conversion mostly works, and why its failures look the way they do. This guide shows what the parser recognises, what the finished entry looks like, and where the DOI link breaks the parse.",
+    sections: [
+      {
+        h2: "Not a rewrite: parse first, then re-render",
+        paragraphs: [
+          "The conversion runs in two steps: the APA text is parsed into fields — authors, year, title, container, volume, issue, pages — as a structured record, then rendered in Chicago 17th edition author-date. A field that never reaches the record cannot appear in the Chicago entry.",
+          "APA text is the only formatted text the tool can parse as input: MLA, Harvard, Chicago and IEEE text cannot be pasted in and read back. Even that parser is a fallback — the citation library itself rejects APA text as unrecognised, so the converter falls back to a heuristic parser that reads the shape author block, year in parentheses, period.",
+          "Entries that do not match that shape — legal citations, web pages with no personal author, in-text citations such as (LeCun et al., 2015), dates as a range like (2020-2023) — are skipped silently, with no error and no gap in the output. Count the entries before you trust the list.",
+        ],
+      },
+      {
+        h2: "The finished entry: same record, Chicago shape",
+        paragraphs: [
+          "From a complete record, the Chicago entry for the LeCun paper is exactly this: `LeCun, Yann, Yoshua Bengio, and Geoffrey Hinton. 2015. “Deep Learning.” Nature 521 (7553): 436–44. https://doi.org/10.1038/nature14539.` Full names appear because the record carries them — this is the entry a DOI lookup produces.",
+          "The author list is reordered: first author inverted, the rest in natural order, and before the last name where APA used an ampersand. The journal, volume and issue lose their labels — Nature 521 (7553) — and the page range is shortened, 436–44, where APA prints the full 436–444. The title is the one element that changes case: APA prints Deep learning in sentence case, Chicago prints “Deep Learning.”",
+          "In-text, three authors become (LeCun, Bengio, and Hinton 2015), or LeCun, Bengio, and Hinton (2015) in narrative form — no comma before the year, and and instead of &. Two authors keep both names, (LeCun and Bengio 2015); a quotation adds the page: (LeCun, Bengio, and Hinton 2015, 436).",
+        ],
+        table: {
+          headers: ["APA element", "Chicago author-date element", "In the LeCun example"],
+          rows: [
+            ["Author block", "First author inverted, rest natural, and", "LeCun, Yann, Yoshua Bengio, and Geoffrey Hinton."],
+            ["Year in parentheses", "Year after the authors, then a period", "2015."],
+            ["Title, sentence case", "Title case, in quotation marks", "“Deep Learning.”"],
+            ["Journal, volume(issue)", "Journal volume (issue), no labels", "Nature 521 (7553):"],
+            ["Page range", "Pages shortened", "436–44."],
+            ["DOI link", "DOI link, last element", "https://doi.org/10.1038/nature14539."],
+          ],
+        },
+      },
+      {
+        h2: "Strip the DOI link before you paste",
+        paragraphs: [
+          "Leaving the trailing DOI link on the pasted entry breaks the conversion: the parser's journal pattern expects the entry to end with the page range, so the link breaks the match and the fallback reads the DOI's trailing digits as the page number, swallowing the whole tail into the journal title.",
+          "Paste `LeCun, Y., Bengio, Y., & Hinton, G. (2015). Deep learning. Nature, 521(7553), 436–444. https://doi.org/10.1038/nature14539` with the link attached and the Chicago entry comes back as `LeCun, Y., Y. Bengio, and G. Hinton. 2015. “Deep Learning.” Nature, 521(7553), 436–444. Https://Doi.Org/10.1038/Nature14539, 2015, 14539.` The pages became 14539 and the DOI was title-cased into the journal name.",
+          "Delete the trailing DOI link before pasting — the DOI does not survive the APA parse, so nothing is lost. If the DOI has to appear in the finished entry, paste the DOI itself into the DOI lookup box: that route reads the full publisher record, DOI included.",
+        ],
+        list: [
+          "Paste: LeCun, Y., Bengio, Y., & Hinton, G. (2015). Deep learning. Nature, 521(7553), 436–444.",
+          "Do not paste: the same entry with https://doi.org/10.1038/nature14539 attached.",
+          "If the DOI matters, use the DOI lookup, not the APA paste.",
+          "A page number like 14539 means the DOI leaked into the parse.",
+        ],
+      },
+      {
+        h2: "What the parse keeps, and what it loses",
+        paragraphs: [
+          "Initials stay initials: APA prints LeCun, Y., and the parser cannot know the Y. stands for Yann, so a Chicago entry built from APA text reads `LeCun, Y., Y. Bengio, and G. Hinton. 2015. “Deep Learning.” Nature, 521(7553), 2015, 436–44.` The doubled year and the volume inside the journal title are the other tell: the parser folds “Nature, 521(7553)” into one container field. Full names only come from a DOI or BibTeX source.",
+          "Missing fields make an incomplete entry: the parser cannot invent them. An APA entry with no volume or pages parses to a container of “Nature, 436” and a page of “–444”, which renders as `LeCun, Y., Y. Bengio, and G. Hinton. 2015. “Deep Learning.” Nature, 436, 2015, 444.` — the range is gone and the start page is stuck to the journal name. Fill in the volume, issue and pages from the source before converting.",
+          "Types are guessed from the text, and books have no distinct shape in APA: a book entry reads like an article whose container is a publisher, so check the container before you trust it. A container with In, or the words Proceedings, Conference, Symposium or Proceeding, becomes a conference paper, and an entry dated n.d. has no year at all.",
+        ],
+      },
+      {
+        h2: "Check the Chicago list before you paste it in",
+        paragraphs: [
+          "Before the list goes into a manuscript, check five things: entry count matches input, every author list is complete, every entry carries volume, issue and pages where the source had them, no page number looks like a DOI fragment, and every entry ends with its DOI link where wanted. A count mismatch is the fastest signal an entry was skipped.",
+          "Fix problems in the source text and convert again — do not hand-edit the formatted output, because the next conversion overwrites it. Keep the APA list: a formatted string cannot be turned back into fields, but the .bib download converts again for any style, and .ris carries the same records into EndNote or Zotero.",
+        ],
+        list: [
+          "Count entries: output count must match input count.",
+          "Check pages for DOI digits such as 14539.",
+          "Check authors: initials from APA, full names only from DOI or BibTeX.",
+          "Re-add DOIs through the DOI lookup where they belong.",
+          "In-text form is (Author Year), with and, not &.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "Can I paste a whole APA list at once?",
+        a: "Yes. Paste one reference per blank line and the whole list is read in a single pass. Entries that do not match the author-year-title shape are skipped silently, so count the output against the input.",
+      },
+      {
+        q: "Why does my Chicago entry show initials, not full names?",
+        a: "Because APA prints initials and the parser cannot expand them: Y. never becomes Yann. Full names need a DOI or BibTeX source, which carries given names as fields.",
+      },
+      {
+        q: "Why did the DOI break my entry?",
+        a: "A trailing https://doi.org/ link breaks the parser's journal pattern: the DOI's trailing digits become the page number and the whole tail is swallowed into the journal title. Strip the link before pasting, or use the DOI lookup instead.",
+      },
+      {
+        q: "What if my APA entry has no volume or pages?",
+        a: "The output is incomplete: the container and page fields come back garbled, for example a page of 444 from a 436–444 range with no volume. Fill in the volume, issue and pages from the source before converting.",
+      },
+      {
+        q: "How do I cite three authors in the text?",
+        a: "As (LeCun, Bengio, and Hinton 2015) in parentheses, or LeCun, Bengio, and Hinton (2015) in narrative form. There is no comma before the year, and and replaces the APA ampersand.",
+      },
+      {
+        q: "Is my APA list uploaded when I convert it?",
+        a: "No. The APA to Chicago conversion runs inside your browser tab, nothing is posted to a server, and no account is needed.",
+      },
+    ],
+    relatedSlugs: ["apa-to-bibtex", "bibtex-to-chicago", "apa-to-harvard"],
+    ctaPrimary: "Paste the APA list and get Chicago author-date",
+    ctaSecondary: "See the same list as BibTeX",
+    updated: "2026-11-26",
+  },
+  "apa-to-harvard": {
+    slug: "apa-to-harvard",
+    keyword: "APA to Harvard",
+    title: "APA to Harvard: Cite Them Right in Practice",
+    description:
+      "APA to Harvard (Cite Them Right 11th): the & becomes and, the title takes quotes, and (LeCun et al., 2015) turns into a three-author in-text citation.",
+    h1: "APA to Harvard: Reference List Conversion in Practice",
+    intro:
+      "APA 7th edition and Harvard (Cite Them Right 11th edition) look like twins: both open with the author, both put the year in parentheses, and both end with the journal and the pages. An APA to Harvard conversion is a small job with a long tail of punctuation — the ampersand becomes and, the title takes quotation marks, and the DOI loses its link. This guide shows it on one real article, explains how the converter reads APA text, and lists the checks it cannot do for you.",
+    sections: [
+      {
+        h2: "APA to Harvard: one article, two entries",
+        paragraphs: [
+          "Here is the same article in both systems. APA 7th edition: `LeCun, Y., Bengio, Y., & Hinton, G. (2015). Deep learning. Nature, 521(7553), 436–444.` Harvard (Cite Them Right 11th): `LeCun, Y., Bengio, Y. and Hinton, G. (2015) “Deep learning,” Nature, 521(7553), pp. 436–444.` Both are the Deep learning paper (Nature, 521(7553), 436–444, DOI 10.1038/nature14539), and every row of the table below is visible in that pair.",
+          "Those two entries are exactly what the converter produces from the pasted APA text: the text is parsed into a structured record and re-rendered in Harvard. The DOI is the one element that does not survive that trip; the reason is in the DOI section below.",
+        ],
+        table: {
+          headers: ["Element", "APA 7th edition", "Harvard (Cite Them Right 11th)"],
+          rows: [
+            ["Authors", "LeCun, Y., Bengio, Y., & Hinton, G.", "LeCun, Y., Bengio, Y. and Hinton, G."],
+            ["Year", "In parentheses after the authors", "In parentheses after the authors"],
+            ["Title", "Sentence case, no quotation marks", "Sentence case, in double quotation marks"],
+            ["Journal", "In italics", "In italics"],
+            ["Volume, issue", "521(7553), volume in italics", "521(7553), volume in roman type"],
+            ["Pages", "436–444, no prefix", "pp. 436–444"],
+            ["DOI", "Resolver URL: https://doi.org/10.1038/nature14539", "doi:10.1038/nature14539 (full record only)"],
+            ["In text", "(LeCun et al., 2015)", "(LeCun, Bengio and Hinton, 2015)"],
+          ],
+        },
+      },
+      {
+        h2: "How the converter reads APA text",
+        paragraphs: [
+          "The converter does not edit the APA string: it parses it into a structured record and renders that record in Harvard, so the conversion is only as good as the parse. The parser expects the APA shape — an author block, a year in parentheses, a period, then the title up to its first period, then journal, volume, issue and pages — and the LeCun entry above matches it exactly, which is why it converts cleanly.",
+          "Paste one reference per block, separated by a blank line: the parser splits on blank lines, so two entries run together become one garbled record. Only APA text parses this way — MLA, Harvard, Chicago and IEEE text cannot be used as input, because none puts the year in parentheses after the author block.",
+          "Author initials stay initials: the parser reads `LeCun, Y.` as family name LeCun and given name Y, so the Harvard output keeps Y. It cannot expand an initial into Yann — the full name is not in the input. If a style needs full first names, convert from BibTeX or a DOI lookup instead.",
+        ],
+        list: [
+          "Paste APA text, one reference per block, blank line between entries.",
+          "Check the author block first: surname, comma, initials, then (year).",
+          "Fix missing volume, issue or pages in the pasted text before converting.",
+        ],
+      },
+      {
+        h2: "Authors: the ampersand becomes and, et al. moves",
+        paragraphs: [
+          "The most visible change is the smallest: APA joins the last author with an ampersand, Harvard with the word and. A leftover & is the clearest sign of a half-converted entry.",
+          "The author count is where the two systems really part. Cite Them Right Harvard lists at most three authors: with four or more, the list shows the first author followed by et al. — a four-author test record renders as `Alpha, A. et al.` APA 7th lists up to twenty names, so the same paper can lose most of its authors. In text, Harvard names all three authors, (LeCun, Bengio and Hinton, 2015), and uses et al. only from four on — while APA writes (LeCun et al., 2015) for the same three authors.",
+          "A corporate author needs a second look: `World Health Organization (2020). ...` has no comma after the name, so the parser's fallback reads the last word as the family name. Check the author line, and convert from BibTeX — where the name can be protected with double braces — if it comes out wrong.",
+        ],
+      },
+      {
+        h2: "Titles, italics and the missing DOI",
+        paragraphs: [
+          "The article title takes double quotation marks and stays in sentence case: Deep learning becomes “Deep learning,” with the comma inside the closing quote. The journal name is italicised in both systems. The volume differs quietly: APA italicises it, while Cite Them Right leaves it in roman type — not bold, whatever a university guide's description of Harvard suggests. The page range takes a pp. prefix and keeps its full length, pp. 436–444.",
+          "The DOI is the element the APA-text route cannot carry: the parser reads authors, year, title, journal, volume, issue and pages, and nothing else — there is no field for a DOI or a URL. So the Harvard entry above ends at the pages. Convert the same paper from its DOI or BibTeX and the full record ends with the Cite Them Right form: `LeCun, Y., Bengio, Y. and Hinton, G. (2015) “Deep learning,” Nature, 521(7553), pp. 436–444. doi:10.1038/nature14539.` — doi: plus the bare identifier, no space, no resolver prefix, no link.",
+          "Do not leave the DOI link on the end of the pasted APA text. With `https://doi.org/10.1038/nature14539` still attached, the parser misreads the tail: the journal field swallows the volume, pages and link, and the page range comes out as the last digits of the DOI. The mangled result renders as `LeCun, Y., Bengio, Y. and Hinton, G. (2015) “Deep learning,” Nature, 521(7553), 436–444. https://doi.org/10.1038/nature14539, p. 14539.` Strip the DOI link before pasting; add the DOI from a DOI lookup if your guide requires it.",
+        ],
+      },
+      {
+        h2: "Check the converted list before you submit",
+        paragraphs: [
+          "Before a converted list goes into a paper, check four things: every & is now an and, every title sits inside quotation marks, every entry ends with a pp. range where the source had pages, and every in-text citation names up to three authors before et al. A missing volume, issue or page range produces a short entry with no warning, so check against the source: if the APA entry had no pages, the Harvard entry has none either.",
+          "Harvard is a family of styles, not one manual. This converter follows Cite Them Right 11th edition, the variant most UK universities base their guides on, but some institutions list every author, use single quotes, or print the DOI as a full https://doi.org/ link. If your institution's guide disagrees, follow the guide. The list downloads as .bib, .ris or plain text; history keeps the most recent twenty items, or one hundred on Pro.",
+        ],
+        list: [
+          "Search the converted list for a leftover &.",
+          "Count the authors: three at most before et al.",
+          "Compare every entry's volume, issue and pages with the source.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "Which Harvard does this converter use?",
+        a: "Cite Them Right 11th edition, the variant most UK universities base their guides on. Harvard has no single official manual, so if your institution publishes its own Harvard guide and it disagrees — on author counts, quote marks or the DOI — follow your institution's guide.",
+      },
+      {
+        q: "Do I need to delete the ampersand before converting?",
+        a: "No. The parser drops the & when it reads the author block, and the Harvard rendering joins the last author with and. If you convert by hand, replace & with and first — a leftover & is the clearest sign of a half-converted entry.",
+      },
+      {
+        q: "Why does my Harvard entry have no DOI?",
+        a: "Because the APA-text parser keeps authors, year, title, journal, volume, issue and pages only — it has no field for a DOI or a URL. Convert the same paper from its DOI or from BibTeX and the entry ends with doi:10.1038/nature14539.",
+      },
+      {
+        q: "Why does Harvard name all three authors in the text, when APA writes et al.?",
+        a: "Cite Them Right Harvard names up to three authors in the text — (LeCun, Bengio and Hinton, 2015) — and uses et al. only from four authors on. APA switches to et al. from three authors, so (LeCun et al., 2015) is correct APA and wrong Harvard for the same paper.",
+      },
+      {
+        q: "Can I paste Harvard or MLA text in as the input?",
+        a: "No. Only APA text parses as input, because only APA puts the year in parentheses directly after the author block. MLA, Harvard, Chicago and IEEE text do not match that shape, so paste the APA version, or the BibTeX, instead.",
+      },
+      {
+        q: "What if my APA entry has no volume or pages?",
+        a: "The Harvard entry comes out short with no warning — the parser cannot invent fields that are not in the text. Add the missing volume, issue or pages to the pasted APA text first, then convert again.",
+      },
+    ],
+    relatedSlugs: ["apa-to-bibtex", "bibtex-to-harvard", "apa-to-ieee"],
+    ctaPrimary: "Convert an APA list to Harvard",
+    ctaSecondary: "See the same record as BibTeX",
+    updated: "2026-11-26",
+  },
+  "apa-to-ieee": {
+    slug: "apa-to-ieee",
+    keyword: "APA to IEEE",
+    title: "APA to IEEE: Author-Date to Numbered [1]",
+    description:
+      "APA to IEEE: paste APA text and get numbered [1] references in citation order — what the parser keeps, what it drops, and how to renumber.",
+    h1: "APA to IEEE: Turning Author-Date References Into Numbers",
+    intro:
+      "APA 7th edition and IEEE could hardly be further apart: one cites by author and year, the other by number, and nothing in an APA entry says which number its work should get. An APA to IEEE conversion is two jobs at once — restyle every entry, then number the list in first-citation order. This guide shows it on one real article, explains how the converter reads APA text, and covers the renumbering that has to happen last.",
+    sections: [
+      {
+        h2: "APA to IEEE: one article, two entries",
+        paragraphs: [
+          "Here is the same article in both systems. APA 7th edition: `LeCun, Y., Bengio, Y., & Hinton, G. (2015). Deep learning. Nature, 521(7553), 436–444.` IEEE: `[1] Y. LeCun, Y. Bengio, and G. Hinton, “Deep learning,” Nature, 521(7553), pp. 436–444, 2015.` Both are the Deep learning paper by LeCun, Bengio and Hinton, published in Nature in 2015, volume 521, issue 7553, pages 436–444, DOI 10.1038/nature14539. Every row in the table below is visible in that pair.",
+          "That IEEE entry is exactly what the converter produces from the pasted APA text. One detail deserves a second look: the volume and issue stay together as 521(7553), exactly as the APA text wrote them, because the parser folds them into the journal field as a single string. Convert the same paper from its DOI or from BibTeX, where volume and issue are separate fields, and the entry renders in the full IEEE shape: `[1] Y. LeCun, Y. Bengio, and G. Hinton, “Deep learning,” Nature, vol. 521, no. 7553, pp. 436–444, 2015, doi: 10.1038/nature14539.`",
+        ],
+        table: {
+          headers: ["Element", "APA 7th edition", "IEEE"],
+          rows: [
+            ["In-text marker", "(LeCun et al., 2015)", "[1]"],
+            ["Authors", "LeCun, Y., Bengio, Y., & Hinton, G.", "Y. LeCun, Y. Bengio, and G. Hinton"],
+            ["Year", "In parentheses after the authors", "Near the end, before the DOI"],
+            ["Title", "Sentence case, no quotation marks", "Sentence case, in double quotation marks"],
+            ["Journal", "In italics", "In italics"],
+            ["Volume, issue", "521(7553)", "vol. 521, no. 7553 (full record)"],
+            ["Pages", "436–444, no prefix", "pp. 436–444"],
+            ["DOI", "Resolver URL: https://doi.org/10.1038/nature14539", "doi: 10.1038/nature14539 (full record only)"],
+            ["List order", "Alphabetical by author", "Order of first citation"],
+          ],
+        },
+      },
+      {
+        h2: "How the converter reads APA text",
+        paragraphs: [
+          "The converter does not edit the APA string: it parses it into a structured record — authors, year, title, journal, volume, issue and pages — and renders that record in IEEE. The parser expects the APA shape: an author block, a year in parentheses, a period, then the title up to its first period, then journal, volume, issue and pages.",
+          "Paste one reference per block, separated by a blank line, and paste them in the order they are first cited in your text. The parser splits the input on blank lines, and the converter numbers the list in pasted order — so the order you paste is the numbering you get. Only APA text parses this way: MLA, Harvard, Chicago and IEEE text cannot be used as input, because none of them puts the year in parentheses directly after the author block.",
+        ],
+        list: [
+          "Paste APA text, one reference per block, in citation order.",
+          "Check the author block first: surname, comma, initials, then (year).",
+          "Fix missing volume, issue or pages in the pasted text before converting.",
+          "Renumbering belongs in the last pass, after the text stops changing.",
+        ],
+      },
+      {
+        h2: "Numbers replace names: citation order, not alphabetical",
+        paragraphs: [
+          "IEEE numbers entries in the order they are first cited: the first work cited is [1], the second [2], and the list is printed in that order. An APA to IEEE conversion therefore cannot keep the APA list's alphabetical order — its first entry becomes [1] only if it is also the first work cited. Paste in citation order, or renumber afterwards.",
+          "The marker in the text is the number in square brackets: `... as shown in [1].` The same work cited twice keeps the same number, and a range is written [1]–[3]. There is no author-date marker anywhere in IEEE, so (LeCun et al., 2015) never appears. Insert one source in paragraph two and every later number shifts by one, which is why numbering belongs in your last pass over the manuscript.",
+        ],
+        list: [
+          "Paste references in the order they are first cited.",
+          "Cite with [1], not with the author name or year.",
+          "Renumber after any insertion, since a new [2] shifts every later reference.",
+          "The same work always keeps the same number.",
+        ],
+      },
+      {
+        h2: "Authors, titles and pages in IEEE",
+        paragraphs: [
+          "Author names flip order: APA writes surname first with initials after it, `LeCun, Y.`, while IEEE writes initials first, `Y. LeCun`. IEEE lists up to six authors in full; a longer list collapses to the first author plus et al. — a four-author record renders with all four names, while the eight-author Attention paper renders as `A. Vaswani et al.` The word before the last author is and, never an ampersand.",
+          "The title takes double quotation marks and stays in sentence case, “Deep learning,”, and the journal name is italicised. The year moves from directly after the authors to near the end of the entry, after the pages: `..., pp. 436–444, 2015.` The page range keeps its full length with a pp. prefix — IEEE does not shorten 436–444 to 436–44 the way MLA and Chicago do. The DOI, when the record has one, closes the entry as `doi: 10.1038/nature14539`, with a space after the colon.",
+        ],
+      },
+      {
+        h2: "What the parser drops, and how to keep it",
+        paragraphs: [
+          "The APA-text parser reads authors, year, title, journal, volume, issue and pages, and nothing else — there is no field for a DOI or a URL. So the IEEE entry above ends at the year, with no DOI; convert from the DOI or BibTeX for the doi: tail. A missing volume, issue or page range produces a short entry with no warning, so check the source text before converting.",
+          "Do not leave the DOI link on the end of the pasted text to keep it: with `https://doi.org/10.1038/nature14539` still attached, the parser misreads the tail — the journal field swallows the volume, pages and link, and the page range comes out as the last digits of the DOI. The mangled result renders as `[1] Y. LeCun, Y. Bengio, and G. Hinton, “Deep learning,” Nature, 521(7553), 436–444. https://doi.org/10.1038/nature14539, p. 14539, 2015.` Strip the link before pasting, and use a DOI lookup if the DOI must appear.",
+          "The converted list downloads as .bib, .ris or plain text, and the .ris file carries the records back into Zotero or EndNote. History keeps the most recent twenty items, or one hundred on Pro. Keep the .bib download too: a formatted string cannot be turned back into fields, while the .bib converts again for another style in seconds.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "Does converting renumber my references?",
+        a: "Yes — the converter numbers the list in the order you paste it, so paste in the order the works are first cited in your text. An alphabetical APA list pasted as-is gets numbers in alphabetical order, which is not IEEE order.",
+      },
+      {
+        q: "Why does my IEEE entry say 521(7553) instead of vol. 521, no. 7553?",
+        a: "Because the APA-text parser folds the volume and issue into the journal field as one string, and the IEEE template prints that string as it stands. Convert the same paper from its DOI or from BibTeX, where volume and issue are separate fields, and the entry renders as vol. 521, no. 7553.",
+      },
+      {
+        q: "Why is there no DOI in my IEEE entry?",
+        a: "The APA-text parser keeps authors, year, title, journal, volume, issue and pages only — it has no field for a DOI or a URL. Convert from the DOI or from BibTeX and the entry ends with doi: 10.1038/nature14539.",
+      },
+      {
+        q: "How many authors does IEEE list?",
+        a: "Up to six in full. A longer author list collapses to the first author plus et al.: the eight-author Attention paper renders as A. Vaswani et al., while a four-author paper lists all four names.",
+      },
+      {
+        q: "Can I paste IEEE text back in as the input?",
+        a: "No. Only APA text parses as input, because only APA puts the year in parentheses directly after the author block. A [1]-numbered list does not match that shape, so paste the APA version, or the BibTeX, instead.",
+      },
+      {
+        q: "I inserted a reference in the middle — what now?",
+        a: "Renumber everything after it. IEEE numbers follow first-citation order, so one insertion shifts every later number, and the in-text markers must shift with them. Do the numbering in your last pass over the manuscript.",
+      },
+    ],
+    relatedSlugs: ["apa-to-bibtex", "bibtex-to-ieee", "apa-to-chicago"],
+    ctaPrimary: "Convert an APA list to IEEE",
+    ctaSecondary: "Convert the same list from BibTeX to IEEE",
+    updated: "2026-11-26",
   },
 };
 
