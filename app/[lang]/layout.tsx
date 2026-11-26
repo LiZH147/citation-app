@@ -27,12 +27,12 @@ export async function generateMetadata({
     title: {
       default: isZh
         ? "参考文献格式转换器 - BibTeX/APA 转 GB/T 7714-2015 国标"
-        : "Citation Format Converter - BibTeX/APA to GB/T 7714-2015",
+        : "Free Citation Converter — BibTeX to APA, MLA, IEEE",
       template: "%s | ConvertGB",
     },
     description: isZh
       ? "免费在线参考文献格式转换器：BibTeX、APA 一键转 GB/T 7714-2015 国标，支持 DOI 与 arXiv 抓取。纯浏览器本地解析，不上传文献、无需注册。"
-      : "Convert BibTeX or APA citations to GB/T 7714-2015 in one click. Paste a DOI or arXiv ID to fetch metadata. Runs in your browser — nothing uploaded, no signup.",
+      : "Free citation converter: turn BibTeX, APA text or a DOI into APA 7th, MLA 9th, Chicago 17th, Harvard or IEEE, plus GB/T 7714-2015. Runs in your browser.",
     keywords: isZh
       ? [
           "参考文献格式转换",
@@ -74,10 +74,10 @@ export async function generateMetadata({
     openGraph: {
       type: "website",
       siteName: "ConvertGB",
-      title: isZh ? "参考文献格式转换器 - BibTeX/APA 转 GB/T 7714-2015" : "Citation Format Converter - BibTeX/APA to GB/T 7714-2015",
+      title: isZh ? "参考文献格式转换器 - BibTeX/APA 转 GB/T 7714-2015" : "Free Citation Converter — BibTeX to APA, MLA, IEEE",
       description: isZh
         ? "BibTeX/APA 转 GB/T 7714-2015 国标格式，支持 DOI 与 arXiv 自动抓取，纯浏览器本地解析。"
-        : "BibTeX/APA to GB/T 7714-2015 with DOI and arXiv lookup, parsed entirely in your browser.",
+        : "Turn BibTeX, APA text or a DOI into APA 7th, MLA 9th, Chicago 17th, Harvard or IEEE — plus GB/T 7714-2015. Parsed entirely in your browser.",
       url: absoluteUrl(`/${lang}`),
       locale: isZh ? "zh_CN" : "en_US",
       alternateLocale: isZh ? ["en_US"] : ["zh_CN"],
@@ -85,8 +85,8 @@ export async function generateMetadata({
     },
     twitter: {
       card: "summary_large_image",
-      title: isZh ? "参考文献格式转换器 - BibTeX/APA 转 GB/T 7714-2015" : "Citation Format Converter - BibTeX/APA to GB/T 7714-2015",
-      description: isZh ? "BibTeX/APA 转 GB/T 7714-2015，支持 DOI/arXiv 抓取，浏览器本地解析。" : "BibTeX/APA to GB/T 7714-2015 with DOI/arXiv lookup, parsed in your browser.",
+      title: isZh ? "参考文献格式转换器 - BibTeX/APA 转 GB/T 7714-2015" : "Free Citation Converter — BibTeX to APA, MLA, IEEE",
+      description: isZh ? "BibTeX/APA 转 GB/T 7714-2015，支持 DOI/arXiv 抓取，浏览器本地解析。" : "Turn BibTeX, APA text or a DOI into APA 7th, MLA 9th, Chicago 17th, Harvard or IEEE — plus GB/T 7714-2015.",
       images: ["/opengraph-image"],
     },
     alternates: {

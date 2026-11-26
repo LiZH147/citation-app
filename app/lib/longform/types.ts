@@ -24,6 +24,12 @@ export const LONGFORM_SLUGS = [
   "doi-to-mla",
   "arxiv-to-ieee",
   "batch-convert-bibtex",
+  "doi-to-chicago",
+  "doi-to-harvard",
+  "doi-to-ieee",
+  "apa-to-chicago",
+  "apa-to-harvard",
+  "apa-to-ieee",
 ] as const;
 
 export type LongformSlug = (typeof LONGFORM_SLUGS)[number];
